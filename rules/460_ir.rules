@@ -1,0 +1,191 @@
+/*
+    part 1 has rules for sending ir commands to the led in SK
+    part 2 has rules for received commands from remote lirc receivers
+*/
+
+
+rule "triggered by system start ir"
+when 
+    System started
+then
+    LedColor.postUpdate("0,70,70")
+    irTarget.postUpdate("flurGo")
+
+    logInfo("medi","init ir  ")
+end
+
+//
+rule "LedSwitch received command"
+when
+    Item LedSwitch received command
+then
+    var key="KEY_W"
+    if (receivedCommand==ON) {key="KEY_POWER"} else
+    if (receivedCommand==OFF) {key="KEY_EXIT"} else
+    {logInfo("IR-Led", "BULLSHIT! LedSwitch received command "+receivedCommand)}
+    i24Transmit.sendCommand(key)
+    //sendCommand("lirc_remote_kiwi_i24_transmit",key)
+end
+
+// 
+rule "rule triggered  by LedColor received command "
+when 	
+    Item  LedColor received command
+then
+    logInfo("IR-Led", "LedColor received command "+receivedCommand)
+
+    if (receivedCommand==ON) { 
+        //sendCommand("lirc_remote_f642d87f_i24_transmit","KEY_BRIGHTNESSUP")
+        sendCommand("lirc_remote_kiwi_i24_transmit","KEY_BRIGHTNESSUP")
+    } else   
+    if (receivedCommand==OFF) { 
+        //sendCommand(lirc_remote_f642d87f_i24_transmit,"KEY_BRIGHTNESSDOWN") 
+        sendCommand(lirc_remote_kiwi_i24_transmit,"KEY_BRIGHTNESSDOWN") 
+    } else
+    {
+        testColor.sendCommand(receivedCommand)
+        var HSBType currentState = testColor.state as HSBType
+
+        var DecimalType hue = currentState.getHue() 
+		var PercentType sat = currentState.getSaturation()
+		var PercentType bright = currentState.getBrightness()
+
+        var key="KEY_W"
+        var col="weiss"
+        
+        if (bright > 80)  {col="white";key="KEY_W"} else
+        if (sat > 80)  {col="white";key="KEY_W"} else
+        if (hue > 336) {col="red";key="KEY_R"} else
+        if (hue > 316) {col="pink";key="KEY_AB"} else
+        if (hue > 290) {col="magenta";key="KEY_8"} else
+        if (hue > 270) {col="purple";key="KEY_5"} else
+        if (hue > 255) {col="darkpurple";key="KEY_2"} else
+        if (hue > 235) {col="blue";key="KEY_B"} else
+        if (hue > 215) {col="navyblue";key="KEY_A"} else
+        if (hue > 195) {col="skyblue";key="KEY_7"} else
+        if (hue > 180) {col="lightblue";key="KEY_4"} else
+        if (hue > 154) {col="turquoise";key="KEY_1"} else
+        if (hue > 132) {col="green";key="KEY_G"} else
+        if (hue > 106) {col="lightgreen";key="KEY_9"} else
+        if (hue > 80)  {col="maygreen";key="KEY_6"} else
+        if (hue > 45)  {col="yellow";key="KEY_3"} else
+        if (hue > 20)  {col="orange";key="KEY_0"} else
+        {col="red";key="KEY_R"}
+
+        logInfo("colors", col+" "+hue+" "+key)
+
+        //sendCommand("lirc_remote_f642d87f_i24_transmit",key)
+        sendCommand("lirc_remote_kiwi_i24_transmit",key)
+
+    }
+
+
+end
+
+
+//////////////////////////////////
+
+rule "rule triggered  by irButton received update "
+when 	
+    Item  irButton received update
+then
+    var key = irButton.state
+    var  col = -1
+    var  sat = 100
+    var HSBType currentState
+    var PercentType bright
+    var String cmd
+
+    if (key=="DIY_1"){irTarget.postUpdate("flurGo")}
+    else if (key=="DIY_2"){irTarget.postUpdate("flurStrip")}
+    else if (key=="DIY_3"){irTarget.postUpdate("mediStrip")}
+    else if (key=="DIY_4"){irTarget.postUpdate("badStrip")}
+    else if (key=="DIY_5"){irTarget.postUpdate("kuecheStrip")}
+    else if (key=="DIY_6"){irTarget.postUpdate("bedStrip")}
+
+    else if (key=="RED"){col=1;sat=100; }
+    else if (key=="GREEN"){col=120;sat=100; }
+    else if (key=="BLUE"){col=240;sat=100; }
+    else if (key=="WHITE"){col=230 ;sat=0;}
+    else if (key=="ORANGE"){col=30 ;sat=100;}
+    else if (key=="PEA_GREEN"){col=90 ;sat=100;}
+    else if (key=="DARK_BLUE"){col=210 ;sat=100;}
+    else if (key=="WHITE_1"){col=30 ;sat=10;}
+    else if (key=="DARK_YELLOW"){col=40 ;sat=100;}
+    else if (key=="CYAN"){col=180 ;sat=100;}
+    else if (key=="BROWN"){col=285 ;sat=100;}
+    else if (key=="WHITE_2"){col=190 ;sat=30;}
+    else if (key=="YELLOW"){col=60 ;sat=100;}
+    else if (key=="LIGHT_BLUE"){col=210 ;sat=100;}
+    else if (key=="PINK"){col=300 ;sat=100;}
+    else if (key=="WHITE_3"){col=300 ;sat=20;}
+    else if (key=="STRAW_YELLOW"){col=50 ;sat=100;}
+    else if (key=="SKY_BLUE"){col=260 ;sat=100;}
+    else if (key=="PURPLE"){col=270 ;sat=100;}
+    else if (key=="WHITE_4"){col=195 ;sat=40;}
+
+
+    logInfo("IR-Led", "irButton received update "+irButton.state+" for device: "+irTarget.state)
+
+    if (col > -1) {
+        // Farbe gewählt mediStripColor_act wlKuecheStrip_act badStripColor_act 
+
+        if (irTarget.state=="flurGo"){
+            currentState = flurGoColor_act.state as HSBType          
+            bright=currentState.getBrightness()
+            cmd = col+","+sat+","+bright
+            
+            flurGoColor_act.sendCommand(cmd)
+            flurGo.sendCommand(cmd)
+            
+        }
+        if (irTarget.state=="flurStrip"){
+            currentState = flurStripColor_act.state as HSBType
+            bright=currentState.getBrightness()
+            cmd = col+","+sat+","+bright
+            
+            flurStripColor_act.sendCommand(cmd)
+            flurStrip.sendCommand(cmd)
+            
+        }
+        if (irTarget.state=="mediStrip"){
+             currentState = mediStripColor_act.state as HSBType
+             bright=currentState.getBrightness()
+             cmd = col+","+sat+","+bright
+            
+            mediStripColor_act.sendCommand(cmd)
+            mediStrip.sendCommand(cmd)
+            
+        }
+        if (irTarget.state=="badStrip"){
+             currentState = badStripColor_act.state as HSBType
+             bright=currentState.getBrightness()
+             cmd = col+","+sat+","+bright
+            
+            badStripColor_act.sendCommand(cmd)
+            wifiLed1_color.sendCommand(cmd)
+            
+        }
+        if (irTarget.state=="kuecheStrip"){
+             currentState = kuecheStripColor_act.state as HSBType
+             bright=currentState.getBrightness()
+             cmd = col+","+sat+","+bright
+            
+            kuecheStripColor_act.sendCommand(cmd)
+            wifiLed3_color.sendCommand(cmd)
+            
+        }
+        if (irTarget.state=="bettStrip"){
+             currentState = girSKStripColor_act.state as HSBType
+             bright=currentState.getBrightness()
+             cmd = col+","+sat+","+bright
+            
+            girSKStripColor_act.sendCommand(cmd)
+            LedColor.sendCommand(cmd)
+            
+        }
+
+        logInfo("IR", irTarget.state+": "+cmd+" "+key)
+    }
+
+end 

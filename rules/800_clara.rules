@@ -1,0 +1,171 @@
+/*
+    die beiden PIR setzen ihren status in PirState_Clara1 und PirState_Clara2
+    nur wenn beide ON sind, geht PirState_Clara ON und schaltet das Licht
+*/
+// Clara
+
+
+
+var Number dusterLimit=25
+var Boolean isClaraDuster=false
+
+
+rule "triggered by system start clara"
+when 
+    System started
+then
+    keepTokoLightsWhenAlone.postUpdate(OFF)
+    logInfo("init","init Clara")
+end
+
+
+
+rule "rule triggered  by PirState_Clara1 received command ON"
+when 	
+    Item  PirState_Clara1 received command ON
+then
+    
+    pirLastTriggered_Clara1.postUpdate( new DateTimeType() ) 
+    //logInfo("PirState_Clara", "PirState_Clara1 ON while PirState_Clara2 "+PirState_Clara2.state)
+
+    // filter?
+    if (PirState_Clara1.state==ON || PirState_Clara2.state==ON){
+        PirState_Clara.sendCommand(ON)
+    }
+    
+    // spot am Ender
+    if (pirActive_SK_spot2.state.toString=="ON"){
+                // no show at bright light
+                //if (isGloomy.state==OFF){return;}
+
+                //logInfo("clara","clara duster "+(sensor_lux_6.state < dusterLimit))
+                if (sensor_lux_6.state < dusterLimit){
+                    schrankSpot2.sendCommand(80)
+                    
+                }
+            }
+
+end
+
+
+rule "rule triggered  by PirState_Clara2 received command ON"
+when 	
+    Item  PirState_Clara2 received command ON
+then
+
+    pirLastTriggered_Clara2.postUpdate( new DateTimeType() ) 
+    //logInfo("PirState_Clara", "PirState_Clara2 ON while PirState_Clara1 "+PirState_Clara1.state)
+    
+        // filter?
+    //if (PirState_Clara1.state==ON && PirState_Clara2.state==ON){
+        PirState_Clara.sendCommand(ON)
+    //}
+
+end
+
+
+rule "rule triggered  by PirState_Clara received command ON"
+
+when 	
+    Item  PirState_Clara received command ON
+then
+    // phase
+        //if ( newArrayList("early","morning","dusk","evening","late","salon","goodnight","night").contains(Current_BtnState.state.toString)) {
+            // active konfiguriert?
+            if (pirActive_Clara_bogenLicht.state.toString=="ON"){
+                // no show at bright light
+                //if (isGloomy.state==OFF){return;}
+
+                //logInfo("clara","clara duster "+(sensor_lux_6.state < dusterLimit))
+                if (sensor_lux_6.state < dusterLimit){
+                    claraLicht.sendCommand(ON)
+                }
+            }
+        //}        
+end
+
+rule "rule triggered  by PirState_Clara received command OFF"
+
+when 	
+    Item  PirState_Clara received command OFF
+then
+
+    if (pirActive_Clara_bogenLicht.state.toString=="ON"){
+        claraLicht.sendCommand(OFF)
+    }        
+end
+
+// daAction_Clara
+rule "rule triggered  by daAction_Clara received command ON"
+when 	
+    Item  daAction_Clara received command ON
+then
+	logInfo("presence", "daAction Clara "+da_jmd.state)
+  
+    if (da_jmd.state==OFF) {
+
+        PirState_Clara.sendCommand(OFF)
+
+        if (keepTokoLightsWhenAlone.state=OFF){
+            sensor_lux_6.postUpdate(sensor_lux_6.state)
+        }
+        
+        
+    } else if (da_jmd.state==ON) {
+        // 
+    }
+  
+end
+
+// pirMulti zeigt genau auf den Eingang und macht kurz schnell das Licht an und schnell wieder aus, wenn niemnd hineinkam
+rule "rule triggered  by PirState_Multi received command ON"
+when 	
+    Item  PirState_Multi received command ON
+then
+    //logInfo("pirMulti","pir Multi hat ausgelöst")
+    //if ( newArrayList("early","morning","dusk","evening","late","salon","goodnight","night").contains(Current_BtnState.state.toString)) {
+            // active konfiguriert?
+            if (pirActive_Clara_bogenLicht.state.toString=="ON"){
+                // no show at bright light
+
+                if (sensor_lux_6.state < dusterLimit){
+                    claraLicht.sendCommand(ON)
+                }
+            }
+        //}        
+    
+end
+
+rule "rule triggered  by PirState_Multi received command OFF"
+
+when 	
+    Item  PirState_Multi received command OFF
+then
+    if(PirState_Clara.state==OFF){
+        claraLicht.sendCommand(OFF)
+    }
+end
+
+
+rule "rule triggered by sensor_lux_6 received update"
+
+when 	
+    Item  sensor_lux_6 received update
+then
+    if(sensor_lux_6.state < dusterLimit){
+        isClaraDuster=true
+    } else {
+        isClaraDuster=false
+    }
+    var String da = (da_jmd.state.toString)
+    if (keepTokoLightsWhenAlone.state=ON){
+        da = "ON"
+    }
+    //var String msg = '{\"isDuster\":\"ON\",\"da\":""}'
+    var String dust = "OFF"
+    if ((sensor_lux_6.state < dusterLimit)) {dust="ON"} 
+    var String msg = '{"isDuster":"'+dust+'","da":"'+da+'","lux":'+sensor_lux_6.state+'}'
+    
+    var nada = executeCommandLine("ssh openhabian@kiwi mosquitto_pub  -u spy -P autan -t tokoLights/environ -m '"+ msg +"'" ,10000)
+    //logInfo("clara","sl6 upd msg "+msg+" result: "+nada)
+end

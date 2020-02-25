@@ -1,0 +1,10 @@
+/local/scripts/steckdosen.sh  1 %2$s
+/local/scripts/steckdosen.sh  2 %2$s
+/local/scripts/steckdosen.sh  3 %2$s
+/local/scripts/steckdosen.sh  4 %2$s
+/local/scripts/steckdosen.sh  5 %2$s
+/local/scripts/steckdosen.sh  6 %2$s
+/local/scripts/steckdosen.sh  7 %2$s
+/local/scripts/steckdosen.sh 8 %2$s
+/local/scripts/steckdosen.sh 16 %2$s
+

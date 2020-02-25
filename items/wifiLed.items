@@ -1,0 +1,38 @@
+Group gWifiLed  (r48)
+Group gWifiLed1 "BadKante" <light> (gWifiLed,gBad)
+Group gWifiLed2 "FlurKante" <light> (gWifiLed,gFlur)
+Group gWifiLed3 "KochKante" <light> (gWifiLed,gKueche)
+Group gWifiLed4 "SchrankKannte" <light> (gWifiLed,gKueche)
+
+
+// wifiLed1 ...61 wifiled:wifiled:badKante 
+Switch wifiLed1_power "Power" (gWifiLed1) {channel="wifiled:wifiled:badKante:power"}
+Color  wifiLed1_color "BadFarbe" (gWifiLed1) {channel="wifiled:wifiled:badKante:color"}
+Dimmer wifiLed1_white "White" (gWifiLed1) {channel="wifiled:wifiled:badKante:white"}
+Dimmer wifiLed1_white2 "Extra" (gWifiLed1) {channel="wifiled:wifiled:badKante:white2"}
+String wifiLed1_program "Programm" (gWifiLed1) {channel="wifiled:wifiled:badKante:program"}
+Dimmer wifiLed1_prSpeed "ProgrammSpeed" (gWifiLed1) {channel="wifiled:wifiled:badKante:programSpeed"}
+
+// wifiLed2 ...62 wifiled:wifiled:flurKante:power
+Switch wifiLed2_power "An/Aus" (gWifiLed2) {channel="wifiled:wifiled:flurKante:power"}
+Dimmer wifiLed2_white "WeissDimm" (gFlur,gWifiLed2) {channel="wifiled:wifiled:flurKante:white"}
+Color  wifiLed2_color "Color" (gWifiLed2) {channel="wifiled:wifiled:flurKante:color"}
+Dimmer wifiLed2_white2 "Extra" (gWifiLed2) {channel="wifiled:wifiled:flurKante:white2"}
+String wifiLed2_program "Programm" (gWifiLed2) {channel="wifiled:wifiled:flurKante:program"}
+Dimmer wifiLed2_prSpeed "ProgrammSpeed" (gWifiLed2) {channel="wifiled:wifiled:flurKante:programSpeed"}
+
+// wifiLed3 ...63 wifiled:wifiled:kochKante:power
+Switch wifiLed3_power "Power" (gWifiLed3) {channel="wifiled:wifiled:kochKante:power"}
+Color  wifiLed3_color "KochFarbe" (gWifiLed3) {channel="wifiled:wifiled:kochKante:color"}
+Dimmer wifiLed3_white "White" (gWifiLed3) {channel="wifiled:wifiled:kochKante:white"}
+Dimmer wifiLed3_white2 "Extra" (gWifiLed3) {channel="wifiled:wifiled:kochKante:white2"}
+String wifiLed3_program "Programm" (gWifiLed3) {channel="wifiled:wifiled:kochKante:program"}
+Dimmer wifiLed3_prSpeed "ProgrammSpeed" (gWifiLed3) {channel="wifiled:wifiled:kochKante:programSpeed"}
+
+// wifiled:wifiled:schrankel
+Switch wifiLed4_power "Power" (gWifiLed4) {channel="wifiled:wifiled:schrankel:power"}
+Color  wifiLed4_color "schrankFarbe" (gWifiLed4) {channel="wifiled:wifiled:schrankel:color"}
+Dimmer wifiLed4_white "White" (gWifiLed4) {channel="wifiled:wifiled:schrankel:white"}
+Dimmer wifiLed4_white2 "Extra" (gWifiLed4) {channel="wifiled:wifiled:schrankel:white2"}
+String wifiLed4_program "Programm" (gWifiLed4) {channel="wifiled:wifiled:schrankel:program"}
+Dimmer wifiLed4_prSpeed "ProgrammSpeed" (gWifiLed4) {channel="wifiled:wifiled:schrankel:programSpeed"}

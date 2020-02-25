@@ -1,0 +1,3 @@
+// keepTokoLightsWhenAlone setzt sich nach 5h alleine zurück. Wenn ON sind die LEDs an Tokoeka ausgenommen vom allgemeinen Licht aus
+// bei verlassen der Whg, damit die Ausleuchtung für remote bilder bleibt
+Switch keepTokoLightsWhenAlone "TokoLights an lassen, wenn ausser Haus" { expire="5h,command=OFF" }

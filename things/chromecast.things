@@ -1,0 +1,22 @@
+
+// devices
+
+chromecast:audio:kueche             [ ipAddress="192.168.50.30" ]
+chromecast:audio:office             [ ipAddress="192.168.50.31" ]
+chromecast:audio:bad                [ ipAddress="192.168.50.32" ]
+chromecast:audio:bett               [ ipAddress="192.168.50.33" ]
+chromecast:audio:flur               [ ipAddress="192.168.50.34" ]
+chromecast:audio:medi               [ ipAddress="192.168.50.35" ]
+chromecast:audio:clara              [ ipAddress="192.168.50.36" ]
+
+/*
+chromecast:audiogroup:ccGrp_Alle           [ ipAddress="192.168.50.34", port=42691]
+chromecast:audiogroup:ccGrp_Core           [ ipAddress="192.168.50.34", port=42275]
+
+chromecast:audiogroup:ccGrp_Home           [ ipAddress="192.168.50.34", port=42734]
+chromecast:audiogroup:ccGrp_OfficeBad           [ ipAddress="192.168.50.31", port=42421]
+chromecast:audiogroup:ccGrp_KuecheBad           [ ipAddress="192.168.50.30", port=42134]
+chromecast:audiogroup:ccGrp_BettBad           [ ipAddress="192.168.50.33", port=42430]
+chromecast:audiogroup:ccGrp_KuecheBett           [ ipAddress="192.168.50.30", port=42015]
+*/
+

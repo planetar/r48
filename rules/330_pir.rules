@@ -1,0 +1,135 @@
+/*
+PIR Bewegungsmelder einbinden.
+
+das gros der handler ist in 800_raum - .rules gewandert, hier bleiben noch Flur* und Bad*
+und das komplette init
+*/
+
+
+var Timer badSpotDelayed = null
+var bkpKante = 0
+var Number tooFast=5
+
+
+var mll=0
+
+var String nada
+
+rule "triggered by system start pir"
+when 
+    System started
+then
+    Flag_Pir_Flur.postUpdate(0)
+    Flag_Pir_SK.postUpdate(0)
+    Flag_Pir_Bad.postUpdate(0)
+    Flag_Pir_Kueche.postUpdate(0)
+    Flag_Pir2_Kueche.postUpdate(0)
+    Flag_Pir_OfficeDesk.postUpdate(0)
+
+    //pirLastTriggered_Bad.postUpdate( new DateTimeType() )
+    //pirLastTriggered_Flur.postUpdate( new DateTimeType() )
+    pirLastTriggered_Flur2.postUpdate( new DateTimeType() )
+    pirLastTriggered_Kueche.postUpdate( new DateTimeType() )
+    pirLastTriggered_Kueche2.postUpdate( new DateTimeType() )
+    pirLastTriggered_SK.postUpdate( new DateTimeType() )
+    //pirLastTriggered_Clara.postUpdate( new DateTimeType() )
+    pirLastTriggered_Medi.postUpdate( new DateTimeType() )
+    pirLastTriggered_OfficeDesk.postUpdate( new DateTimeType() )
+
+    wifiLed1_power.sendCommand(ON)
+    wifiLed2_power.sendCommand(ON)
+    wifiLed3_power.sendCommand(ON)
+
+    IntenseFlur.postUpdate(OFF)
+    IntenseBad.postUpdate(OFF)
+    IntenseSK.postUpdate(OFF)                   
+    KuschelnSK.postUpdate(OFF)                            
+    SchrankSK.postUpdate(OFF)
+    
+    RemoteFlurActive.postUpdate(OFF)
+    allowFlurBrightnessRegulation.postUpdate(OFF)
+    allowFlurColorCycle.postUpdate(OFF)
+
+    PirState_Kueche.sendCommand(ON)
+    PirState_Bad.sendCommand(ON)
+
+
+    pirActive_SK_spot1.postUpdate(OFF)                  
+    pirActive_SK_spot3.postUpdate(OFF)                    
+    pirActive_SK_Bettkante.postUpdate(OFF)   
+    pirActive_SK_Fensterkante.postUpdate(OFF)             
+    pirActive_SK_buddha.postUpdate(OFF)                  
+    pirActive_SK_fenster.postUpdate(OFF)                  
+    pirActive_SK_balkon.postUpdate(OFF)    
+    pirActive_SK_bettLicht.postUpdate(OFF)    
+
+    pirActive_Bad_spot1.postUpdate(OFF)         
+
+    PirState_OfficeDesk.postUpdate(ON)    
+    pirActive_Office_klarLicht.postUpdate(ON)           
+    pirActive_OfficePanel.postUpdate(ON)                 
+    pirActive_OfficeLevel.postUpdate(ON)                 
+    pirActive_OfficeSpot.postUpdate(ON)  
+
+    pirActive_Clara_bogenLicht.postUpdate(ON)   
+
+    pirActive_Flur_Go.postUpdate(ON)
+    pirActive_Flur_Strip.postUpdate(ON)
+    pirActive_Flur_Kante.postUpdate(ON)
+
+    claraLightLevelControls.postUpdate(ON)
+    badLightLevelControls.postUpdate(ON)
+    kuecheLightLevelControls.postUpdate(ON)
+    flurLightLevelControls.postUpdate(ON)
+
+    officeLightLevel.postUpdate(0)
+    flurLightLevel.postUpdate(0)
+    badLightLevel.postUpdate(0)
+    claraLightLevel.postUpdate(0)
+    kuecheLightLevel.postUpdate(0)
+
+    logInfo("medi","init pir  ")
+end
+
+/*
+    Flur1 und Bad1 geben viele Fehllarme, wenn die therme anspringt.
+    hier war der Versuch, diese Fehlalarme auszufiltern als Fälle, wo diese beiden in sehr kurzer Frist aktivieren.
+    Der war halbwegs erfolgreich, dieser Stand ist in 330_pir.rules.bkp aufgehoben
+
+    Neuer Ansatz ist, Flur1 und Flur3 and-verknüpft zu halten, integriert in PirState_Flur, wo auch die Action liegt.
+
+    PirState_Flur2 bleibt erst mal solo
+
+    ähnlich Bad1 und Bad2
+*/
+
+
+
+rule "rule triggered  by evalTriggerTimes_Flur ON"
+when 	
+    Item  evalTriggerTimes_Flur received command
+then
+    // debug
+    /*
+    gerade.postUpdate( new DateTimeType() )
+    var flurMillis = (pirLastTriggered_Flur.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var flur2Millis = (pirLastTriggered_Flur2.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var flur3Millis = (pirLastTriggered_Flur3.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var officeTuerMillis = (pirLastTriggered_OfficeTuer.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var badMillis = (pirLastTriggered_Bad.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var kueche2Millis = (pirLastTriggered_Kueche2.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta0 = nowMillis - flurMillis
+    var delta1 = nowMillis - flur2Millis
+    var delta2 = nowMillis - flur3Millis
+    var delta3 = nowMillis - officeTuerMillis
+    var delta4 = nowMillis - badMillis
+    var delta5 = nowMillis - kueche2Millis
+
+    logInfo("PirFlur", "delta /flur: "+delta0+" /flur2: "+delta1+" /flur3: "+delta2+" /officeTuer: "+delta3+" /bad: "+delta4+" /kueche2: "+delta5)
+	*/
+
+end
+
+
+

@@ -1,0 +1,145 @@
+/*
+    die Wetterstation stürzt nach einer gewissen Zeit ab.
+    es braucht einen niederfrequenten Test, wie alt das letzte Messergebnis ist und dann einen Neustart per An/Aus einer Funksteckdose
+
+    ähnliches gilt bei luftdaten für das script, dass die Werte abruft
+
+    mqOfficePack
+*/
+
+/*
+    - new watchdog for vbb
+    - new watchdog action: send telegram msg
+
+*/
+rule "rule triggered every 2 minutes"
+
+when
+    Time cron "0 0/2 * * * ?"   // every 2 minute
+	
+then
+    //sensor_bme280_temperature.lastUpdate
+
+    gerade.postUpdate(new DateTimeType())
+    var updMillis = sensor_bme280_temperature.lastUpdate.millis
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta = nowMillis - updMillis
+    var sensorAlarm = (delta > 1200000)
+
+	//logInfo("bme-watchdog", "bme-watchdog  delta seit bme update: "+delta+" sensorAlarm: "+sensorAlarm)
+
+    if (sensorAlarm) {
+        steckdose04Switch.sendCommand("OFF")
+        // satt Wartezeit, dsmit der sensor wirklich neu starten muss
+        Thread::sleep(6000)
+
+        logInfo("bme-watchdog", "bme-watchdog tried restart with delta since bme update: "+delta+" ("+(delta/60000)+" min.)"+" sensorAlarm: "+sensorAlarm)
+   
+		steckdose04Switch.sendCommand("ON")
+        Thread::sleep(300)
+
+//        logInfo("bme-watchdog", "bme-watchdog tried restart with delta since bme update: "+delta+" ("+(delta/60000)+" min.)"+" sensorAlarm: "+sensorAlarm)
+
+        // steckdose04Switch.sendCommand("OFF")
+        // Thread::sleep(600)
+		// steckdose04Switch.sendCommand("ON")
+    }
+
+    //sensor_feinstaub_temp.lastUpdate
+
+    updMillis = sensor_feinstaub_temp.lastUpdate.millis
+    nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    delta = nowMillis - updMillis
+    sensorAlarm = (delta > 1800000)
+
+	//logInfo("bme-watchdog", "feinstaub-watchdog  delta seit bme update: "+delta+" sensorAlarm: "+sensorAlarm)
+
+    if (sensorAlarm) {
+        //var nada = executeCommandLine("ssh openhabian@moa /local/scripts/luftdaten/restart-service.sh",10000)
+        // der service sitzt jetzt auf tieke selbst. 
+        logInfo("bmp-watchdog", "feinstaub-watchdog  alarmed  delta since update: "+delta+" ("+(delta/60000)+" min.)")
+    }
+    
+    // mqOfficePack
+
+  
+    // updMillis = mqOfficePack.lastUpdate.millis
+    // //nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    // delta = nowMillis - updMillis
+    // // 5 min
+    // sensorAlarm = (delta > 300000)
+
+	// //logInfo("bme-watchdog", "feinstaub-watchdog  delta seit bme update: "+delta+" sensorAlarm: "+sensorAlarm)
+
+    // if (sensorAlarm) {
+    //     // smalle11-power2 speist officePack
+    //     smalle11Power2.sendCommand("OFF")
+    //     // Wartezeit, damit der sensor wirklich neu starten muss
+    //     Thread::sleep(1000)
+    //     smalle11Power2.sendCommand("ON")
+    //     // und loggen
+    //     logInfo("bmp-watchdog", "officePack-watchdog  alarmed  delta since update: "+delta+" ("+(delta/60000)+" min.)")
+
+    // }  
+
+
+    // pir/clara/state
+    //sensor_humidity_Clara sensor_temperature_Clara
+
+    if (sensor_humidity_Clara.state == 0 || sensor_temperature_Clara.state == 0) {
+        smalle2Power2.sendCommand("OFF")
+        // Wartezeit, damit der sensor wirklich neu starten muss
+        Thread::sleep(1000)
+        smalle2Power2.sendCommand("ON")
+        // und loggen
+        logInfo("bmp-watchdog", "pirClara-watchdog  alarmed  ")
+
+    }
+end
+
+
+// dbg
+// dbg-watch to detect when a strip contoller went south
+// led/fk/dbg {"dbg":null}
+// led/bk/dbg {"dbg":null}
+// String led_bk_dbg "BettKante dbg"                    // wird derzeit nicht gelesen
+// String led_fk_dbg "FensterKante dbg"                 // (bei Umstellung auf mqtt v2 binding nicht migriert)
+
+
+
+rule "led_bk_dbg changed"
+when Item led_bk_dbg changed
+
+then
+    logInfo("chkDbg","BettKante dbg: "+led_fk_dbg.state.toString())
+	if (led_bk_dbg.state.toString()=='{"dbg":null}') {
+		logInfo("chkDbg","BettKante freaked out")
+		mqSmalle3Cmd1.sendCommand("OFF")
+		Thread::sleep(2000)
+		mqSmalle3Cmd1.sendCommand("ON")
+		Thread::sleep(5000)
+        led_bk.sendCommand('{"state":"ON","bright":24,"effect":"rangeWave","stepTime":180,"colorHsv":{"h":3,"s":250,"v":135}}')
+        Thread::sleep(500)
+        led_bk.sendCommand('{"state":"ON","bright":24,"effect":"rangeWave","stepTime":180,"colorHsv":{"h":3,"s":250,"v":135}}')
+	}
+end
+
+
+rule "led_fk_dbg changed"
+when Item led_fk_dbg changed
+
+then
+    logInfo("chkDbg","FensterKante dbg: "+led_fk_dbg.state.toString())
+	if (led_fk_dbg.state.toString()=='{"dbg":null}') {
+		logInfo("chkDbg","FensterKante freaked out")
+		mqSmalle3Cmd1.sendCommand("OFF")
+		Thread::sleep(2000)
+		mqSmalle3Cmd1.sendCommand("ON")
+		Thread::sleep(5000)
+        led_fk.sendCommand('{"state":"ON","bright":48,"effect":"rangeWave","stepTime":340,"colorHsv":{"h":31,"s":250,"v":135}}')
+        Thread::sleep(500)
+        led_fk.sendCommand('{"state":"ON","bright":48,"effect":"rangeWave","stepTime":340,"colorHsv":{"h":31,"s":250,"v":135}}')
+        //led_fk.sendCommand('{"state":"ON","effect":"solid","bright":18,"colorHsv":{"h":35,"s":240,"v":255}}')
+        // {"state":"ON","effect":"solid","bright":28,"colorHsv":{"h":35,"s":240,"v":255}}
+	}
+end

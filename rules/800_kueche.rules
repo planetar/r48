@@ -1,0 +1,279 @@
+/*
+
+*/
+
+var String nada
+
+val Integer dusterLimit=15
+var Boolean isDuster=false
+var Boolean isEmpty=false
+
+rule "triggered by system start SK"
+when 
+    System started
+then
+    pirLastTriggered_Kueche1.postUpdate( new DateTimeType() )
+    pirLastTriggered_Kueche2.postUpdate( new DateTimeType() )
+    pirLastTriggered_Kueche3.postUpdate( new DateTimeType() )
+    logInfo("inits","init Kueche")
+end
+
+
+rule "Kueche triggered minutely"
+when 	
+    Time cron "0 0/1 * * * ?"   // every minute
+then
+    //logInfo("bad","pirLastTriggered_Kueche 1: "+ pirLastTriggered_Kueche1.state+"    2: "+ pirLastTriggered_Kueche2.state+"    3:"+ pirLastTriggered_Kueche3.state)
+    gerade.postUpdate(new DateTimeType())
+    var kuecheMillis  = (pirLastTriggered_Kueche1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var kueche2Millis = (pirLastTriggered_Kueche2.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var compar = kueche2Millis
+    if (kuecheMillis > kueche2Millis) {compar=kuecheMillis}
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta = nowMillis - compar
+    
+    //logInfo("checkLight_Kueche","delta ist "+delta)
+
+
+    if (delta > 6*60*1000) {
+        isEmpty = true
+        //logInfo("checkLight_Kueche","delta ist "+delta+" monitorKochKante.state "+monitorKochKante.state)
+        if (monitorKochKante.state==ON){
+            kochKante.sendCommand(OFF)
+        }
+
+    } 
+    else {
+        isEmpty = false
+    }
+
+    // isDuster
+    if (sensor_lux_3.state < dusterLimit){isDuster=true} else {isDuster=false }
+
+end
+
+
+// Pirs in der Kueche
+
+// pir in der Kammer ist irgendwie out of order und kam dann in ein Dauerfeuer
+// welches diese rules zu immer neuen ssh-sessions ermutigte 
+// unter denen tieke auf eine load von über 6 kam und openhab abkackte.
+// lesson learned: ssh ist zu aufwendig für ein,zwei bit info
+// mqtt r48/kueche/relais29/set '{"action":"OFF/ON/TOGGLE"}'
+// auf tael ist relaisd mit dem Ohr an mqtt und schaltet 
+// und pir geht an einen paok 
+
+// pir ist vorerst arbeitslos. Es klappert allenfalls etwas mit einem Relais
+// pir2 bleibt wie es ist
+// pir3 in der Kammer steuert jetzt kammerlicht.
+// Balkonlicht steuert pirState_Balkon
+
+// pir
+rule "rule triggered  by PirState_Kueche received command ON"
+when 	
+    Item  PirState_Kueche received command ON
+then
+    //pirLastTriggered_Kueche.postUpdate( new DateTimeType() ) 
+	//logInfo("PirState_Kueche", "PirState_Kueche got command ON")
+    if (isGloomy.state==ON){
+        schrankSpot3.sendCommand(ON)
+    }
+
+    //platzHalt27.sendCommand(ON)
+  
+    // if (Astro_Sun_Elevation.state < 0) { 
+    //     steckdose03Switch.postUpdate(OFF)
+    //     Thread::sleep(30)
+    //     steckdose03Switch.sendCommand("ON") 
+    // }
+end
+
+rule "rule triggered  by PirState_Kueche received command OFF"
+
+when 	
+    Item  PirState_Kueche received command OFF
+then
+	//logInfo("PirState_Kueche", "PirState_Kueche got command OFF")
+ 
+    schrankSpot3.sendCommand(OFF)
+    //platzHalt27.sendCommand(OFF)
+ 
+    // steckdose03Switch.postUpdate(ON)
+    // Thread::sleep(30)
+    // steckdose03Switch.sendCommand("OFF")
+end
+
+
+
+// Pir2
+rule "rule triggered  by PirState_Kueche2 received command ON"
+when 	
+    Item  PirState_Kueche2 received command ON
+then
+    //var Number bright=0
+    pirLastTriggered_Kueche2.postUpdate( new DateTimeType() ) 
+    //logInfo("PirState_Kueche2", "PirState_Kueche2 received command ON")
+    
+    wifiLed3_color.sendCommand(kuecheStripColor_act.state.toString)
+
+    // abends auch kochKante
+    if (isGloomy.state==ON &&  newArrayList("morning","day","noon","afternoon","dusk","evening","salon","late").contains(Current_BtnState.state.toString)) {
+        //logInfo("PirState_Kueche2","Gloomy && zweite Tageshälfte und monitorKochKante.state "+monitorKochKante.state)
+        if (monitorKochKante.state==OFF){
+            kochKante.sendCommand(ON)
+        }
+    }
+
+    Flag_Pir2_Kueche.postUpdate(1)
+         
+    //}
+end
+
+rule "rule triggered  by PirState_Kueche2 received command OFF"
+
+when 	
+    Item  PirState_Kueche2 received command OFF
+then
+    //logInfo("PirState_Kueche2", "PirState_Kueche2 reset to 0")
+    wifiLed3_color.sendCommand(kuecheStripColor_pas.state.toString)
+    Flag_Pir2_Kueche.postUpdate(0)
+    
+end
+
+// pir3
+
+rule "rule triggered  by PirState_Kueche3 received command ON"
+when 	
+    Item  PirState_Kueche3 received command ON
+then
+    logInfo("kueche","pir3 got on")
+    pirLastTriggered_Kueche3.postUpdate( new DateTimeType() )     
+   
+    kammerLicht.sendCommand(ON)
+  
+end
+
+rule "rule triggered  by PirState_Kueche3 received command OFF"
+
+when 	
+    Item  PirState_Kueche3 received command OFF
+then
+ 
+    kammerLicht.sendCommand(OFF)
+ 
+end
+ 
+
+
+// relais
+// relais26
+// relais27 - triggered by PirStateKueche, derzeit kein Konsument
+// relais28 - kochKante
+// relais29 - kammerlicht
+
+
+rule "rule triggered  by platzHalt26 received command"
+
+when 	
+    Item  platzHalt26 received command 
+then
+	nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais26_toggle.sh",10000)
+    //logInfo("dummy", "platzHalt26 relais position "+nada)
+    //logInfo("PirState_Kueche", "PirState_Kueche got command OFF and "+nada)
+    
+end
+
+rule "rule triggered  by platzHalt27 received command"
+
+when 	
+    Item  platzHalt27 received command 
+then
+	if (receivedCommand==ON){
+        //nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais27_On.sh",10000)
+        mqKuecheRelay27Set.sendCommand('{"action":"ON"}')
+    } else if (receivedCommand==OFF){
+        //nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais27_Off.sh",10000)
+        mqKuecheRelay27Set.sendCommand('{"action":"OFF"}')
+    }
+    //logInfo("PirState_Kueche", "PirState_Kueche got command OFF and "+nada)
+    
+end
+
+
+rule "rule triggered  by kochKante received command"
+
+when 	
+    Item  kochKante received command 
+then
+	//nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais28_toggle.sh",10000)
+    
+    //logInfo("kochKante", "kochKante relais position "+nada)
+    //logInfo("PirState_Kueche", "PirState_Kueche got command OFF and "+nada)
+    mqKuecheRelay28Set.sendCommand('{"action":"TOGGLE"}')
+end
+
+rule "rule triggered  by kammerLicht received command"
+
+when 	
+    Item  kammerLicht received command 
+then
+    if (receivedCommand==ON){
+        //nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais29_On.sh",10000)
+        //led_fk.sendCommand('{"bright":12,"effect":"rangeWave","stepTime":90,"colorHsv":{"h":32,"s":250,"v":135}}')
+        mqKuecheRelay29Set.sendCommand('{"action":"ON"}')
+    } else if (receivedCommand==OFF){
+        //nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais29_Off.sh",10000)
+        mqKuecheRelay29Set.sendCommand('{"action":"OFF"}')
+    }
+	
+    //logInfo("kammerLicht", "kammerLicht action "+nada)
+    
+end
+
+
+// monitore
+
+rule "rule triggered  by monitorKochKante changed"
+
+when 	
+    Item  monitorKochKante changed 
+    then
+	//logInfo("monitorKochKante", "monitorKochKante "+monitorKochKante.state)
+    kochKante.postUpdate(monitorKochKante.state)
+    
+end
+
+ 
+
+
+
+/*
+    minuten-trigger
+
+    eine regel für die KochKante:
+    - wenn letzter pir oder pir2 länger als 10 min her:   pirLastTriggered_Kueche pirLastTriggered_Kueche2
+        - KochKante aus
+
+*/
+
+
+
+// daAction_Kueche
+rule "rule triggered  by daAction_Kueche changed"
+when 	
+    Item  daAction_Kueche received command ON
+then
+	logInfo("presence", "daAction Kueche "+da_jmd.state)
+  
+    if (da_jmd.state==OFF) {
+
+        PirState_Kueche.sendCommand(OFF)
+        PirState_Kueche2.sendCommand(OFF)
+        PirState_Kueche3.sendCommand(OFF)
+        kochKante.sendCommand(OFF)
+
+    } else if (da_jmd.state==ON) {
+        // 
+    }
+  
+end

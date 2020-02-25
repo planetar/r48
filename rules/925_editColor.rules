@@ -1,0 +1,82 @@
+var String cmd
+
+// init
+// rule "triggered by system start editColor"
+// when 
+//     System started
+// then
+
+// end
+
+
+// load aus den codierten items, je für aktuelle Phase. So wurde das son initialisiert.
+rule "triggered by editLoad received command ON"
+when 
+    Item editLoad_prime received command ON
+then
+    cmd=editMember.state+"_"+editState.state+".state"
+    logInfo("edit",cmd+" "+flurGoColor_act.state+" target "+editColor.state)
+
+    //editColor.sendCommand(cmd)    
+
+    if (editMember.state == "flurGoColor" && editState.state == "act") {editColor.sendCommand(flurGoColor_act.state.toString)}
+    if (editMember.state == "flurGoColor" && editState.state == "pas") {editColor.sendCommand(flurGoColor_pas.state.toString)}
+
+    if (editMember.state == "flurStripColor" && editState.state == "act") {editColor.sendCommand(flurStripColor_act.state.toString)}
+    if (editMember.state == "flurStripColor" && editState.state == "pas") {editColor.sendCommand(flurStripColor_pas.state.toString)}
+
+    if (editMember.state == "mediStripColor" && editState.state == "act") {editColor.sendCommand(mediStripColor_act.state.toString)}
+    if (editMember.state == "mediStripColor" && editState.state == "pas") {editColor.sendCommand(mediStripColor_pas.state.toString)}
+
+    if (editMember.state == "kuecheStripColor" && editState.state == "act") {editColor.sendCommand(kuecheStripColor_act.state.toString)}
+    if (editMember.state == "kuecheStripColor" && editState.state == "pas") {editColor.sendCommand(kuecheStripColor_pas.state.toString)}  
+
+    if (editMember.state == "badStripColor" && editState.state == "act") {editColor.sendCommand(badStripColor_act.state.toString)}
+    if (editMember.state == "badStripColor" && editState.state == "pas") {editColor.sendCommand(badStripColor_pas.state.toString)}    
+end
+
+rule "triggered by editLoad received command ON"
+when 
+    Item editLoad received command ON
+then
+    // laden aus json
+    cmd="python /local/scripts/hashMap/hashMap.py get "+editPhase.state.toString+","+editMember.state.toString+","+editState.state.toString
+    logInfo("edit","cmd:"+cmd)
+    cmd=executeCommandLine(cmd,10000)
+    logInfo("edit","result:"+cmd)
+    editColor.sendCommand(cmd)
+
+end
+// save
+rule "triggered by editLoad received command ON"
+when 
+    Item editSave received command ON
+then
+    // executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",flurStripColor,act",10000)
+    cmd="python /local/scripts/hashMap/hashMap.py set "+editPhase.state.toString+","+editMember.state.toString+","+editState.state.toString+" "+editColor.state.toString
+    logInfo("edit","cmd:"+cmd)
+    cmd=executeCommandLine(cmd,10000)
+    logInfo("edit","result:"+cmd)
+
+    // Anzeige auf device, Ablage auch im aktuellen item
+    if (editMember.state == "flurGoColor") {
+        flurGo.sendCommand(editColor.state.toString)
+        if (editState.state == "act" && Current_BtnState.state.toString == editPhase.state.toString ){flurGoColor_act.sendCommand(editColor.state.toString)}
+        }
+    if (editMember.state == "flurStripColor") {
+        flurStrip.sendCommand(editColor.state.toString)
+        if (editState.state == "act" && Current_BtnState.state.toString == editPhase.state.toString){flurStripColor_act.sendCommand(editColor.state.toString)}
+        }
+    if (editMember.state == "mediStripColor") {
+        mediStrip.sendCommand(editColor.state.toString)
+        if (editState.state == "act" && Current_BtnState.state.toString == editPhase.state.toString){mediStripColor_act.sendCommand(editColor.state.toString)}
+        }
+    if (editMember.state == "kuecheStripColor") {
+        wifiLed3_color.sendCommand(editColor.state.toString)
+        if (editState.state == "act" && Current_BtnState.state.toString == editPhase.state.toString){kuecheStripColor_act.sendCommand(editColor.state.toString)}
+        }
+    if (editMember.state == "badStripColor") {
+        wifiLed1_color.sendCommand(editColor.state.toString)
+        if (editState.state == "act" && Current_BtnState.state.toString == editPhase.state.toString){badStripColor_act.sendCommand(editColor.state.toString)}
+        }
+end

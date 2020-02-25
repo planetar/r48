@@ -1,0 +1,93 @@
+Group       gPresence               "wer ist da"    <network> (r48)
+Group       gPresenceMobile
+Group       gDa_Daniel              "Daniel da?"    <network> (gPresence)
+Group       gDa_Luise               "Luise da?"     <network> (gPresence)
+
+// Gruppe Anwesenheit 
+Group gAW             (r48)
+Group AW_MQTT_dp                   "dp anwesend"                        <parents>       (gAW)
+Group AW_MQTT_lulu                  "lulu anwesend" <child>       (gAW)
+
+Switch      presence_Mobile_dp      "presence_Mobile_dp"      <network> (gPresenceMobile,gDa_Daniel)  { channel="network:pingdevice:feng:online" }
+DateTime    presence_Mobile_dp_last "dp Handi lst"  <network> (gPresenceMobile)  { channel="network:pingdevice:feng:lastseen" }
+Switch      presence_Mobile_lp      "lulu Handi"    <network> (gPresenceMobile)  { channel="network:pingdevice:goldammer:online" }
+DateTime    presence_Mobile_lp_last "lulu Handi lst" <network> (gPresenceMobile)  { channel="network:pingdevice:goldammer:lastseen" }
+Switch      presence_Mobile_anton   "anton Handi"   <network> (gPresenceMobile)  { channel="network:pingdevice:37f23ad7:online" }
+DateTime    presence_Mobile_anton_last "anton Handi lst" <network> (gPresenceMobile)  { channel="network:pingdevice:37f23ad7:lastseen" }
+//Switch      presence_someone        "someone da"
+
+//
+Switch      presence_feng            "dp Handi arp"      <network> (gPresenceMobile,gDa_Daniel)
+DateTime    presence_feng_last
+Switch      presence_goldammer       "lulu Handi"      <network> (gPresenceMobile)
+Switch      presence_ente            "anton Handi"      <network> (gPresenceMobile)
+Switch      presence_highgarden      "macbook"      <network> (gPresenceMobile)
+Switch      presence_ashemark        "iPhone"      <network> (gPresenceMobile)
+
+//
+Switch      atMeditation            "at Meditation" (gDa_Daniel) //{ expire="8m,command=OFF" }
+Switch      atDesk_Daniel           "atDesk" (gDa_Daniel) { expire="4m,command=OFF" }
+Switch      tsk_Daniel              "Daniel-Tasker" <network> (gDa_Daniel)
+
+Switch        da_Daniel              "Daniel da?"    <network> (gPresence,gDa_Daniel)   
+Switch        da_Luise               "Luise da?"     <network> (gPresence)
+Switch        da_Gast                "Gast da?"     <network> (gPresence)
+
+Switch        da_jmd               "Jemand da?"    <network> (gPresence)       
+
+DateTime    network_pingdevice_e767c179_lastseen "Daniel last seen %s"   <network> (gPresence) 
+Switch      network_pingdevice_e767c179_online   "dp Mobile pingt"       <network> (gPresence,gDa_Daniel)
+
+// Handi_anton network:pingdevice:37f23ad7:online 
+ 
+// Handi_dp network:pingdevice:e767c179:online network_pingdevice_e767c179_online
+Number      Flag_presence_Daniel    "Flag to trigger eval"
+Number      Flag_presence_Luise     "Flag to trigger eval"
+Number      Flag_presence_Anton     "Flag to trigger eval"
+
+
+ 
+Location        location_dp                                               (AW_MQTT_dp,gDa_Daniel)
+Location        location_dp_last                                          (AW_MQTT_dp,gDa_Daniel)
+Number          location_dp_last_distance "Distanz zur letzten Region"
+String          mqttPosition_dp_Raw   "dp Rohdaten"                                                 { channel="mqtt:topic:mqBroker:remotes:ownFeng" }
+String          mqtt_dp_Latitude      "dp geogr. Breite [%s]"             (AW_MQTT_dp)
+String          mqtt_dp_Longitude     "dp geogr. Länge [%s]"              (AW_MQTT_dp)
+String          mqtt_dp_Accuracy      "dp Genauigkeit [%s]"               (AW_MQTT_dp)
+String          mqtt_dp_Altitude     "dp Höhe  [%s]"                      (AW_MQTT_dp)
+
+String          mqtt_dp_Battery       "dp Akku [%s]"    <battery>       (AW_MQTT_dp)
+String          mqtt_dp_Region        "dp Region [%s]"                  (AW_MQTT_dp)
+
+
+String          feng "test mqtt" { mqtt="<[mqttBroker:owntracks/dp/feng:state:default]" }
+
+//Switch          presence_dp_PhoneMqtt   "Mqtt manual"  (gDa_Daniel) { mqttitude="mqttBroker:owntracks/dp/feng" }
+
+// owntracks/lulu/goldammer
+// owntracks/lp/flamingo
+// 
+Location        location_lulu                                            (AW_MQTT_lulu,gDa_Luise)
+Location        location_lulu_last                                       (AW_MQTT_lulu,gDa_Luise)
+Number          location_lulu_last_distance "Distanz zur letzten Region"
+String          mqttPosition_lulu_Raw   "lulu Rohdaten"                                              { channel="mqtt:topic:mqBroker:remotes:ownFlamingo" }
+
+Number          mqtt_lulu_Accuracy     "lulu Genauigkeit [%s]"           (AW_MQTT_lulu)
+String          mqtt_lulu_Battery       "lulu Akku [%s]"    <battery>    (AW_MQTT_lulu)
+String          mqtt_lulu_Altitude     "lulu Höhe [%s]"                  (AW_MQTT_lulu)
+String          mqtt_lulu_Region        "lulu Region [%s]"               (AW_MQTT_lulu)
+
+//Switch          presence_lulu_PhoneMqtt   "Mqtt manual"  (gDa_Luise,AW_MQTT_lulu) { mqttitude="mqttBroker:owntracks/lp/flamingo" }
+
+
+
+//  sensor/rfid/state {"rfidValid":"ON","rfidEntry":"1","commError":false,"commErrorMsg":"ok"}
+
+Switch          rfidValid   "valid card in rfid reader" 
+Number          rfidEntry   "# of valid card"           
+
+Switch          rfidValid_m  "valid card in rfid reader" 
+Number          rfidEntry_m  "# of valid card"  
+
+
+Location        location_clara  

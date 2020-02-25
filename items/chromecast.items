@@ -1,0 +1,58 @@
+// chromecast:audio:medi
+Group Audios (r48)
+
+Player ccMedi_Music (Audios){ channel="chromecast:audio:medi:control" }
+Dimmer ccMedi_Volume (Audios) { channel="chromecast:audio:medi:volume" }
+Switch ccMedi_Mute  (Audios) { channel="chromecast:audio:medi:mute" }
+
+Player ccFlur_Music (Audios){ channel="chromecast:audio:flur:control" }
+Dimmer ccFlur_Volume (Audios){ channel="chromecast:audio:flur:volume" }
+Switch ccFlur_Mute   (Audios){ channel="chromecast:audio:flur:mute" }
+String ccFlur_location (Audios){ channel="chromecast:audio:flur:location" }
+String ccFlur_artist (Audios){ channel="chromecast:audio:flur:artist" }
+String ccFlur_title (Audios){ channel="chromecast:audio:flur:title" }
+String ccFlur_appID (Audios){ channel="chromecast:audio:flur:appId" }
+String ccFlur_appName (Audios){ channel="chromecast:audio:flur:appName" }
+
+Player ccKueche_Music (Audios){ channel="chromecast:audio:kueche:control" }
+Dimmer ccKueche_Volume (Audios) { channel="chromecast:audio:kueche:volume" }
+Switch ccKueche_Mute  (Audios) { channel="chromecast:audio:kueche:mute" }
+
+Player ccBad_Music (Audios){ channel="chromecast:audio:bad:control" }
+Dimmer ccBad_Volume (Audios){ channel="chromecast:audio:bad:volume" }
+Switch ccBad_Mute   (Audios){ channel="chromecast:audio:bad:mute" }
+
+Player ccBett_Music (Audios){ channel="chromecast:audio:bett:control" }
+Dimmer ccBett_Volume (Audios) { channel="chromecast:audio:bett:volume" }
+Switch ccBett_Mute  (Audios) { channel="chromecast:audio:bett:mute" }
+
+Player ccOffice_Music (Audios){ channel="chromecast:audio:office:control" }
+Dimmer ccOffice_Volume (Audios){ channel="chromecast:audio:office:volume" }
+Switch ccOffice_Mute   (Audios){ channel="chromecast:audio:office:mute" }
+
+Player ccClara_Music (Audios){ channel="chromecast:audio:clara:control" }
+Dimmer ccClara_Volume (Audios){ channel="chromecast:audio:clara:volume" }
+Switch ccClara_Mute   (Audios){ channel="chromecast:audio:clara:mute" }
+
+
+// Groups
+
+String ccAlle_appName (Audios){ channel="chromecast:audiogroup:ccGrp_Alle:appName" }
+String ccAlle_appId (Audios){ channel="chromecast:audiogroup:ccGrp_Alle:appId" }
+String ccAlle_playUri (Audios){ channel="chromecast:audiogroup:ccGrp_Alle:playUri" }
+String ccAlle_statustext (Audios){ channel="chromecast:audiogroup:ccGrp_Alle:statustext" }
+String ccAlle_currentTime (Audios){ channel="chromecast:audiogroup:ccGrp_Alle:currentTime" }
+String ccAlle_duration (Audios){ channel="chromecast:audiogroup:ccGrp_Alle:duration" }
+
+String ccCore_appName (Audios){ channel="chromecast:audiogroup:ccGrp_Core:appName" } 
+
+String ccHome_appName (Audios){ channel="chromecast:audiogroup:ccGrp_Home:appName" }
+
+String ccOfficeBad_appName (Audios){ channel="chromecast:audiogroup:ccGrp_OfficeBad:appName" } 
+
+String ccKuecheBad_appName (Audios){ channel="chromecast:audiogroup:ccGrp_KuecheBad:appName" }
+
+String ccKuecheBett_appName (Audios){ channel="chromecast:audiogroup:ccGrp_KuecheBett:appName" } 
+
+String ccBettBad_appName (Audios){ channel="chromecast:audiogroup:ccGrp_BettBad:appName" }
+

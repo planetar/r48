@@ -1,0 +1,211 @@
+/*
+    Hier die Scripte für die Alerts auf kochendes Wasser, offenes Fenster in Kueche, Bad
+*/
+
+import java.util.ArrayList
+
+
+
+val ArrayList<DecimalType> humKuecheList = new ArrayList<DecimalType>()
+val ArrayList<Integer> alarmTriggerKuecheList = new ArrayList<Integer>()
+
+var Integer alarmTriggerKueche=8
+var Integer alertCount_Kueche=0
+var Integer compareMinutes=30
+var Integer samplesKueche=5
+
+val ArrayList<DecimalType> humBadList = new ArrayList<DecimalType>()
+val ArrayList<Integer> alarmTriggerBadList = new ArrayList<Integer>()
+
+var Integer alarmTriggerBad=8
+var Integer alertCount_Bad=0
+var Integer compareMinutes_Bad=240
+var Integer samplesBad=5
+
+
+rule "triggered by system start sens"
+when 
+    System started
+then
+    alarmTriggerKuecheList.add(8)
+    alarmTriggerKuecheList.add(13)
+    alarmTriggerKuecheList.add(20)
+    alarmTriggerBadList.add(8)
+    alarmTriggerBadList.add(13)
+    alarmTriggerBadList.add(20)
+    pirLastTriggered_Kueche1.postUpdate( new DateTimeType() )
+    pirLastTriggered_Kueche2.postUpdate( new DateTimeType() )
+    pirLastTriggered_Kueche3.postUpdate( new DateTimeType() )
+    pirLastTriggered_Bad1.postUpdate( new DateTimeType() )
+    gerade.postUpdate(new DateTimeType())
+
+    logInfo("medi","init sens  ")
+end
+
+rule "sensor_humidity_Kueche received command"
+when 
+    Item sensor_humidity_Kueche received command
+then
+   
+    //logInfo("sensor","humidity Kueche: "+sensor_humidity_Kueche.state)
+    
+    // wenn wer in der Küche ist, lass es
+    gerade.postUpdate(new DateTimeType())
+    var kueche2Millis = (pirLastTriggered_Kueche2.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta = nowMillis - kueche2Millis
+    //logInfo("sensor","delta ist "+delta)
+
+    if (delta < 5*60*1000) {return;}
+
+    var Number sum
+    var Number avg
+    var Number avg2
+    var Integer stetig=1
+    var Integer iter=0
+
+    avg2=sensor_humidity_Kueche.averageSince(now.minusMinutes(compareMinutes))
+    if (avg2===null){logInfo("sensor","sens.rules: sensor_humidity_Kueche: persistence problem");return;}
+    //logInfo("sensor","avg2: "+avg2);
+
+    humKuecheList.add(sensor_humidity_Kueche.state)
+    if (humKuecheList.size() >samplesKueche){humKuecheList.remove(0)}
+    
+    humKuecheList.forEach [el|
+        sum +=el as Number;
+        //logInfo("sensor","el: "+el+" iter: "+iter);
+        
+        if (iter>0) {
+            // hier tritt wohl der Fehler auf
+            // Rule 'sensor_humidity_Kueche received command': null
+            //logInfo("sensor","iter: "+iter+" "+humKuecheList.get(iter-1)+" / "+humKuecheList.get(iter));
+            if (humKuecheList.get(iter-1)>humKuecheList.get(iter)){stetig=0}
+        }
+        iter +=1;
+        ]
+
+    avg = sum / humKuecheList.size()
+    alarmTriggerKueche=alarmTriggerKuecheList.get(alertCount_Kueche)
+
+    //alarmTriggerKuecheList.forEach [el|logInfo("sensor","tr: "+el);]
+
+    if ((avg > avg2+alarmTriggerKueche) && (stetig==1)) {
+        if (alertCount_Kueche<alarmTriggerKuecheList.size()-1){
+            alertCount_Kueche +=1
+        }
+        logInfo("sensor","Alarm "+alertCount_Kueche+": Wasserkessel in der Küche vergessen?")
+        sendTelegram("r48_bot","Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
+        //sendMail("test@magisterludi.de", "Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
+        //pebbleNotification("oy3NcoHsp-yexg_8S9qCkuOJ3pQ4Junx2MY6njdzAL4", "Wasserkessel?", "Alert #"+alertCount_Kueche+" ausgelöst")
+    } else{
+        if (stetig!=1) {alertCount_Kueche=0}
+    }
+
+    if (stetig==1 && (avg-avg2 > 5)) { logInfo("sensor","avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche) }
+
+end
+
+
+rule "sensor_humidity_Bad changed"
+when 
+    Item sensor_humidity_Bad received command
+then
+   
+    
+    // wenn wer im Bad ist, lass es
+    gerade.postUpdate(new DateTimeType())
+    var badMillis = (pirLastTriggered_Bad1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta = nowMillis - badMillis
+    //logInfo("sensor","delta ist "+delta)
+
+    if (delta < 5*60*1000) {return;}
+
+    // wenn die Aussentemperatur über 15 °C ist, lass es
+    if (Weather_Temperature_F.state > 13) {return;}
+
+    // wenn es Sommer ist, lass es
+    if (Astro_Season_Name.state=="Summer") {return;}
+    
+    var Number sum
+    var Number avg
+    var Number avg2
+    var Integer stetig=1
+    var Integer iter=0
+
+    avg2=sensor_humidity_Bad.averageSince(now.minusMinutes(compareMinutes_Bad))
+    
+    if (avg2===null){logInfo("sensor","sens.rules: sensor_humidity_Bad: persistence problem");return;}
+
+    humBadList.add(sensor_humidity_Bad.state)
+    if (humBadList.size() >samplesBad){humBadList.remove(0)}
+    
+    humBadList.forEach [el|
+        sum +=el as Number;
+        //logInfo("sensor","el: "+el);
+        
+        if (iter>0) {
+            if (humBadList.get(iter-1)<humBadList.get(iter)){stetig=0}
+        }
+        iter +=1;
+        ]
+
+    avg = sum / humBadList.size()
+    alarmTriggerBad=alarmTriggerBadList.get(alertCount_Bad)
+
+    //alarmTriggerKuecheList.forEach [el|logInfo("sensor","tr: "+el);]
+
+    if ((avg+alarmTriggerBad < avg2) && (stetig==1)) {
+        if (alertCount_Bad<alarmTriggerBadList.size()-1){
+            alertCount_Bad +=1
+        }
+        logInfo("sensor","Alarm "+alertCount_Bad+": Fenster im Bad vergessen?")
+        sendTelegram("r48_bot", "Fenster im Bad vergessen? Alert "+alertCount_Bad, "avg humidity Bad: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerBad)
+        //sendMail("test@magisterludi.de", "Fenster im Bad vergessen? Alert "+alertCount_Bad, "avg humidity Bad: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerBad)
+        //pebbleNotification("daniel", "Fenster im Bad?", "Alert #"+alertCount_Bad+" ausgelöst")
+    } else{
+        if (stetig!=1) {alertCount_Bad=0}
+    }
+
+    if (stetig==1 && (avg-avg2 > 5)) { logInfo("sensor","avg humidity Bad: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerBad) }
+    
+
+end
+
+
+
+// delta von Sensoren:
+/*
+Number sensor_delta_PE_temp "delta bmp bme Temperatur  [%.1f]" <temperature> (gSensor4,gBalkon)
+Number sensor_delta_PE_pres "delta bmp bme Pressure    [%.1f]" <pressure> (gSensor4,gBalkon)
+Number sensor_delta_DE_temp "delta dht bme Temperatur  [%.1f]" <temperature> (gSensor4,gBalkon)
+Number sensor_delta_DE_humi "delta dht bme Humidity    [%.1f]" <rain> (gSensor4,gBalkon)
+
+
+
+rule "sensor_bme280_humidity received command"
+when 
+    Item sensor_bme280_humidity received command
+then
+    sensor_delta_DE_temp.postUpdate(sensor_bme280_temperature.state as Number-sensor_temperature_Kueche.state as Number)
+    sensor_delta_DE_humi.postUpdate(sensor_bme280_humidity.state as Number-sensor_humidity_Kueche.state as Number)
+    sensor_delta_PE_pres.postUpdate(sensor_bme280_pressure.state as Number-sensor_bmp180_pressure1.state as Number)
+    sensor_delta_PE_temp.postUpdate(sensor_bme280_temperature.state as Number-sensor_bmp180_temperature.state as Number)
+end
+
+*/
+
+// sensor_lux_2 im office schaltet officeLight bei da_Daniel und schwachem Licht
+
+rule "sensor_lux_2 received command"
+when 
+    Item sensor_lux_2 received command
+then
+    //pebblePin("oy3NcoHsp-yexg_8S9qCkuOJ3pQ4Junx2MY6njdzAL4", now.toDate, "Title", "This is a message")
+   // da_Daniel?
+
+   // quorum ?
+
+   // falls true und lux2 kleiner quorum dann officeLight an oder 5 heller
+end
+

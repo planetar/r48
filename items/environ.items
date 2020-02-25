@@ -1,0 +1,11 @@
+Number dTemp "delta Temp" 
+Number dHum  "delta Humidity" 
+Number dPress "delta Pressure" 
+Number dGas "delta Gas" 
+Number dAlt "delta Altitude" 
+
+
+Number humiTemp "humiWarn Temperature"
+Number humiHumi "humiWarn Humidity"
+Number humiPress "humiWarn Pressure"
+Number humirPress "humiWarn reduced Pressure"

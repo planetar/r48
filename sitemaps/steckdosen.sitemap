@@ -1,0 +1,14 @@
+sitemap steckdosen label="Steckdosen" {
+    Frame label="Funksteckdosen" {
+        Switch item=steckdose16Switch label="16 office" mappings=[ "ON"="ON", "OFF"="OFF" ]
+        Switch item=steckdose08Switch label="08 LEDband Schlafkammer" mappings=[ "ON"="ON", "OFF"="OFF" ]
+        Switch item=steckdose04Switch label="04"  mappings=[ "ON"="ON", "OFF"="OFF" ]
+        Switch item=steckdose03Switch label="03 Balkon" mappings=[ "ON"="ON", "OFF"="OFF" ]
+        Switch item=steckdose02Switch label="02" mappings=[ "ON"="ON", "OFF"="OFF" ]
+        Switch item=steckdose01Switch label="01" mappings=[ "ON"="ON", "OFF"="OFF" ]
+         
+        //Switch item=grp_steckdosen mappings=[ "ON"="ON", "OFF"="OFF" ]
+        
+        //Switch item=Dash_Switch
+    }
+}

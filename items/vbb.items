@@ -1,0 +1,83 @@
+Switch pressel
+String callTime
+String boostFlag
+String bannerText "banner"
+
+String vbbHalte1 
+String vbbHalte2 
+String vbbHalte3 
+String vbbHalte4 
+String vbbHalte5 
+String vbbHalte6 
+String vbbHalte7 
+String vbbHalte8 
+String vbbHalte9 
+String vbbHalteA 
+String vbbHalteB 
+
+String vbbHalte1Zug1 
+String vbbHalte1Zug2 
+
+String vbbHalte2Zug1 
+String vbbHalte2Zug2 
+
+String vbbHalte3Zug1 
+String vbbHalte3Zug2 
+
+String vbbHalte4Zug1 
+String vbbHalte4Zug2 
+
+String vbbHalte5Zug1 
+String vbbHalte5Zug2 
+
+String vbbHalte6Zug1 
+String vbbHalte6Zug2 
+
+String vbbHalte7Zug1 
+String vbbHalte7Zug2 
+
+String vbbHalte8Zug1 
+String vbbHalte8Zug2 
+
+String vbbHalte9Zug1 
+String vbbHalte9Zug2 
+
+String vbbHalteAZug1 
+String vbbHalteAZug2 
+
+String vbbHalteBZug1 
+String vbbHalteBZug2 
+
+
+String vbbHalte1Noch1 
+String vbbHalte1Noch2 
+
+String vbbHalte2Noch1 
+String vbbHalte2Noch2 
+
+String vbbHalte3Noch1 
+String vbbHalte3Noch2 
+
+String vbbHalte4Noch1 
+String vbbHalte4Noch2 
+
+String vbbHalte5Noch1 
+String vbbHalte5Noch2 
+
+String vbbHalte6Noch1 
+String vbbHalte6Noch2 
+
+String vbbHalte7Noch1 
+String vbbHalte7Noch2 
+
+String vbbHalte8Noch1 
+String vbbHalte8Noch2 
+
+String vbbHalte9Noch1 
+String vbbHalte9Noch2 
+
+String vbbHalteANoch1 
+String vbbHalteANoch2 
+
+String vbbHalteBNoch1 
+String vbbHalteBNoch2 

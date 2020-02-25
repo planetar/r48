@@ -1,0 +1,46 @@
+
+
+
+Group       gStateBtn "Phasen" <network> (r48)
+
+Switch      StateBtn_early            "Frühlicht"              <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_morning          "Morgenlicht"            <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_day              "Taglicht"               <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_noon             "Mittaglicht"            <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_afternoon        "Nachmittaglicht"        <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_away             "Weglicht"               <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_dusk             "Dämmerlicht"            <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_evening          "Abendlicht"             <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_salon            "Salonlicht"             <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_late             "Spätlicht"              <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_goodnight        "GuteNachtlicht"         <"light">       (gStateBtn) [ "Switchable" ]
+Switch      StateBtn_night            "Nachtlicht"             <"light">       (gStateBtn) [ "Switchable" ]
+
+String      Current_BtnState          "current Button state"
+
+
+
+String cycleAction_Office "trigert lokale routinen bei Phasenwechsel"
+String cycleAction_Medi "trigert lokale routinen bei Phasenwechsel"
+String cycleAction_Clara "trigert lokale routinen bei Phasenwechsel"
+String cycleAction_SK "trigert lokale routinen bei Phasenwechsel"
+String cycleAction_Balkon "trigert lokale routinen bei Phasenwechsel"
+String cycleAction_Kueche "trigert lokale routinen bei Phasenwechsel"
+String cycleAction_Bad "trigert lokale routinen bei Phasenwechsel"
+String cycleAction_Flur "trigert lokale routinen bei Phasenwechsel"
+
+
+String estimatePhase "passende Phase für init finden"
+
+
+
+ 
+// 
+Switch      daAction_Office     { expire="20s,command=OFF" }
+Switch      daAction_Medi       { expire="20s,command=OFF" }
+Switch      daAction_Clara      { expire="20s,command=OFF" }
+Switch      daAction_SK         { expire="20s,command=OFF" }
+Switch      daAction_Balkon     { expire="20s,command=OFF" }
+Switch      daAction_Kueche     { expire="20s,command=OFF" }
+Switch      daAction_Bad        { expire="20s,command=OFF" }
+Switch      daAction_Flur       { expire="20s,command=OFF" }

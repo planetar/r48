@@ -1,0 +1,39 @@
+// hue items
+
+Group gHueItems "Hue" <light>  [ "Lighting" ]
+Group gTradfri  "Tradfri" <light> (gHueItems) [ "Lighting" ] 
+Group gRemotes "Remotes" <switch> 
+Group:Dimmer:AVG gSpotlight "Spotlight " <light> (gHueItems, gTradfri, gSchlafkammer) [ "Lighting" ] 
+
+//hue_0210_001788a718e6_1_color hue:0210:1:flurStrip:color
+Color flurGo "Go"  (gHueItems, gFlur) [ "Lighting" ] { channel="hue:0210:1:flurGo:color" }
+Dimmer flurGoBright "flurGoBright" (gHueItems, gFlur) [ "Lighting" ] { channel="hue:0210:1:flurGo:color" }
+// hue_0210_001788a718e6_2_color
+Color flurStrip "Strip"  (gHueItems, gFlur) [ "Lighting" ] { channel="hue:0210:1:flurStrip:color" }
+Dimmer flurStripBright "flurStripBright" (gHueItems, gFlur) [ "Lighting" ] { channel="hue:0210:1:flurStrip:color" }
+// hue:0210:001788a718e6:12:color
+Color mediStrip "mediStrip"  (gHueItems, gMedi) [ "Lighting" ] { channel="hue:0210:1:mediStrip:color" }
+Dimmer mediStripBright "mediStripBright" (gHueItems, gMedi) [ "Lighting" ] { channel="hue:0210:1:mediStrip:color" }
+
+
+//
+Number hueDimmerSwitchButton "button [%d]" <wallswitch>
+DateTime hueDimmerSwitchButtonLastChange "last change [%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS]" <time> 
+
+// hybrids
+
+
+
+
+
+// Backup Items halten bei kurzfristigen Änderungen den vorigen State
+/*
+Color bkp_hue_1
+Color bkp_hue_2
+Color bkp_hue_3
+
+Dimmer bkp_dimmer_1
+Dimmer bkp_dimmer_2
+Dimmer bkp_dimmer_3
+*/
+

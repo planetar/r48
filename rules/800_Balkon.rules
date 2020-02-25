@@ -1,0 +1,62 @@
+
+// KammerLicht, BalkonLicht
+rule "rule triggered  by PirState_Balkon received command ON"
+when 	
+    Item  PirState_Balkon received command ON
+then
+    //logInfo("pirBalkon","pir Balkon hat ausgelöst")
+
+    if (Astro_Sun_Elevation.state < 0) { 
+        steckdose03Switch.postUpdate(OFF)
+        Thread::sleep(30)
+        steckdose03Switch.sendCommand("ON") 
+    }
+end
+
+rule "rule triggered  by PirState_Balkon received command OFF"
+
+when 	
+    Item  PirState_Balkon received command OFF
+then
+    steckdose03Switch.postUpdate(ON)
+    Thread::sleep(30)
+    steckdose03Switch.sendCommand("OFF")
+end
+
+
+
+
+// daAction_Balkon
+rule "rule triggered  by daAction_Balkon changed"
+when 	
+    Item  daAction_Balkon received command ON
+then
+	logInfo("presence", "daAction_Balkon  "+da_jmd.state)
+  
+    if (da_jmd.state==OFF) {
+
+        PirState_Balkon.sendCommand(OFF)
+    
+        
+    } else if (da_jmd.state==ON) {
+        // 
+    }
+  
+end
+
+
+rule "rule triggered  by cron Balkon"
+when 	
+    Time cron "0 0 7 1/1 * ? *"   // morgens um 7
+then
+    // tgl neustarts des environ und Wetterstation
+
+    steckdose04Switch.sendCommand("OFF")
+    // satt Wartezeit, dsmit der sensor wirklich neu starten muss
+    Thread::sleep(6000)
+
+    logInfo("balkoniere", "allmorgendlicher Neustart der Wetterstation")
+
+    steckdose04Switch.sendCommand("ON")
+
+end

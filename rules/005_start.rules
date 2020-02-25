@@ -1,0 +1,29 @@
+/*
+
+
+*/
+
+var Timer rulesDelayed
+var String nada
+
+rule "triggered by system start start"
+when 
+    System started
+then
+    // nice try, doesn't work though. It still gets executed twice more often than not. Longer duration helped better
+    if (nada!="done") {
+        var duration = 3
+        rulesDelayed = createTimer(now.plusMinutes(duration), [|
+                        logInfo("rulesDelayed", "Timer expired and start")
+                        nada=executeCommandLine("/bin/bash /etc/openhab2/exec-scripts/move_rules_at_start.sh rules_ rules POST ",90000)
+                        logInfo("rulesDelayed", "result: "+nada)
+                        rulesDelayed = null
+
+                    ])
+        logInfo("rulesDelayed", "Timer set on "+duration+" min")
+        nada="done"
+    }
+end
+
+
+

@@ -1,0 +1,20 @@
+Group  gAstro "Himmlische Körper" <sun> (r48)
+
+//
+DateTime    Astro_Current_DateTime     "Today [%1$tA, %1$td.%1$tm.%1$tY]"                <clock>  (gAstro) {channel="ntp:ntp:local:dateTime"}
+//
+DateTime    Astro_Sunset_Time          "Sunset [%1$tH:%1$tM]"                            <sun>    (gAstro) {channel="astro:sun:local:set#start"}
+DateTime    Astro_Sunrise_Time         "Sunrise [%1$tH:%1$tM]"                           <sun>    (gAstro) {channel="astro:sun:local:rise#end"}
+DateTime    Astro_Evening_Time         "Evening [%1$tH:%1$tM]"                                    (gAstro) {channel="astro:sun:minus90:set#start"}
+//
+String      Astro_Day_Phase            "Phase of Day [MAP(astro.map):%s]"                         (gAstro) {channel="astro:sun:local:phase#name"}
+Switch      Astro_Night_State          "Night"                                                    (gAstro)
+//
+String      Astro_Season_Name          "Season [MAP(astro.map):%s]"                               (gAstro) {channel="astro:sun:local:season#name"}
+String      Astro_Zodiac_Sign          "Zodiac [MAP(astro.map):%s]"                      <zodiac> (gAstro) {channel="astro:sun:local:zodiac#sign"}
+Number      Astro_Sun_Elevation        "Sun Elevation [%.1f °]"                          <sun>    (gAstro) {channel="astro:sun:local:position#elevation"}
+Number      Astro_Moon_Elevation       "Moon Elevation [%.1f °]"                         <moon>   (gAstro) {channel="astro:moon:local:position#elevation"}
+String      Astro_Moon_Phase           "Moon Phase [MAP(astro.map):%s]"                  <moon>   (gAstro) {channel="astro:moon:local:phase#name"}
+DateTime    Astro_Moon_Next_Full       "Next Full Moon [%1$td.%1$tm.%1$tY, %1$tH:%1$tM]" <moon>   (gAstro) {channel="astro:moon:local:phase#full"}
+DateTime    Astro_Moon_Next_New        "Next New Moon [%1$td.%1$tm.%1$tY, %1$tH:%1$tM]"  <moon>   (gAstro) {channel="astro:moon:local:phase#new"}
+

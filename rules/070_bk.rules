@@ -1,0 +1,104 @@
+rule "LEDStrip_BettKante_Power received command"
+when Item LEDStrip_BettKante_Power received command
+then
+	if (receivedCommand == "ON"){
+		LEDStrip_BettKante.sendCommand("{\"color\": {" + 
+		"\"r\": " + (LEDStrip_BettKante_Color.state as HSBType).red + "," +
+		"\"g\": " + (LEDStrip_BettKante_Color.state as HSBType).green + "," +
+		"\"b\": " + (LEDStrip_BettKante_Color.state as HSBType).blue + "}}") 
+
+		LEDStrip_BettKante.sendCommand("{\"color2\": {" + 
+		"\"r\": " + (LEDStrip_BettKante_Color2.state as HSBType).red + "," +
+		"\"g\": " + (LEDStrip_BettKante_Color2.state as HSBType).green + "," +
+		"\"b\": " + (LEDStrip_BettKante_Color2.state as HSBType).blue + "}}")
+	}
+end
+
+rule "LED Strip BettKante JSON Color"
+when Item LEDStrip_BettKante_Color received update
+then LEDStrip_BettKante.sendCommand("{\"color\": {" + 
+		"\"r\": " + (LEDStrip_BettKante_Color.state as HSBType).red + "," +
+		"\"g\": " + (LEDStrip_BettKante_Color.state as HSBType).green + "," +
+		"\"b\": " + (LEDStrip_BettKante_Color.state as HSBType).blue + "}}") 
+end
+
+rule "LED Strip BettKante JSON Color"
+when Item LEDStrip_BettKante_Color2 received update
+then LEDStrip_BettKante.sendCommand("{\"color2\": {" + 
+		"\"r\": " + (LEDStrip_BettKante_Color2.state as HSBType).red + "," +
+		"\"g\": " + (LEDStrip_BettKante_Color2.state as HSBType).green + "," +
+		"\"b\": " + (LEDStrip_BettKante_Color2.state as HSBType).blue + "}}") 
+end
+
+rule "LED Strip Office Window JSON Speed"
+when Item LEDStrip_BettKante_Speed received update
+then LEDStrip_BettKante.sendCommand("{\"stepTime\": \"" + LEDStrip_BettKante_Speed.state + "\"}") 
+end
+
+rule "LED Strip Office Window JSON Intensity"
+when Item LEDStrip_BettKante_Intensity received update
+then LEDStrip_BettKante.sendCommand("{\"bright\":" + LEDStrip_BettKante_Intensity.state + "}") 
+end 
+
+
+/*
+hue = Farbton + FarbtonOffset
+
+FarbtonColor
+*/
+rule "LED Strip FarbTon changed"
+when Item Farbton received update
+	or Item FarbtonOffset received update
+	or Item FarbtonSaturation received update
+	or Item FarbtonBrightness received update
+then
+	var DecimalType val1 = new DecimalType (Farbton.state.toString )
+	var DecimalType val2 = new DecimalType (FarbtonOffset.state.toString )
+	var DecimalType hue = new DecimalType (val1 + val2)
+	if (hue<0)   {hue = new DecimalType(hue+360)}
+	if (hue>360) {hue = new DecimalType(hue-360)}
+
+	var Number Fasa =FarbtonSaturation.state as Number 
+	var Number Fabi =FarbtonBrightness.state as Number
+
+	//logInfo("farbTon","farbton: "+val1+" Offset: "+val2+" Summe; "+(val1+val2)+"   "+ hue +" Fasa: "+Fasa+" Fabi: "+Fabi)
+
+	//var DecimalType hueval = val3
+	//var DecimalType hue = new DecimalType(val3) // 0-360; 0=red, 120=green, 240=blue, 360=red(again)
+	var PercentType sat = new PercentType(Fasa+0) // 0-100
+	var PercentType bright = new PercentType(Fabi+0) // 0-100
+	var HSBType light = new HSBType(hue,sat,bright)
+
+	LEDStrip_BettKante_Color.sendCommand(light)
+	FarbtonBeschreibung.sendCommand("HSB: "+hue+" | "+sat+" | "+bright)
+end
+
+
+rule "LED Strip FarbTon2 changed"
+when Item Farbton2 received update
+	or Item FarbtonOffset2 received update
+	or Item FarbtonSaturation2 received update
+	or Item FarbtonBrightness2 received update
+then
+	var DecimalType val1 = new DecimalType (Farbton2.state.toString )
+	var DecimalType val2 = new DecimalType (FarbtonOffset2.state.toString )
+	var DecimalType hue = new DecimalType (val1 + val2)
+	if (hue<0)   {hue = new DecimalType(hue+360)}
+	if (hue>360) {hue = new DecimalType(hue-360)}
+
+	var Number Fasa =FarbtonSaturation2.state as Number 
+	var Number Fabi =FarbtonBrightness2.state as Number
+
+	//logInfo("farbTon","farbton: "+val1+" Offset: "+val2+" Summe; "+(val1+val2)+"   "+ hue +" Fasa: "+Fasa+" Fabi: "+Fabi)
+
+	//var DecimalType hueval = val3
+	//var DecimalType hue = new DecimalType(val3) // 0-360; 0=red, 120=green, 240=blue, 360=red(again)
+	var PercentType sat = new PercentType(Fasa+0) // 0-100
+	var PercentType bright = new PercentType(Fabi+0) // 0-100
+	var HSBType light = new HSBType(hue,sat,bright)
+
+	LEDStrip_BettKante_Color2.sendCommand(light)
+	FarbtonBeschreibung2.sendCommand("HSB: "+hue+" | "+sat+" | "+bright)
+end
+
+

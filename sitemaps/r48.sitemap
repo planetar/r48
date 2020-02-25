@@ -1,0 +1,6 @@
+sitemap r48 label="r48" {
+    Frame label="groups" icon="house"{
+
+        Group item=r48
+    }
+}

@@ -1,0 +1,11 @@
+services
+*.swp
+*.pyc
+*.bkp
+*.weg
+*.hide
+*.save
+icons
+things/mqttConnections.things
+things/hue.things
+weg

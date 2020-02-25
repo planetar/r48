@@ -1,0 +1,75 @@
+
+
+//Steckdose 16
+Thing exec:command:steckdose16-control [ command="/local/scripts/steckdosen.sh 16 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose16-status [ command="", interval=0, timeout=5 ]
+
+//Steckdose 8
+Thing exec:command:steckdose08-control [ command="/local/scripts/steckdosen.sh 8 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose08-status [ command="", interval=0, timeout=5 ]
+
+
+//Steckdose 7
+Thing exec:command:steckdose07-control [ command="/local/scripts/steckdosen.sh  7 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose07-status [ command="/local/scripts/steckdosen.sh  7 %2$s", interval=0, autorun=true ]
+
+//Steckdose 6
+Thing exec:command:steckdose06-control [ command="/local/scripts/steckdosen.sh  6 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose06-status [ command="/local/scripts/steckdosen.sh  6 %2$s", interval=0, autorun=true ]
+
+//Steckdose 5
+Thing exec:command:steckdose05-control [ command="/local/scripts/steckdosen.sh  5 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose05-status [ command="/local/scripts/steckdosen.sh  5 %2$s", interval=0, autorun=true ]
+
+//Steckdose 4
+Thing exec:command:steckdose04-control [ command="/local/scripts/steckdosen.sh  4 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose04-status [ command="", interval=0, timeout=5 ]
+
+//Steckdose 3
+Thing exec:command:steckdose03-control [ command="/local/scripts/steckdosen.sh  3 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose03-status [ command="", interval=0, timeout=5 ]
+
+//Steckdose 2
+Thing exec:command:steckdose02-control [ command="/local/scripts/steckdosen.sh  2 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose02-status [ command="", interval=0, timeout=5 ]
+
+//Steckdose 1
+Thing exec:command:steckdose01-control [ command="/local/scripts/steckdosen.sh  1 %2$s", interval=0, autorun=true ]
+Thing exec:command:steckdose01-status [ command="", interval=0, timeout=5 ]
+
+
+/*
+Thing exec:command:steckdose16-control [ command="/local/scripts/steckdosen.sh 16 %2$s", interval=0, autorun=true ]
+
+
+//Steckdose 8
+Thing exec:command:steckdose08-control [ command="/local/scripts/steckdosen.sh 8 %2$s", interval=0, autorun=true ]
+
+//Steckdose 7
+Thing exec:command:steckdose07-control [ command="/local/scripts/steckdosen.sh  7 %2$s", interval=0, autorun=true ]
+
+
+//Steckdose 6
+Thing exec:command:steckdose06-control [ command="/local/scripts/steckdosen.sh  6 %2$s", interval=0, autorun=true ]
+
+
+//Steckdose 5
+Thing exec:command:steckdose05-control [ command="/local/scripts/steckdosen.sh  5 %2$s", interval=0, autorun=true ]
+
+
+
+//Steckdose 4
+Thing exec:command:steckdose04-control [ command="/local/scripts/steckdosen.sh  4 %2$s", interval=0, autorun=true ]
+
+
+//Steckdose 3
+Thing exec:command:steckdose03-control [ command="/local/scripts/steckdosen.sh  3 %2$s", interval=0, autorun=true ]
+
+
+//Steckdose 2
+Thing exec:command:steckdose02-control [ command="/local/scripts/steckdosen.sh  2 %2$s", interval=0, autorun=true ]
+
+
+//Steckdose 1
+Thing exec:command:steckdose01-control [ command="/local/scripts/steckdosen.sh  1 %2$s", interval=0, autorun=true ]
+*/

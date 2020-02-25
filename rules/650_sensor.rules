@@ -1,0 +1,748 @@
+/*
+    sensor_lux_1 Flur als modell, Helligkeiten dynamisch anzupassen
+
+    * sensor_ldr_kueche wird hier nach händischer Tabelle von _raw auf _index interpretiert, und davon wiederum isGloomy
+    * sensor_lux_5 doku im log
+
+
+*/
+
+
+var Number gloomLimit=9
+
+
+rule "triggered by system start sensor"
+when 
+    System started
+then
+ 
+    rush_lux_1.postUpdate(OFF)
+    rush_lux_2.postUpdate(OFF)
+    rush_lux_3.postUpdate(OFF)
+    rush_lux_4.postUpdate(OFF)
+    rush_lux_5.postUpdate(OFF)
+    rush_lux_6.postUpdate(OFF)
+    rush_lux_7.postUpdate(OFF)
+    rush_lux_8.postUpdate(OFF)
+
+    showPir_lux_6.postUpdate(OFF)
+    showPir_lux_7.postUpdate(OFF)
+    showPir_lux_8.postUpdate(OFF)
+
+    showErr_lux_6.postUpdate(OFF)
+    showErr_lux_7.postUpdate(OFF)
+    showErr_lux_8.postUpdate(OFF)
+
+    binState_lux_6.postUpdate(0)
+    binState_lux_7.postUpdate(0)
+    binState_lux_8.postUpdate(0)
+
+    binState_OfficeTuer.postUpdate(11)
+    binState_Flur.postUpdate(3)
+    binState_Multi.postUpdate(0)
+    binState_Rfid.postUpdate(0)
+
+
+    isGloomy.postUpdate(OFF)
+
+    logInfo("medi","init sensor  ")
+end
+ 
+
+// Flur
+
+// allowFlurBrightnessRegulation
+
+// sensor_lux_1
+rule "sensor_lux_1 received command"
+when 
+    Item sensor_lux_1 received command
+then
+    sensorLastTriggered_lux1.postUpdate( new DateTimeType() )
+    var lux1_low=9
+    var lux1_high=18
+    var HSBType currentState
+    
+    if (newArrayList("morning","day").contains(Current_BtnState.state.toString)) {
+        lux1_low=6
+        lux1_high=13
+    }
+    if (newArrayList("late","night").contains(Current_BtnState.state.toString)) {
+        lux1_low=1
+        lux1_high=5
+    } 
+
+    if (PirState_Flur.state.toString=="ON" && PirState_Flur2.state.toString=="ON") {
+        if (newArrayList("morning","day","noon","afternoon","dusk","evening").contains(Current_BtnState.state.toString)) {
+            if (allowFlurBrightnessRegulation.state.toString=="ON"){
+           
+                currentState = flurGo.state as HSBType
+
+                var DecimalType hueGo = currentState.getHue()
+                var PercentType satGo = currentState.getSaturation()
+                var PercentType briGo = currentState.getBrightness()
+
+                currentState = flurStrip.state as HSBType
+                
+                var DecimalType hueSt = currentState.getHue()
+                var PercentType satSt = currentState.getSaturation()
+                var PercentType briSt = currentState.getBrightness()
+
+                var PercentType step = new PercentType(10)
+                var PercentType low = new PercentType(30)
+                //var PercentType hi = new PercentType(100)
+
+                if (sensor_lux_1.state < lux1_low) {
+                    logInfo("sensor","sat/bright before boost for         hueGo "+hueGo+"/"+satGo+"/"+briGo+"  Strip " +hueSt+"/"+satSt+"/"+briSt)
+                    //briSt += step
+                    satSt -= step
+                    //briGo += step
+                    satGo -= step
+                    //if (briGo > hi){briGo=hi}
+                    //if (briSt > hi){briSt=hi}
+                    if (satGo < low){satGo=low}
+                    if (satSt < low){satSt=low}
+                    
+                    flurGo.sendCommand(""+hueGo+","+satGo+","+briGo)
+                    flurStrip.sendCommand(""+hueSt+","+satSt+","+briSt)
+                    flurGoColor_act.sendCommand(""+hueGo+","+satGo+","+briGo)
+                    flurStripColor_act.sendCommand(""+hueSt+","+satSt+","+briSt)
+
+                    logInfo("sensor","sat/bright boosted by lux1 for      hueGo "+hueGo+"/"+satGo+"/"+briGo+"  Strip " +hueSt+"/"+satSt+"/"+briSt)
+                }
+                else if (sensor_lux_1.state > lux1_high) {
+                    logInfo("sensor","sat/bright before unboost for       hueGo "+hueGo+"/"+satGo+"/"+briGo+"  Strip " +hueSt+"/"+satSt+"/"+briSt)
+                    briSt -= step
+                    //satSt += step
+                    briGo -= step
+                    //satGo += step
+
+                    if (briGo < low){briGo=low}
+                    if (briSt < low){briSt=low}
+                    //logInfo("sensor","satGo "+satGo)
+                    //if ( satGo > hi ){ satGo=hi }  // was soll da NULL sein? Ich hasse Java
+                    //logInfo("sensor","satSt "+satSt)
+                    //if ( satSt >= hi ){ satSt=hi }
+                    flurGo.sendCommand(""+hueGo+","+satGo+","+briGo)
+                    flurStrip.sendCommand(""+hueSt+","+satSt+","+briSt)
+
+                    flurGoColor_act.sendCommand(""+hueGo+","+satGo+","+briGo)
+                    flurStripColor_act.sendCommand(""+hueSt+","+satSt+","+briSt)
+
+                    logInfo("sensor","sat/bright adapted by lux1 for      hueGo "+hueGo+"/"+satGo+"/"+briGo+"  Strip " +hueSt+"/"+satSt+"/"+briSt)
+                }
+
+            }
+            
+        }
+    }
+end
+
+
+// Bad
+
+
+// sensor_lux_2
+rule "sensor_lux_2 received command"
+when 
+    Item sensor_lux_2 received command
+then
+    //
+end
+
+
+// Schlafkammer
+
+
+// sensor_lux_3
+rule "sensor_lux_3 received command"
+when 
+    Item sensor_lux_3 received command
+then
+    //
+end
+
+
+// Kueche
+/*
+rule "sensor_ldr_kueche_raw changed"
+when 
+    Item sensor_ldr_kueche_raw changed
+then
+    if (sensor_ldr_kueche_raw.state > 20000000) 
+        {sensor_ldr_kueche_index.sendCommand(0)} else 
+    if (sensor_ldr_kueche_raw.state > 10000000) 
+        {sensor_ldr_kueche_index.sendCommand(1)} else 
+    if (sensor_ldr_kueche_raw.state > 5000000) 
+        {sensor_ldr_kueche_index.sendCommand(2)} else 
+    if (sensor_ldr_kueche_raw.state > 2000000) 
+        {sensor_ldr_kueche_index.sendCommand(3)} else 
+    if (sensor_ldr_kueche_raw.state > 1000000) 
+        {sensor_ldr_kueche_index.sendCommand(4)} else 
+    if (sensor_ldr_kueche_raw.state > 800000) 
+        {sensor_ldr_kueche_index.sendCommand(5)} else 
+    
+    if (sensor_ldr_kueche_raw.state > 500000) 
+        {sensor_ldr_kueche_index.sendCommand(6)} else 
+    if (sensor_ldr_kueche_raw.state > 300000) 
+        {sensor_ldr_kueche_index.sendCommand(7)} else 
+    if (sensor_ldr_kueche_raw.state > 200000) 
+        {sensor_ldr_kueche_index.sendCommand(8)} else 
+    if (sensor_ldr_kueche_raw.state > 100000) 
+        {sensor_ldr_kueche_index.sendCommand(9)} else 
+    if (sensor_ldr_kueche_raw.state > 80000) 
+        {sensor_ldr_kueche_index.sendCommand(10)} else 
+    if (sensor_ldr_kueche_raw.state > 60000) 
+        {sensor_ldr_kueche_index.sendCommand(11)} else  
+    if (sensor_ldr_kueche_raw.state > 50000) 
+        {sensor_ldr_kueche_index.sendCommand(12)} else 
+    if (sensor_ldr_kueche_raw.state > 40000) 
+        {sensor_ldr_kueche_index.sendCommand(13)} else 
+    if (sensor_ldr_kueche_raw.state > 30000) 
+        {sensor_ldr_kueche_index.sendCommand(14)} else 
+    if (sensor_ldr_kueche_raw.state > 20000) 
+        {sensor_ldr_kueche_index.sendCommand(15)} else 
+    if (sensor_ldr_kueche_raw.state > 10000) 
+        {sensor_ldr_kueche_index.sendCommand(16)} else 
+    if (sensor_ldr_kueche_raw.state > 8000) 
+        {sensor_ldr_kueche_index.sendCommand(17)} else 
+    if (sensor_ldr_kueche_raw.state > 6000) 
+        {sensor_ldr_kueche_index.sendCommand(18)} else 
+    if (sensor_ldr_kueche_raw.state > 4000) 
+        {sensor_ldr_kueche_index.sendCommand(19)} else  
+        {sensor_ldr_kueche_index.sendCommand(20)} 
+    
+    
+    //if (sensor_ldr_kueche_index.state <= gloomLimit){isGloomy.sendCommand(ON)} else {isGloomy.sendCommand(OFF)}
+end
+
+*/
+
+rule "isGloomy changed"
+when 
+    Item isGloomy changed
+then
+    logInfo("sensor","isGloomy changed to "+isGloomy.state.toString+" while Lux5 "+sensor_lux_5.state.toString)
+    // so circa bei 30 
+    // phase anpassen?
+    if (isGloomy.state==ON){StateBtn_dusk.sendCommand("ON")}
+    else {StateBtn_day.sendCommand("ON")}
+    
+    
+    // office Light, KlarLight?
+    
+end
+
+
+// sensor_lux_5
+rule "sensor_lux_5 received command"
+when 
+    Item sensor_lux_5 received command
+then
+    //
+    if ((sensor_lux_5.state < 35) && isGloomy.state==OFF){isGloomy.sendCommand(ON)}
+    if ((sensor_lux_5.state > 45) && isGloomy.state==ON) {isGloomy.sendCommand(OFF)}
+end
+
+
+
+// Clara
+
+
+
+rule "showErr_lux_6 changed"
+when 
+    Item showErr_lux_6 changed
+then
+    // bit 3
+    var Integer bit = 4
+    var Integer state = (binState_lux_6.state as DecimalType).intValue
+    var Integer mask
+    if (showErr_lux_6.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_6.postUpdate(mask)
+end
+
+rule "showPir_lux_6 changed"
+when 
+    Item showPir_lux_6 changed
+then
+    // bit 2
+    var Integer bit = 2
+    var Integer state = (binState_lux_6.state as DecimalType).intValue
+    var Integer mask
+    if (showPir_lux_6.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_6.postUpdate(mask)
+end
+
+rule "rush_lux_6 changed"
+when 
+    Item rush_lux_6 changed
+then
+    // bit 1
+    var Integer bit = 1
+    var Integer state = (binState_lux_6.state as DecimalType).intValue
+    var Integer mask
+    if (rush_lux_6.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_6.postUpdate(mask)
+end
+
+
+// medi
+
+
+
+rule "showErr_lux_7 changed"
+when 
+    Item showErr_lux_7 changed
+then
+    // bit 3
+    var Integer bit = 4
+    var Integer state = (binState_lux_7.state as DecimalType).intValue
+    var Integer mask
+    if (showErr_lux_7.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_7.postUpdate(mask)
+end
+
+rule "showPir_lux_7 changed"
+when 
+    Item showPir_lux_7 changed
+then
+    // bit 2
+    var Integer bit = 2
+    var Integer state = (binState_lux_7.state as DecimalType).intValue
+    var Integer mask
+    if (showPir_lux_7.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_7.postUpdate(mask)
+end
+
+rule "rush_lux_7 changed"
+when 
+    Item rush_lux_7 changed
+then
+    // bit 1
+    var Integer bit = 1
+    var Integer state = (binState_lux_7.state as DecimalType).intValue
+    var Integer mask
+    if (rush_lux_7.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_7.postUpdate(mask)
+end
+
+
+
+
+// office
+// sensor_lux_8
+rule "sensor_lux_8 received command"
+when 
+    Item sensor_lux_8 received command
+then
+    //
+end
+
+rule "showErr_lux_8 changed"
+when 
+    Item showErr_lux_8 changed
+then
+    // bit 3
+    var Integer bit = 4
+    var Integer state = (binState_lux_8.state as DecimalType).intValue
+    var Integer mask
+    if (showErr_lux_8.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_8.postUpdate(mask)
+end
+
+rule "showPir_lux_8 changed"
+when 
+    Item showPir_lux_8 changed
+then
+    // bit 2
+    var Integer bit = 2
+    var Integer state = (binState_lux_8.state as DecimalType).intValue
+    var Integer mask
+    if (showPir_lux_8.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_8.postUpdate(mask)
+end
+
+rule "rush_lux_8 changed"
+when 
+    Item rush_lux_8 changed
+then
+    // bit 1
+    var Integer bit = 1
+    var Integer state = (binState_lux_8.state as DecimalType).intValue
+    var Integer mask
+    if (rush_lux_8.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_lux_8.postUpdate(mask)
+end
+
+
+
+// so kann ich diesen Event ggf umbiegen auf andere Empfänger
+rule "sensor_toc_OfficeDesk received command ON"
+when 
+    Item sensor_toc_OfficeDesk received command ON
+then
+    logInfo("toc","sensor_toc_OfficeDesk calls bettReif")
+    bettReif.sendCommand(ON)
+end
+
+// multi
+rule "rush_Multi changed"
+when 
+    Item rush_Multi changed
+then
+    // bit 1
+    var Integer bit = 1
+    var Integer state = (binState_Multi.state as DecimalType).intValue
+    var Integer mask
+    if (rush_Multi.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Multi.postUpdate(mask)
+end
+
+rule "showErr_Multi changed"
+when 
+    Item showErr_Multi changed
+then
+    // bit 2
+    var Integer bit = 2
+    var Integer state = (binState_Multi.state as DecimalType).intValue
+    var Integer mask
+    if (showErr_Multi.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Multi.postUpdate(mask)
+end
+
+rule "showPir_Multi changed"
+when 
+    Item showPir_Multi changed
+then
+    // bit 3
+    var Integer bit = 4
+    var Integer state = (binState_Multi.state as DecimalType).intValue
+    var Integer mask
+    if (showPir_Multi.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Multi.postUpdate(mask)
+end
+
+rule "loopDisp_Multi changed"
+when 
+    Item loopDisp_Multi changed
+then
+    // bit 4
+    var Integer bit = 8
+    var Integer state = (binState_Multi.state as DecimalType).intValue
+    var Integer mask
+    if (loopDisp_Multi.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Multi.postUpdate(mask)
+end
+
+rule "useRemote_Multi changed"
+when 
+    Item useRemote_Multi changed
+then
+    // bit 5
+    var Integer bit = 16
+    var Integer state = (binState_Multi.state as DecimalType).intValue
+    var Integer mask
+    if (useRemote_Multi.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Multi.postUpdate(mask)
+end
+
+
+// flur RFID
+// Number binState_Rfid
+
+rule "activateDisp_Rfid changed"
+when 
+    Item activateDisp_Rfid changed
+then
+    // bit 5
+    var Integer bit = 1
+    var Integer state = (binState_Rfid.state as DecimalType).intValue
+    var Integer mask
+    if (activateDisp_Rfid.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Rfid.postUpdate(mask)
+end
+
+rule "loopDisp_Rfid changed"
+when 
+    Item loopDisp_Rfid changed
+then
+    // bit 5
+    var Integer bit = 8
+    var Integer state = (binState_Rfid.state as DecimalType).intValue
+    var Integer mask
+    if (loopDisp_Rfid.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Rfid.postUpdate(mask)
+end
+ 
+
+rule "alert_Rfid changed"
+when 
+    Item alert_Rfid changed
+then
+    // bit 5
+    var Integer bit = 16
+    var Integer state = (binState_Rfid.state as DecimalType).intValue
+    var Integer mask
+    if (alert_Rfid.state==ON){ mask = state.bitwiseOr(bit)} else {mask = state.bitwiseXor(bit)}
+    binState_Rfid.postUpdate(mask)
+end
+
+
+/*
+
+Number sensor_moist_balkon "Erdfeuchte Balkon" (gBalkon)
+Number moisture_balkon_01 "01 Gegossenheit in Prozent" (gBalkon)
+
+Eckwerte des Sensors:
+
+trocken an Luft: 820
+trocken in Erde: 724
+nass in Erde:    434
+nass in Wasser:  424
+
+Messbereich sei 434 - 724
+
+*/
+
+rule "sensor_moist_balkon_0 changed"
+when 
+    Item sensor_moist_balkon_0 changed
+then
+    var Number low = 660
+    var Number high = 450
+    var Number messwert = sensor_moist_balkon_0.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    moisture_balkon_0.postUpdate(gegoss)
+    
+end
+
+// an Luft 829
+// staubtrockne Erde: 823
+// in Erde, die just noch das Wasser hält: 495
+// in Wasser: 405
+// in Erde mit Giesswasser dran: 207
+// in Salzwasser: 160
+
+// Messbereich soll zwischen staubtrocken und hält gerade noch das Wasser sein. 
+// der Sensor in der Kueche bestätigt 494 als voll gegossen - Wert
+
+rule "sensor_moist_office_0 changed"
+when 
+    Item sensor_moist_office_0 changed
+then
+    var Number low = 520
+    var Number high = 475
+    var Number messwert = sensor_moist_office_0.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    moisture_office_0.postUpdate(gegoss)
+    
+end
+
+rule "sensor_moist_kueche_0 changed"
+when 
+    Item sensor_moist_kueche_0 changed
+then
+    var Number low = 737
+    var Number high = 580
+    var Number messwert = sensor_moist_kueche_0.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    moisture_kueche_0.postUpdate(gegoss)
+    
+end
+
+// bei Clara
+rule "sensor_moisture_01 changed"
+when 
+    Item sensor_moisture_01 changed
+then
+    var Number low = 540
+    var Number high = 240
+    var Number messwert = sensor_moisture_01.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    moisture_clara_0.postUpdate(gegoss)
+    
+end
+
+/*
+
+Dies sind die rules für die ESP32-moistures, derzeit 4 in Balkon, 3 in Office
+
+*/
+
+rule "sensor_moistBalkon_raw0 changed"
+when 
+    Item sensor_moistBalkon_raw0 changed
+then
+    var Number low = 3045
+    var Number high = 1500
+    var Number messwert = sensor_moistBalkon_raw0.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistBalkon_per0.postUpdate(gegoss)
+    
+end
+
+
+rule "sensor_moistBalkon_raw1 changed"
+when 
+    Item sensor_moistBalkon_raw1 changed
+then
+    var Number low = 2785
+    var Number high = 1500
+    var Number messwert = sensor_moistBalkon_raw1.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistBalkon_per1.postUpdate(gegoss)
+    
+end
+
+
+rule "sensor_moistBalkon_raw2 changed"
+when 
+    Item sensor_moistBalkon_raw2 changed
+then
+    var Number low = 2693
+    var Number high = 1500
+    var Number messwert = sensor_moistBalkon_raw2.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistBalkon_per2.postUpdate(gegoss)
+    
+end
+
+rule "sensor_moistBalkon_raw3 changed"
+when 
+    Item sensor_moistBalkon_raw3 changed
+then
+    var Number low = 2436
+    var Number high = 1500
+    var Number messwert = sensor_moistBalkon_raw3.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistBalkon_per3.postUpdate(gegoss)
+    
+end
+
+
+
+rule "sensor_moistOffice_raw0 changed"
+when 
+    Item sensor_moistOffice_raw0 changed
+then
+    var Number low = 3400
+    var Number high = 1500
+    var Number messwert = sensor_moistOffice_raw0.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistOffice_per0.postUpdate(gegoss)
+    
+end
+
+
+rule "sensor_moistOffice_raw1 changed"
+when 
+    Item sensor_moistOffice_raw1 changed
+then
+    var Number low = 3400
+    var Number high = 1500
+    var Number messwert = sensor_moistOffice_raw1.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistOffice_per1.postUpdate(gegoss)
+    
+end
+
+
+rule "sensor_moistOffice_raw2 changed"
+when 
+    Item sensor_moistOffice_raw2 changed
+then
+    var Number low = 3400
+    var Number high = 1500
+    var Number messwert = sensor_moistOffice_raw2.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistOffice_per2.postUpdate(gegoss)
+    
+end
+
+rule "sensor_moistClara_raw0 changed"
+when 
+    Item sensor_moistClara_raw0 changed
+then
+    var Number low = 2607
+    var Number high = 724
+    var Number messwert = sensor_moistClara_raw0.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistClara_per0.postUpdate(gegoss)
+    
+end
+
+
+rule "sensor_moistClara_raw1 changed"
+when 
+    Item sensor_moistClara_raw1 changed
+then
+    var Number low = 3315
+    var Number high = 726
+    var Number messwert = sensor_moistClara_raw1.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistClara_per1.postUpdate(gegoss)
+    
+end
+
+
+rule "sensor_moistClara_raw2 changed"
+when 
+    Item sensor_moistClara_raw2 changed
+then
+    var Number low = 2200
+    var Number high = 575
+    var Number messwert = sensor_moistClara_raw2.state as Number
+    var Number gegoss = (((low-messwert)*100) / (low - high))
+    
+    sensor_moistClara_per2.postUpdate(gegoss)
+    
+end
+
+
+/*
+Number binState_lux_6
+Number binState_lux_7
+Number binState_lux_8
+*/
+
+rule "binState_lux_6 changed"
+when 
+    Item binState_lux_6 changed
+then
+    var String jsor = '{"binState":' + binState_lux_6.state.toString() + '}'
+    mqPirClaraSet.sendCommand(jsor)
+end
+
+
+rule "binState_lux_7 changed"
+when 
+    Item binState_lux_7 changed
+then
+    var String jsor = '{"binState":' + binState_lux_7.state.toString() + '}'
+    mqPirMediSet.sendCommand(jsor)
+end
+
+
+rule "binState_lux_8 changed"
+when 
+    Item binState_lux_8 changed
+then
+    var String jsor = '{"binState":' + binState_lux_8.state.toString() + '}'
+    mqOfficeDeskSet.sendCommand(jsor)
+end
+
+

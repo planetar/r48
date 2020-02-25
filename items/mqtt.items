@@ -1,0 +1,52 @@
+// 'alte items' umgeschrieben für mqtt v2 binding
+
+// Thing Sensors  -  Incoming
+
+String mqEich         "eiche sens"                { channel="mqtt:topic:mqBroker:sensors:eiche" }
+String mqOfficePack   "officePack"                { channel="mqtt:topic:mqBroker:sensors:officePack" }
+String mqOfficeDesk   "officeDesk"                { channel="mqtt:topic:mqBroker:sensors:officeDesk" }
+String mqRfid         "rfid"                      { channel="mqtt:topic:mqBroker:sensors:rfid" }
+
+                      
+String mqMulti        "multi"                     { channel="mqtt:topic:mqBroker:sensors:multi" }
+String mqLuftdaten    "feinstaub"                 { channel="mqtt:topic:mqBroker:sensors:feinstaub" }
+String mqWetterBalkon "wetterBalkon"              { channel="mqtt:topic:mqBroker:sensors:wetterBalkon" }
+String mqPirSK        "pirSK"                     { channel="mqtt:topic:mqBroker:sensors:pirSK" }
+String mqPirMedi      "pirMedi"                   { channel="mqtt:topic:mqBroker:sensors:pirMedi" }
+String mqPirClara     "pirClara"                  { channel="mqtt:topic:mqBroker:sensors:pirClara" }
+
+String mqPirBad3      "pirBad3"                   { channel="mqtt:topic:mqBroker:sensors:pirBad3" }
+String mqPirKueche    "pirKueche"                 { channel="mqtt:topic:mqBroker:sensors:pirKueche" }
+
+
+// Thing Remotes  - incoming, outgoing
+String mqKuecheRelay       "incoming"  { channel="mqtt:topic:mqBroker:remotes:kuecheRelay" }  
+String mqVbb               "incoming"  { channel="mqtt:topic:mqBroker:remotes:vbb" }
+String mqVbbCmd            "outgoing"  { channel="mqtt:topic:mqBroker:remotes:vbbCmd" }
+
+
+// Thing Sensors, outgoing
+
+String mqPirClaraSet       "outgoing"  { channel="mqtt:topic:mqBroker:sensors:pirClaraSet" }  
+String mqPirMediSet        "outgoing"  { channel="mqtt:topic:mqBroker:sensors:pirMediSet" }  
+String mqOfficeDeskSet     "outgoing"  { channel="mqtt:topic:mqBroker:sensors:officeDeskSet" }  
+String mqOfficePackSet     "outgoing"  { channel="mqtt:topic:mqBroker:sensors:officePackSet" }  
+String mqPirBad3Set        "outgoing"  { channel="mqtt:topic:mqBroker:sensors:pirBad3Set" }  
+String mqPirKuecheSet      "outgoing"  { channel="mqtt:topic:mqBroker:sensors:pirKuecheSet" }  
+
+
+String mqKuecheRelay27Set  "outgoing"  { channel="mqtt:topic:mqBroker:remotes:kuecheRelay27Set" }  
+String mqKuecheRelay28Set  "outgoing"  { channel="mqtt:topic:mqBroker:remotes:kuecheRelay28Set" }  
+String mqKuecheRelay29Set  "outgoing"  { channel="mqtt:topic:mqBroker:remotes:kuecheRelay29Set" }  
+
+
+// Thing mqLights
+
+// die erlauben, einen frei formulierten set zu übergeben
+String led_bk "BettKante Strip"     {channel="mqtt:topic:mqBroker:lights:bkLed"}
+String led_fk "FensterKante Strip"  {channel="mqtt:topic:mqBroker:lights:fkLed"}
+String led_ok "OfficeKante Strip"   {channel="mqtt:topic:mqBroker:lights:okLed"}
+String led_fm "FlurMatrix"          {channel="mqtt:topic:mqBroker:lights:fmLed"}
+String led_mm "MediMatrix"          {channel="mqtt:topic:mqBroker:lights:mmLed"}
+String led_rm "rotaMatrix"          {channel="mqtt:topic:mqBroker:lights:rmLed"}
+String led_tl "tokoLights"          {channel="mqtt:topic:mqBroker:lights:tlLed"}

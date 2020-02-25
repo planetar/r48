@@ -1,0 +1,59 @@
+
+var OnOffType anyone
+
+
+// ntries so:
+// dp 0
+// lp 1
+// cp 2
+// gast 3
+rule "rule triggered  by rfidEntry changed"
+when 	
+    Item  rfidEntry changed
+then
+	logInfo("presence", "rfidEntry changed from "+previousState+" to "+rfidEntry.state)
+  if (previousState==0) {da_Daniel.sendCommand(OFF)}
+  if (previousState==1) {da_Daniel.sendCommand(OFF)}
+  if (previousState==3) {da_Gast.sendCommand(OFF)}
+  if (rfidEntry.state==0) {da_Daniel.sendCommand(ON)}
+  if (rfidEntry.state==1) {da_Daniel.sendCommand(ON)}
+  if (rfidEntry.state==3) {da_Gast.sendCommand(ON)}
+  // rfidEntry":"999999999"
+   if (rfidEntry.state==999999999) {da_jmd.sendCommand(OFF)}
+end
+
+rule "rule triggered  by rfidValid changed"
+when 	
+    Item  rfidValid changed
+then
+	logInfo("presence", "rfidValid changed from "+previousState+" to "+rfidValid.state)
+  sendCommand(da_jmd,rfidValid.state.toString)
+end
+
+
+/*
+  jeder Raum soll sinen eigenen handler halten
+  wenn da_jmd.state==OFF dann alle relevanten settings in backup, alles aus
+  wenn da_jmd==ON dann Einstellungen/werte aus backup restaurieren
+*/
+
+rule "rule triggered  by da_jmd changed"
+when 	
+  Item  da_jmd received command 
+then
+
+  logInfo("presence", "da_jmd "+da_jmd.state+" rfidValid "+rfidValid.state+" rfidEntry "+rfidEntry.state+" da_Daniel "+da_Daniel.state+" while presence_feng "+presence_feng.state+" and presence_Mobile_dp "+presence_Mobile_dp.state+" atDesk_Daniel.state "+ atDesk_Daniel.state)
+  //var ON=da_jmd.state.toString
+
+    
+  sendCommand("daAction_SK","ON")
+  sendCommand("daAction_Kueche","ON")
+  sendCommand("daAction_Bad","ON")
+  sendCommand("daAction_Flur","ON")
+  sendCommand("daAction_Clara","ON")
+  sendCommand("daAction_Medi","ON")
+  sendCommand("daAction_Office","ON")
+  sendCommand("daAction_Balkon","ON")
+  
+end
+

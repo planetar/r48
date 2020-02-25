@@ -1,0 +1,52 @@
+/*
+
+*/
+
+/*
+// hue.items zur referenz
+
+// hue:0210:001788a718e6:12:color
+Color mediStrip "mediStrip"  (gHueItems, gMedi) [ "Lighting" ] { channel="hue:0210:001788a718e6:12:color" }
+
+
+// mediStehLampe
+Dimmer mediStehLampe_Temp   "mediStehLampe_Temp" (gClara) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65558:color_temperature" }
+Dimmer mediStehLampe        "mediStehLampe"      (gClara) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65558:brightness" }
+
+// luiseSpot
+Dimmer mediSpot1        "mediSpot1"      (gMedi) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65559:brightness" }
+Dimmer mediSpot2        "mediSpot2"      (gMedi) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65560:brightness" }
+
+// sensor.items
+Number sensor_temperature_Luise         "Temperatur Luise [%.1f]°"          <temperature>   (gSensor1, gMedi) [ "CurrentTemperature" ]
+Number sensor_humidity_Luise            "Luftfeuchte Luise [%.1f]%"         <rain>          (gSensor1, gMedi) [ "CurrentHumidity" ]
+*/
+
+Group gMediModes "Licht mode" (gMedi)
+
+// Bewegung, Modi, Level zur Auswahl
+String mediLichtArt "Welche Lichtsteuerung"
+
+Switch pirActive_mediLevel "mediLightLevel piraktiv" (gMedi) [ "Switchable" ]
+Switch pirActive_Medi_hueStrip "mediStrip piraktiv" (gMedi) [ "Switchable" ]
+Switch pirActive_Medi_Stehlampe "Stehlampe piraktiv" (gMedi) [ "Switchable" ]
+Switch pirActive_Medi_Spot "mediSpot piraktiv" (gMedi) [ "Switchable" ]
+
+
+DateTime pirLastTriggered_Medi
+
+Number mediLightLevel
+Switch mediLightLevelControls "medi LightLevel steuert" (gMedi) [ "Switchable" ]
+Switch checkLight_Medi "medi LightLevel prüfen" { expire="5s,command=OFF" }
+
+Switch mediLicht_aus  "medi dunkel"  (gMediModes) [ "Switchable" ]
+Switch mediLicht_zart  "medi zartes Licht"  (gMediModes) [ "Switchable" ]
+Switch mediLicht_sanft "medi sanftes Licht" (gMediModes) [ "Switchable" ]
+Switch mediLicht_weich "medi weiches Licht" (gMediModes) [ "Switchable" ]
+Switch mediLicht_wach  "medi waches Licht"  (gMediModes) [ "Switchable" ]
+Switch mediLicht_hell  "medi helles Licht"  (gMediModes) [ "Switchable" ]
+
+
+Switch mediLicht_level  "medi lightLevel controls"  (gMediModes) [ "Switchable" ]
+//Switch mediLicht_modi  "medi Modi controls"  (gMediModes) [ "Switchable" ]
+Switch mediLicht_pir   "medi Pir controls"  (gMediModes) [ "Switchable" ]

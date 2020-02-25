@@ -1,0 +1,4 @@
+Thing wifiled:wifiled:badKante [ ip="192.168.50.61", port=5577, pollingPeriod=3000, protocol="LD382A", driver="CLASSIC", fadeDurationInMs=1000, fadeSteps=100 ]
+Thing wifiled:wifiled:flurKante [ ip="192.168.50.62", port=5577, pollingPeriod=3000, protocol="LD382A", driver="CLASSIC", fadeDurationInMs=1000, fadeSteps=100 ] 
+Thing wifiled:wifiled:kochKante [ ip="192.168.50.63", port=5577, pollingPeriod=3000, protocol="LD382A", driver="CLASSIC", fadeDurationInMs=1000, fadeSteps=100 ]
+Thing wifiled:wifiled:schrankel [ ip="192.168.50.64", port=5577, pollingPeriod=3000, protocol="LD382A", driver="CLASSIC", fadeDurationInMs=1000, fadeSteps=100 ]

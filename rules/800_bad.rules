@@ -1,0 +1,255 @@
+var Timer badSpotDelayed = null
+var Number tooFast=5
+var Number badDusterLimit=23
+
+
+var Boolean isDuster=false
+var Boolean isEmpty=false
+
+rule "triggered by system start Bad"
+when 
+    System started
+then
+    pirLastTriggered_Bad1.postUpdate( new DateTimeType() )
+    pirLastTriggered_Bad2.postUpdate( new DateTimeType() )
+    pirLastTriggered_Bad3.postUpdate( new DateTimeType() )
+    logInfo("inits","init Bad")
+end
+
+
+rule "Bad triggered minutely"
+
+when
+    Time cron "0 0/1 * * * ?"   // every minute
+then
+// isOfficeEmpty wird true, wenn pirLastTriggered_OfficeDesk - now > grenze ist und pirLastTriggered_OfficeTuer entsprechend
+    //gerade.postUpdate(new DateTimeType())
+    //logInfo("bad","pirLastTriggered_Bad    1: "+ pirLastTriggered_Bad1.state+"    2: "+ pirLastTriggered_Bad2.state+"    3:"+ pirLastTriggered_Bad3.state)
+    var tuerMoveMillis = (pirLastTriggered_Bad2.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var kloMoveMillis  = (pirLastTriggered_Bad3.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var deltaEins = nowMillis - kloMoveMillis
+    var deltaTuer = nowMillis - tuerMoveMillis
+    if ((deltaEins > 8*60*1000) && (deltaTuer > 8*60*1000)){
+        isEmpty = true
+    }
+    else {
+        {isEmpty = false}
+    }
+
+
+end
+
+
+/////////////////////////////////////////////////////////////////////////
+/*
+    Bad1 und Bad2 and-verknüpft. Bad1 zudem mit Flur1 in Filtergemeinschaft.
+    alle Action geht über PirStte_Bad
+*/
+
+// Bad
+rule "rule triggered  by PirState_Bad1 received command ON"
+when 	
+    Item  PirState_Bad1 received command ON
+then
+    pirLastTriggered_Bad1.postUpdate( new DateTimeType() )
+    evalTriggerTimes_Flur.sendCommand(ON)
+
+    Thread::sleep(5)
+
+    //logInfo("PirState_Bad", "PirState_Bad received command ON")
+
+    var flurMillis = (pirLastTriggered_Flur1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var badMillis = (pirLastTriggered_Bad1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta = Math.abs(flurMillis - badMillis)
+
+    // fehlalarme filtern
+    if (delta<tooFast){logInfo("pir","zeitgleicher Aufruf, pir_Bad1 ignoriert "+delta);return;}
+
+    // verlängerung vereinfachen
+    if (PirState_Bad2.state==ON || PirState_Bad.state==ON){
+        //logInfo("PirBad", "Pir Bad1  triggert")
+        PirState_Bad.sendCommand(ON)
+    } else {
+        // dies ist ein recht häufiger verlauf
+        //logInfo("PirBad", "Pir Bad1 wurde gefiltert")
+        return;
+    }
+end
+
+rule "rule triggered  by PirState_Bad2 received command ON"
+when 	
+    Item  PirState_Bad2 received command ON
+then
+    pirLastTriggered_Bad2.postUpdate( new DateTimeType() )
+ 
+    if (PirState_Bad1.state==ON){
+        //logInfo("PirBad", "Pir Bad2  triggert")
+        PirState_Bad.sendCommand(ON)
+    } else {
+        //logInfo("PirBad", "Pir Bad2 wurde gefiltert")
+        return;
+    }   
+end
+
+
+rule "rule triggered  by PirState_Bad3 received command ON"
+when 	
+    Item  PirState_Bad3 received command ON
+then
+    //logInfo("PirBad", "Pir Bad3  triggert")
+    pirLastTriggered_Bad3.postUpdate( new DateTimeType() )
+    // var test = new DateTimeType(PirState_Bad.lastUpdate)
+ 
+
+    //  var t1Millis = (pirLastTriggered_Bad3.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    //  var t2Millis = test.zonedDateTime.toInstant.toEpochMilli
+    //  var delta = Math.abs(t1Millis - t2Millis)
+
+
+    // logInfo("test","PirState_Bad.lastUpdate: "+test+" delta: "+delta)
+
+    // im wesentlichen ist der dafür da, dass das Licht nicht ausgeht, wenn man badet oder auf dem Klo sitzt
+   // if (PirState_Bad1.state==ON || PirState_Bad2.state==ON || PirState_Bad.state==ON) {
+
+       // der war mal wirklich stabil. und jetzt ertappe ich ihn im Dauerfeuer
+        PirState_Bad.sendCommand(ON)
+   // }
+    
+
+end
+
+
+
+
+
+
+
+rule "rule triggered  by PirState_Bad received command ON"
+when 	
+    Item  PirState_Bad received command ON
+then
+    /*
+        scheints kickt dies während "bereits ON" in ~30s Abständen herein und
+        führt zu dem Blinken des WeissStrip
+        Flag mit ON setzen und folgende Aufrufe abweisen
+    */
+ 
+    // intense in Ruhe lasen
+    if (IntenseBad.state==ON) {return;}
+   
+
+			
+    if (newArrayList("dusk","evening","late","goodnight","night").contains(Current_BtnState.state.toString) ||
+        isBadDuster.state == ON
+    ) {
+ 
+        // badKante
+        wifiLed1_color.sendCommand(badStripColor_act.state.toString)
+        wifiLed1_white.sendCommand(wlBadKante_act.state.toString)
+
+        if (newArrayList("dusk","evening").contains(Current_BtnState.state.toString)) {
+            // badSpot
+            if (pirActive_Bad_spot1.state==ON) {badSpot.sendCommand(tfBadSpot_act.state.toString)}
+        }
+
+    }
+
+end
+
+rule "rule triggered  by PirState_Bad received command OFF"
+
+when 	
+    Item  PirState_Bad received command OFF
+then
+    if (IntenseBad.state==ON) {return;}
+    //if (PirState_Bad3.state==ON) {PirState_Bad.sendCommand(ON)}
+
+    ////logInfo("PirState_Bad", "PirState_Bad reset to 0")
+    // badKante
+    wifiLed1_color.sendCommand(badStripColor_pas.state.toString)
+    wifiLed1_white.sendCommand(wlBadKante_pas.state.toString)
+    // badSpot
+    if (pirActive_Bad_spot1.state==ON) {badSpot.sendCommand(tfBadSpot_pas.state.toString)}
+
+    
+end
+
+
+
+
+// rule "rule triggered  by toggle_IntenseBad received command ON"
+// when 	
+//     Item  toggle_IntenseBad received command ON
+// then
+//     if (IntenseBad.state==ON) {IntenseBad.sendCommand(OFF);} else {IntenseBad.sendCommand(ON);}
+//     logInfo("toggle","IntenseBad.state "+IntenseBad.state)
+// end
+
+// sensor_lux_2
+rule "rule triggered  by sensor_lux_2 changed in Bad"
+when 	
+    Item  sensor_lux_2 changed
+then
+    var Number lux = sensor_lux_2.state as Number
+
+    if ( lux < badDusterLimit ) { 
+        isBadDuster.postUpdate(ON)
+    } else {
+        isBadDuster.postUpdate(OFF)
+    }
+  
+end
+
+
+
+
+rule "IntenseBad received command"
+when 
+    Item IntenseBad changed
+then
+    //logInfo("dash", "IntenseBad received command "+receivedCommand)
+    var intenseState=IntenseBad.state.toString
+    if (intenseState=="ON") {
+        // badKante
+        wifiLed1_color.sendCommand(badStripColor_act.state.toString)
+        wifiLed1_white.sendCommand(wlBadKante_act.state.toString)
+
+        if (newArrayList("dusk","evening","late").contains(Current_BtnState.state.toString)) {
+            // badSpot
+            badSpot.sendCommand(tfBadSpot_act.state.toString)
+        }
+        
+    } else {
+        // badKante
+        wifiLed1_color.sendCommand(badStripColor_pas.state.toString)
+        wifiLed1_white.sendCommand(wlBadKante_pas.state.toString)
+        // badSpot
+        badSpot.sendCommand(tfBadSpot_pas.state.toString)
+        
+        // aber jetzt nicht im Dunkeln sitzen lassen
+        PirState_Bad.sendCommand(ON)
+    }
+    
+    
+end
+
+// daAction_Bad
+rule "rule triggered  by daAction_Bad changed"
+when 	
+    Item  daAction_Bad received command ON
+then
+	logInfo("presence", "daAction Bad "+da_jmd.state)
+  
+    if (da_jmd.state==OFF) {
+        
+        badSpot.sendCommand(0)
+        wifiLed1_white.sendCommand(0)
+        wifiLed1_color.sendCommand(0)
+        IntenseBad.postUpdate(OFF)
+
+    } else if (da_jmd.state==ON) {
+        // 
+    }
+  
+end

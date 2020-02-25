@@ -1,0 +1,14 @@
+
+Group gskModes "Licht mode" (gsk)
+
+Switch skSteady "licht bleibt an"
+
+
+Switch skLicht_aus  "sk dunkel"  (gskModes) [ "Switchable" ]
+Switch skLicht_zart  "sk zartes Licht"  (gskModes) [ "Switchable" ]
+Switch skLicht_sanft "sk sanftes Licht" (gskModes) [ "Switchable" ]
+Switch skLicht_weich "sk weiches Licht" (gskModes) [ "Switchable" ]
+Switch skLicht_wach  "sk waches Licht"  (gskModes) [ "Switchable" ]
+Switch skLicht_hell  "sk helles Licht"  (gskModes) [ "Switchable" ]
+Switch skLicht_pir   "sk Pir controls"  (gskModes) [ "Switchable" ]
+

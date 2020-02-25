@@ -1,0 +1,77 @@
+// mediMatrix_target
+
+// mediMatrix_target
+rule "rule triggered  by mediMatrix_target changed"
+when 	
+    Item  mediMatrix_target changed
+then
+    var text=mediMatrix_target.state.toString()
+    if (text == "herz"){
+        led_mm.sendCommand('{"state":"ON","effect":"matrixHerz","bright":6}')
+    } 
+    else if (text == "om"){
+        led_mm.sendCommand('{"state":"ON","effect":"matrixOm","bright":1}')
+    } 
+    else if (text == "cool"){
+        led_mm.sendCommand('{"state":"ON","effect":"matrixCool","bright":8}')
+    } 
+    else if (text == "apple"){
+        led_mm.sendCommand('{"state":"ON","effect":"matrixApple","bright":10}')
+    } 
+    else if (text == "anim"){
+        led_mm.sendCommand('{"state":"ON","effect":"matrixAnim","bright":12}')
+    } 
+    else if (text == "farbGlitter"){
+        led_mm.sendCommand('{"state":"ON","effect":"farbGlitter","bright":32,"stepTime":240}')
+    } 
+    else if (text == "glitter"){
+        led_mm.sendCommand('{"state":"ON","effect":"glitter","bright":32,"stepTime":240}')
+    } 
+    else if (text == "rangeWave"){
+        led_mm.sendCommand('{"state":"ON","effect":"rangeWave","bright":32,"stepTime":240}')
+    } 
+    else if (text == "sineHue"){
+        led_mm.sendCommand('{"state":"ON","effect":"sineHue","bright":32}')
+    } 
+    else if (text == "shiftBand"){
+        led_mm.sendCommand('{"state":"ON","effect":"shiftBand","bright":32}')
+    } 
+end
+
+// matrixKante_target
+rule "rule triggered  by matrixKante_target changed"
+when 	
+    Item  matrixKante_target changed
+then
+    var text=matrixKante_target.state.toString()
+    if (text == "herz"){
+        led_fm.sendCommand('{"state":"ON","effect":"matrixHerz","bright":6}')
+    } 
+    else if (text == "om"){
+        led_fm.sendCommand('{"state":"ON","effect":"matrixOm","bright":1}')
+    } 
+    else if (text == "cool"){
+        led_fm.sendCommand('{"state":"ON","effect":"matrixCool","bright":8}')
+    } 
+    else if (text == "apple"){
+        led_fm.sendCommand('{"state":"ON","effect":"matrixApple","bright":10}')
+    } 
+    else if (text == "anim"){
+        led_fm.sendCommand('{"state":"ON","effect":"matrixAnim","bright":12}')
+    } 
+    else if (text == "farbGlitter"){
+        led_fm.sendCommand('{"state":"ON","effect":"farbGlitter","bright":80,"stepTime":240}')
+    } 
+    else if (text == "glitter"){
+        led_fm.sendCommand('{"state":"ON","effect":"glitter","bright":80,"stepTime":240}')
+    } 
+    else if (text == "rangeWave"){
+        led_fm.sendCommand('{"state":"ON","effect":"rangeWave","bright":80,"stepTime":2}')
+    } 
+    else if (text == "sineHue"){
+        led_fm.sendCommand('{"state":"ON","effect":"sineHue","bright":32}')
+    } 
+    else if (text == "shiftBand"){
+        led_fm.sendCommand('{"state":"ON","effect":"shiftBand","bright":32,"stepTime":5}')
+    } 
+end

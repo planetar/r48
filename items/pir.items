@@ -1,0 +1,135 @@
+Group       gPirStates "Pir-State" <network> (r48)
+
+/*
+    Flur hatte sehr mit DauerFeuer und FehlAlarmen zu kämpfen, wg. der Therme entstand hier erstens das Konzept, 
+    zeitgleiche Aktivierung von Flur und Bad zu filtern und später der neue/zusätzliche Ansatz, je zwei Pir AND-verknüpft zu schalten.
+    DauerFeuer ist besiegt, zuweilen aktiviert Flur aber sehr träge oder gar nicht.
+    Stati prüfen, ggf können die beiden auf em Schrank einfach wegfallen.
+    Ebenso im Bad, braucht es das zeitgleich-Kalkül noch bei AND-Verknüpften PIR?
+*/
+Switch      PirState_Flur        "Pir Flur integ."              (gPirStates,gFlur)    { expire="1m,command=OFF" }
+Switch      PirState_Flur1       "Pir Flur1"                    (gPirStates,gFlur)    { expire="1m,command=OFF" }
+Switch      PirState_Flur2       "Pir Flur2"                    (gPirStates,gFlur)    { expire="1m,command=OFF" }
+Switch      PirState_Flur3       "Pir Flur3"                    (gPirStates,gFlur)    { expire="1m,command=OFF" }
+Switch      PirState_Flur4       "Pir Flur4"                    (gPirStates,gFlur)    { expire="1m,command=OFF" }
+Switch      PirState_Garde       "Pir Garde"                    (gPirStates,gFlur)    { expire="90s,command=OFF" }
+
+// bad1 und bad2 filtern sich gegenseitig (AND)  bad3 verlängert bestehende Aktivierung
+Switch      PirState_Bad         "Pir Bad integ."               (gPirStates,gBad)     { expire="3m,command=OFF" }
+Switch      PirState_Bad1        "Pir Bad1"                     (gPirStates,gBad)     { expire="30s,command=OFF" }
+Switch      PirState_Bad2        "Pir Bad2"                     (gPirStates,gBad)     { expire="45s,command=OFF" }
+Switch      PirState_Bad3        "Pir Bad3"                     (gPirStates,gBad)     { expire="45s,command=OFF" }
+
+Switch      PirState_Kueche      "Pir Küche fensternah"         (gPirStates,gKueche)  { expire="3m,command=OFF" }
+Switch      PirState_Kueche2     "Pir2 Küche tuernah"           (gPirStates,gKueche)  { expire="3m,command=OFF" }
+Switch      PirState_Kueche3     "Pir3 Küche Kammer"            (gPirStates,gKueche)  { expire="30s,command=OFF" }
+Switch      PirState_Balkon      "Pir Balkon"                   (gPirStates,gSchlafkammer,gBalkon)  { expire="1m,command=OFF" }
+
+Switch      PirState_Clara       "Pir Clara integ."             (gPirStates,gClara)   { expire="2m,command=OFF" }
+Switch      PirState_Clara1      "Pir Clara1"                   (gPirStates,gClara)   { expire="30s,command=OFF" }
+Switch      PirState_Clara2      "Pir Clara2"                   (gPirStates,gClara)   { expire="30s,command=OFF" }
+Switch      PirState_Multi       "Pir Clara Eingang"            (gPirStates,gClara)   { expire="30s,command=OFF" } // quer-Verknüpfung zu PirState_Clara
+ 
+Switch      PirState_SK          "Pir SK"                       (gPirStates,gSchlafkammer)  { expire="2m,command=OFF" }
+Switch      PirState_SK2         "Pir SK2 Schrank"              (gPirStates,gSchlafkammer)  { expire="45s,command=OFF" }
+Switch      TocState_SK          "Toc SK"                       (gPirStates,gSchlafkammer)  { expire="5s,command=OFF" } 
+
+Switch      PirState_OfficeDesk  "Pir OfficeDesk"               (gPirStates,gOffice)  { expire="2m,command=OFF" }
+Switch      PirState_Office      "Pir Office integ."            (gPirStates,gOffice)  { expire="2m,command=OFF" }   // integ. aber gar nix, dupl. officeDesk
+Switch      PirState_OfficeTuer  "Pir OfficeTuer"               (gPirStates,gOffice)  { expire="1m,command=OFF" }
+Switch      PirState_OfficePack  "Pir OfficePack"               (gPirStates,gOffice)  { expire="2m,command=OFF" }
+
+Switch      PirState_Medi       "Bewegung Medi"                 (gPirStates,gMedi)    { expire="3m,command=OFF" }
+Switch      PirState_Luise      "Bewegung Luise"                (gPirStates,gMedi)    { expire="2m,command=OFF" }
+
+//Switch      PirState_Medi       "Luise"              <"light">       (gPirStates,gMedi)  { expire="10m,command=OFF" }
+
+// werden diese flags eigentlich irgendwo noch wirklich benutzt? Kandidat für Löschung
+
+Number Flag_Pir_Bad
+Number Flag_Pir_SK
+Number Flag_Pir_Flur
+Number Flag_Pir_Flur2
+Number Flag_Pir_Kueche
+Number Flag_Pir2_Kueche
+Number Flag_Pir_OfficeDesk
+
+//das käme vom flur-Light/Pir/multi-sensor poak01
+// Werte 0 bis 3, flurIntense für 3,5, 8 minuten
+// kleines extra: wenn abgelaufen, soll das poak01 im control-byte signlisiert werden, 
+// damit das teil die LED wieder zurücksetzt, wenn die Wirkung im Realen beendet ist.
+Number flurSonderWunsch "flurIntense-Selector"
+
+
+// Schalter, ob items durch Pir aktivierbar sind
+
+Switch pirActive_SK_spot1 "Leuchte 1 piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_spot2 "Leuchte 2 piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_spot3 "Leuchte 3 piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_Bettkante "Bettkante piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_Fensterkante "Fensterkante piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_buddha "Buddhalicht piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_fenster "Fensterlicht piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_balkon "Balkonlicht piraktiv" (gSchlafkammer) [ "Switchable" ]
+Switch pirActive_SK_bettLicht "Bettlicht piraktiv" (gSchlafkammer) [ "Switchable" ]
+
+Switch pirActive_Bad_spot1 "Leuchte Bad piraktiv" (gBad) [ "Switchable" ]
+Switch pirActive_Flur_Kante "FlurKante piraktiv" (gFlur) [ "Switchable" ]
+Switch pirActive_Flur_Go "FlurGo piraktiv" (gFlur) [ "Switchable" ]
+Switch pirActive_Flur_Strip "FlurStrip piraktiv" (gFlur) [ "Switchable" ]
+
+Switch pirActive_OfficeLevel "OfficeLightLevel piraktiv" (gOffice) [ "Switchable" ]
+Switch pirActive_Office_klarLicht "Klarlicht Office piraktiv" (gOffice) [ "Switchable" ]
+Switch pirActive_OfficePanel "OfficePanel piraktiv" (gOffice) [ "Switchable" ]
+Switch pirActive_OfficeSpot "OfficeSpot piraktiv" (gOffice) [ "Switchable" ]
+
+
+Switch pirActive_ClaraLevel "ClaraLightLevel piraktiv" (gClara) [ "Switchable" ]
+Switch pirActive_Clara_bogenLicht "Bogenlicht Clara piraktiv" (gClara) [ "Switchable" ]
+
+ 
+
+// TimeStamps 
+DateTime pirLastTriggered_Flur1
+DateTime pirLastTriggered_Flur2
+DateTime pirLastTriggered_Flur3
+DateTime pirLastTriggered_Flur4
+DateTime pirLastTriggered_Kueche1
+DateTime pirLastTriggered_Kueche2
+DateTime pirLastTriggered_Kueche3
+DateTime pirLastTriggered_Bad1
+DateTime pirLastTriggered_Bad2
+DateTime pirLastTriggered_Bad3 
+DateTime pirLastTriggered_SK1
+DateTime pirLastTriggered_SK2
+DateTime pirLastTriggered_OfficePack
+DateTime pirLastTriggered_OfficeDesk
+DateTime pirLastTriggered_OfficeTuer
+DateTime pirLastTriggered_Clara1
+DateTime pirLastTriggered_Clara2
+
+Switch evalTriggerTimes_Flur 
+
+// light levels
+Number officeLightLevel
+Number flurLightLevel
+Number badLightLevel 
+Number claraLightLevel
+// Medi hat es lokal
+Number kuecheLightLevel
+
+// eingesetzt?
+Switch claraLightLevelControls "Clara LightLevel steuert" (gClara) [ "Switchable" ]
+Switch badLightLevelControls "Bad LightLevel steuert" (gBad) [ "Switchable" ]
+Switch flurLightLevelControls "Flur LightLevel steuert" (gFlur) [ "Switchable" ]
+Switch kuecheLightLevelControls "Kueche LightLevel steuert" (gKueche) [ "Switchable" ]
+
+
+Switch kochKante "KochKante Küche" (gKueche) [ "Switchable" ]
+Switch kammerLicht "kammerLicht Küche" (gKueche) [ "Switchable" ] { expire="1m,command=OFF" }
+
+Switch checkLight_Office "office LightLevel prüfen" { expire="5s,command=OFF" }
+Switch checkLight_Kueche "kueche Licht prüfen" { expire="5s,command=OFF" }
+
+
+//Switch toggle_IntenseBad "toggelt IntenseBad" { expire="5s,command=OFF" }

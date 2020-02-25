@@ -1,0 +1,202 @@
+// daAction_SK
+// rule "rule triggered  by pressel received command"
+// when 	
+//     Item  pressel received command 
+// then
+// 	logInfo("pressel", "pressel hit")
+  
+//     //pebbleNotification("dp", "test?", "test!")
+  
+// end
+
+/*
+rule "rule triggered  by mqVbb changed"
+when 	
+    Item  mqVbb changed 
+then
+    val String json = (mqVbb.state as StringType).toString
+    val String type = transform("JSONPATH", "$.[0].[0]", json)
+    val String erster = transform("JSONPATH", "$.0.0.0.direction", json)
+	
+    
+    
+    
+    
+    logInfo("mqVbb", "mqVbb changed : "+erster)
+  
+    
+  
+end
+
+"900054105O": {"dep"
+
+
+
+*/
+rule "rule triggered  by pressel changed"
+when 	
+    Item  pressel received command
+then
+    mqVbbCmd.sendCommand("boost")
+end
+
+
+rule "rule triggered  by mqVbb changed"
+when 	
+    Item  mqVbb changed 
+
+then
+    var String halte=""
+    var String station=""
+    var String zug1=""
+    var String zug2="" 
+    var String noch1=""
+    var String noch2=""
+
+    var String json = (mqVbb.state as StringType).toString
+    
+    noch1 = transform("JSONPATH","callTime",json)
+    callTime.sendCommand(noch1)
+    noch1 = transform("JSONPATH","boostFlag",json)
+    boostFlag.sendCommand(noch1)
+    
+    //logInfo("vbb","callTime: "+noch1)
+
+    halte="900060101N" // S Friedenau Nord
+    
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte1.sendCommand(station)
+    if (zug1.length()<100){vbbHalte1Zug1.sendCommand(zug1);vbbHalte1Noch1.sendCommand(noch1)}else{vbbHalte1Zug1.sendCommand(" ");vbbHalte1Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte1Zug2.sendCommand(zug2);vbbHalte1Noch2.sendCommand(noch2)}else{vbbHalte1Zug2.sendCommand(" ");vbbHalte1Noch2.sendCommand(" ")}
+
+
+
+    
+    halte="900060101S" // S Friedenau Süd
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte2.sendCommand(station)
+    if (zug1.length()<100){vbbHalte2Zug1.sendCommand(zug1);vbbHalte2Noch1.sendCommand(noch1)}else{vbbHalte2Zug1.sendCommand(" ");vbbHalte2Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte2Zug2.sendCommand(zug2);vbbHalte2Noch2.sendCommand(noch2)}else{vbbHalte2Zug2.sendCommand(" ");vbbHalte2Noch2.sendCommand(" ")}
+
+
+    halte="900054105O" // innsbrucker ost
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte3.sendCommand(station)
+    if (zug1.length()<100){vbbHalte3Zug1.sendCommand(zug1);vbbHalte3Noch1.sendCommand(noch1)}else{vbbHalte3Zug1.sendCommand(" ");vbbHalte3Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte3Zug2.sendCommand(zug2);vbbHalte3Noch2.sendCommand(noch2)}else{vbbHalte3Zug2.sendCommand(" ");vbbHalte3Noch2.sendCommand(" ")}
+
+
+    halte="900054105W" // innsbrucker west
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte4.sendCommand(station)
+    if (zug1.length()<100){vbbHalte4Zug1.sendCommand(zug1);vbbHalte4Noch1.sendCommand(noch1)}else{vbbHalte4Zug1.sendCommand(" ");vbbHalte4Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte4Zug2.sendCommand(zug2);vbbHalte4Noch2.sendCommand(noch2)}else{vbbHalte4Zug2.sendCommand(" ");vbbHalte4Noch2.sendCommand(" ")}
+
+
+    halte="900054105U" // U Inssbrucker
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte5.sendCommand(station)
+    if (zug1.length()<100){vbbHalte5Zug1.sendCommand(zug1);vbbHalte5Noch1.sendCommand(noch1)}else{vbbHalte5Zug1.sendCommand(" ");vbbHalte5Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte5Zug2.sendCommand(zug2);vbbHalte5Noch2.sendCommand(noch2)}else{vbbHalte5Zug2.sendCommand(" ");vbbHalte5Noch2.sendCommand(" ")}
+
+
+    halte="900060107N"  // Ceciliengärten Nord
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte6.sendCommand(station)
+    if (zug1.length()<100){vbbHalte6Zug1.sendCommand(zug1);vbbHalte6Noch1.sendCommand(noch1)}else{vbbHalte6Zug1.sendCommand(" ");vbbHalte6Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte6Zug2.sendCommand(zug2);vbbHalte6Noch2.sendCommand(noch2)}else{vbbHalte6Zug2.sendCommand(" ");vbbHalte6Noch2.sendCommand(" ")}
+
+
+    halte="900060107S"  // Ceciliengärten Süd
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte7.sendCommand(station)
+    if (zug1.length()<100){vbbHalte7Zug1.sendCommand(zug1);vbbHalte7Noch1.sendCommand(noch1)}else{vbbHalte7Zug1.sendCommand(" ");vbbHalte7Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte7Zug2.sendCommand(zug2);vbbHalte7Noch2.sendCommand(noch2)}else{vbbHalte7Zug2.sendCommand(" ");vbbHalte7Noch2.sendCommand(" ")}
+
+
+
+    halte="900061153N"  // Hähnelstr Nord
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte8.sendCommand(station)
+    if (zug1.length()<100){vbbHalte8Zug1.sendCommand(zug1);vbbHalte8Noch1.sendCommand(noch1)}else{vbbHalte8Zug1.sendCommand(" ");vbbHalte8Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte8Zug2.sendCommand(zug2);vbbHalte8Noch2.sendCommand(noch2)}else{vbbHalte8Zug2.sendCommand(" ");vbbHalte8Noch2.sendCommand(" ")}
+
+
+    halte="900061153S"  // Hähnelstr Süd
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalte9.sendCommand(station)
+    if (zug1.length()<100){vbbHalte9Zug1.sendCommand(zug1);vbbHalte9Noch1.sendCommand(noch1)}else{vbbHalte9Zug1.sendCommand(" ");vbbHalte9Noch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalte9Zug2.sendCommand(zug2);vbbHalte9Noch2.sendCommand(noch2)}else{vbbHalte9Zug2.sendCommand(" ");vbbHalte9Noch2.sendCommand(" ")}
+
+
+    halte="900060153N"  // Rubensstr Nord
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalteA.sendCommand(station)
+    if (zug1.length()<100){vbbHalteAZug1.sendCommand(zug1);vbbHalteANoch1.sendCommand(noch1)}else{vbbHalteAZug1.sendCommand(" ");vbbHalteANoch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalteAZug2.sendCommand(zug2);vbbHalteANoch2.sendCommand(noch2)}else{vbbHalteAZug2.sendCommand(" ");vbbHalteANoch2.sendCommand(" ")}
+
+
+    halte="900060153S"  // Rubensstr Süd
+    station = transform("JSONPATH", "$['"+halte+"'].name", json) + " (" + transform("JSONPATH", "$['"+halte+"'].dist", json) + "m / " + transform("JSONPATH", "$['"+halte+"'].walk", json) + " min) "   
+    zug1= transform("JSONPATH", "$['"+halte+"'].dep[0].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[0].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[0].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[0].late", json)+") "
+    zug2= transform("JSONPATH", "$['"+halte+"'].dep[1].name", json) +" -> " + transform("JSONPATH", "$['"+halte+"'].dep[1].direction", json) +": " +transform("JSONPATH", "$['"+halte+"'].dep[1].time", json)+" ("+ transform("JSONPATH", "$['"+halte+"'].dep[1].late", json)+") "
+    noch1=transform("JSONPATH", "$['"+halte+"'].dep[0].left", json)
+    noch2=transform("JSONPATH", "$['"+halte+"'].dep[1].left", json)
+
+    vbbHalteB.sendCommand(station)
+    if (zug1.length()<100){vbbHalteBZug1.sendCommand(zug1);vbbHalteBNoch1.sendCommand(noch1)}else{vbbHalteBZug1.sendCommand(" ");vbbHalteBNoch1.sendCommand(" ")}
+    if (zug2.length()<100){vbbHalteBZug2.sendCommand(zug2);vbbHalteBNoch2.sendCommand(noch2)}else{vbbHalteBZug2.sendCommand(" ");vbbHalteBNoch2.sendCommand(" ")}
+
+
+   // logInfo("vbb","vbb connex updated")
+end

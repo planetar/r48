@@ -1,0 +1,221 @@
+/*
+Wetterdaten von darksky/ForecastIO suffix _F
+Wetterdaten von openweathermap     suffix _owm
+
+
+*/
+
+Group gWeather           "Wetter"   <climate>
+
+Group gWeather_Athmosphere_F        "Luft"          <climacon-cloudy>     (gWeather)
+Group gWeather_Condition_F          "Lage"          <fog>               (gWeather) 
+Group gWeather_Rain_F               "Niederschläge" <rain>              (gWeather)
+Group gWeather_Temperature_F        "Temperatur"    <temperature>       (gWeather)
+Group gWeather_Wind_F               "Wind"          <wind>              (gWeather)
+Group gWeather_Station_F            "Messtation"    <fog>               (gWeather)
+
+
+
+
+//// ForecastIO  darkSky
+/*
+FORECASTIO[dks]:
+Weather
+    Temperature
+        current=8.21,
+        min=<null>,
+        max=<null>,
+        feel=4.77,
+        dewpoint=4.97
+    Atmosphere
+        humidity=80,
+        visibility=16.093,
+        pressure=996.9,
+        pressureTrend=equal,
+        ozone=360,
+        uvIndex=1
+    Clouds
+        percent=63
+    Condition
+        text=Nieselregen möglich
+        lastUpdate=Tue Feb 25 11:39:22 CET 2020,
+        observationTime=Tue Feb 25 11:39:22 CET 2020,
+        id=<null>,
+        icon=rain,
+        commonId=rain
+    Precipitation
+        rain=0.3072
+        snow=0.0,
+        probability=30,
+        total=<null>
+    Wind
+        speed=23.795999980963202
+        direction=W,
+        degree=280,
+        gust=51.191999959046406
+        chill=<null>
+    Station
+        name=<null>,
+        id=<null>,
+        latitude=52.465803,
+        longitude=13.344846,
+        altitude=<null>],
+        <null>
+
+
+*/
+// atmosphere
+Number   Weather_Humidity_F         "Luftfeuchte [%d %%]"  (gWeather_Athmosphere_F)  {weather="locationId=dks, type=atmosphere, property=humidity"}
+Number   Weather_Visibility_F       "Sichtweite [%.2f km]" (gWeather_Athmosphere_F)  {weather="locationId=dks, type=atmosphere, property=visibility"}
+Number   Weather_Pressure_F         "Druck [%.2f mb]"      (gWeather_Athmosphere_F)  {weather="locationId=dks, type=atmosphere, property=pressure"}
+String   Weather_Pressure_Trend_F   "Tendenz [%s]"         (gWeather_Athmosphere_F)  {weather="locationId=dks, type=atmosphere, property=pressureTrend"}
+Number   Weather_Ozone_F            "Ozon [%d ppm]"        (gWeather_Athmosphere_F)  {weather="locationId=dks, type=atmosphere, property=ozone"}
+Number   Weather_UV_Index_F         "UV Index"             (gWeather_Athmosphere_F)  {weather="locationId=dks, type=atmosphere, property=uvIndex, scale=0"}
+
+// clouds
+Number   Weather_Clouds_F           "Wolken [%.0f %%]"     (gWeather_Athmosphere_F)  {weather="locationId=dks, type=clouds, property=percent"}
+
+// condition
+String   Weather_Condition_F        "Beschreibung [%s]" <fog>    (gWeather_Condition_F) {weather="locationId=dks, type=condition, property=text"}
+DateTime Weather_ObservationTime_F  "beobachtet [%1$td.%1$tm.%1$tY %1$tH:%1$tM]" <fog> (gWeather_Condition_F) {weather="locationId=dks, type=condition, property=observationTime"}
+DateTime Weather_LastUpdate_F       "aktualisiert [%1$td.%1$tm.%1$tY %1$tH:%1$tM]" <fog> (gWeather_Condition_F)       {weather="locationId=dks, type=condition, property=lastUpdate"}
+
+// precipitation
+Number   Weather_Rain_F             "Regen [%.2f mm/h]"         (gWeather_Rain_F)  {weather="locationId=dks, type=precipitation, property=rain"}
+Number   Weather_Snow_F             "Schnee [%.2f mm/h]"        (gWeather_Rain_F)   {weather="locationId=dks, type=precipitation, property=snow"}
+Number   Weather_Precip_Probability_F   "Niederschlagschance [%d %%]" (gWeather_Rain_F)    {weather="locationId=dks, type=precipitation, property=probability"}
+//Number   Weather_Precip_Total_F         "Precip total [%d mm]" (gWeather_Rain_F)    {weather="locationId=dks, type=precipitation, property=total"}
+
+
+// temperature
+Number   Weather_Temperature_F      "Temperatur [%.2f °C]"      (gWeather_Temperature_F) {weather="locationId=dks, type=temperature, property=current"}
+Number   Weather_Temp_Feel_F        "gefühlte Temp. [%.2f °C]" (gWeather_Temperature_F)  {weather="locationId=dks, type=temperature, property=feel"}
+Number   Weather_Temp_Dewpoint_F    "Taupunkt [%.2f °C]"         (gWeather_Temperature_F)  {weather="locationId=dks, type=temperature, property=dewpoint"}
+
+
+// min and max values only available in forecasts
+//Number   Weather_Temp_Min_F         "Temperature min [%.2f °C]"  (gWeather_Temperature_F)  {weather="locationId=dks, type=temperature, property=min"}
+//Number   Weather_Temp_Max_F         "Temperature max [%.2f °C]"  (gWeather_Temperature_F)  {weather="locationId=dks, type=temperature, property=max"}
+//String   Weather_Temp_MinMax_F      "Min/Max [%s °C]"            (gWeather_Temperature_F)  {weather="locationId=dks, type=temperature, property=minMax"}
+
+// wind
+Number   Weather_Wind_Speed_F           "Windgeschwindigkeit [%.2f km/h]"  (gWeather_Wind_F)    {weather="locationId=dks, type=wind, property=speed"}
+String   Weather_Wind_Direction_F       "Windrichtung [%s]"  <compass>  (gWeather_Wind_F)    {weather="locationId=dks, type=wind, property=direction"}
+Number   Weather_Wind_Degree_F          "Windrichtung in Grad [%.0f °]"   (gWeather_Wind_F)    {weather="locationId=dks, type=wind, property=degree"}
+Number   Weather_Wind_Gust_F            "Böen [%.2f km/h]"  (gWeather_Wind_F)    {weather="locationId=dks, type=wind, property=gust"}
+Number   Weather_Wind_Chill_F           "Wind chill [%.2f °C]"   (gWeather_Wind_F)    {weather="locationId=dks, type=wind, property=chill"}
+
+// weather station (only Wunderground and Hamweather), needs version 1.7 or greater of the binding
+//String   Weather_Station_Name_F         "Station am Grazer Platz [%s]"   <house>     (gWeather_Station_F)  {weather="locationId=dks, type=station, property=name"}
+//String   Weather_Station_Id_F           "Station Id [%s]"          (gWeather_Station_F)    {weather="locationId=dks, type=station, property=id"}
+Number   Weather_Station_Latitude_F     "Station Latitude [%.6f]" <location> (gWeather_Station_F)    {weather="locationId=dks, type=station, property=latitude, scale=6"}
+Number   Weather_Station_Longitude_F    "Station Longitude [%.6f]" <location> (gWeather_Station_F)   {weather="locationId=dks, type=station, property=longitude, scale=6"}
+
+ 
+//// openWeatherMap 
+/*
+OPENWEATHERMAP[owm]:
+Weather
+    Temperature
+        current=9.05,
+        min=8.33,
+        max=10.56,
+        feel=7.972452477501278,
+        dewpoint=<null>
+    ,Atmosphere
+        humidity=70,
+        visibility=<null>,
+        pressure=996.0,
+        pressureTrend=equal,
+        ozone=<null>,
+        uvIndex=<null>],
+    Clouds
+        percent=75
+    Condition
+        text=Leichter Regen,
+        lastUpdate=Tue Feb 25 11:39:22 CET 2020,
+        observationTime=Tue Feb 25 11:33:21 CET 2020,
+        id=500,
+        icon=10d,
+        commonId=few-showers
+    Precipitation
+        rain=0.0,
+        snow=0.0,
+        probability=<null>,
+        total=<null>
+    Wind
+        speed=24.119999980704,
+        direction=WSW,
+        degree=250,
+        gust=<null>,
+        chill=<null>
+    Station
+        name=Berlin Schoeneberg,
+        id=<null>,
+        latitude=52.4746,
+        longitude=13.3484,
+        altitude=<null>
+    <null>
+
+*/
+
+Group gWeather_Athmosphere_owm        "Luft"          <climacon-cloudy>     (gWeather)
+Group gWeather_Condition_owm          "Lage"          <fog>               (gWeather) 
+Group gWeather_Rain_owm               "Niederschläge" <rain>              (gWeather)
+Group gWeather_Temperature_owm        "Temperatur"    <temperature>       (gWeather)
+Group gWeather_Wind_owm               "Wind"          <wind>              (gWeather)
+Group gWeather_Station_owm            "Messtation"    <fog>               (gWeather)
+
+
+
+
+//// openWeatherMap
+// atmosphere
+Number   Weather_Humidity_owm         "Luftfeuchte [%d %%]"  (gWeather_Athmosphere_owm)  {weather="locationId=owm, type=atmosphere, property=humidity"}
+Number   Weather_Visibility_owm       "Sichtweite [%.2f km]" (gWeather_Athmosphere_owm)  {weather="locationId=owm, type=atmosphere, property=visibility"}
+Number   Weather_Pressure_owm         "Druck [%.2f mb]"      (gWeather_Athmosphere_owm)  {weather="locationId=owm, type=atmosphere, property=pressure"}
+String   Weather_Pressure_Trend_owm   "Tendenz [%s]"         (gWeather_Athmosphere_owm)  {weather="locationId=owm, type=atmosphere, property=pressureTrend"}
+//Number   Weather_Ozone_owm            "Ozon [%d ppm]"        (gWeather_Athmosphere_owm)  {weather="locationId=owm, type=atmosphere, property=ozone"}
+//Number   Weather_UV_Index_owm         "UV Index"           (gWeather_Athmosphere_owm)  {weather="locationId=owm, type=atmosphere, property=uvIndex, scale=0"}
+
+// clouds
+Number   Weather_Clouds_owm           "Wolken [%.0f %%]"     (gWeather_Athmosphere_owm)  {weather="locationId=owm, type=clouds, property=percent"}
+
+// condition
+String   Weather_Condition_owm        "Beschreibung [%s]" <fog>    (gWeather_Condition_owm) {weather="locationId=owm, type=condition, property=text"}
+DateTime Weather_ObservationTime_owm  "beobachtet [%1$td.%1$tm.%1$tY %1$tH:%1$tM]" <fog> (gWeather_Condition_owm) {weather="locationId=owm, type=condition, property=observationTime"}
+DateTime Weather_LastUpdate_owm       "aktualisiert [%1$td.%1$tm.%1$tY %1$tH:%1$tM]" <fog> (gWeather_Condition_owm)       {weather="locationId=owm, type=condition, property=lastUpdate"}
+
+// precipitation
+//Number   Weather_Rain_owm             "Regen [%.2f mm/h]"         (gWeather_Rain_owm)  {weather="locationId=owm, type=precipitation, property=rain"}
+//Number   Weather_Snow_owm             "Schnee [%.2f mm/h]"        (gWeather_Rain_owm)   {weather="locationId=owm, type=precipitation, property=snow"}
+//Number   Weather_Precip_Probability_owm   "Niederschlagschance [%d %%]" (gWeather_Rain_owm)    {weather="locationId=owm, type=precipitation, property=probability"}
+// new total property in 1.8, only Wunderground
+//Number   Weather_Precip_Total_owm         "Precip total [%d mm]" (gWeather_Rain_owm)    {weather="locationId=owm, type=precipitation, property=total"}
+
+
+// temperature
+Number   Weather_Temperature_owm      "Temperatur [%.2f °C]"      (gWeather_Temperature_owm) {weather="locationId=owm, type=temperature, property=current"}
+Number   Weather_Temp_Feel_owm        "gefühlte Temp. [%.2f °C]" (gWeather_Temperature_owm)  {weather="locationId=owm, type=temperature, property=feel"}
+//Number   Weather_Temp_Dewpoint_owm    "Taupunkt [%.2f °C]"         (gWeather_Temperature_owm)  {weather="locationId=owm, type=temperature, property=dewpoint"}
+
+
+// min and max values only available in forecasts
+Number   Weather_Temp_Min_owm         "Temperature min [%.2f °C]"  (gWeather_Temperature_owm)  {weather="locationId=owm, type=temperature, property=min"}
+Number   Weather_Temp_Max_owm         "Temperature max [%.2f °C]"  (gWeather_Temperature_owm)  {weather="locationId=owm, type=temperature, property=max"}
+//String   Weather_Temp_MinMax_owm      "Min/Max [%s °C]"            (gWeather_Temperature_owm)  {weather="locationId=owm, type=temperature, property=minMax"}
+
+// wind
+Number   Weather_Wind_Speed_owm           "Windgeschwindigkeit [%.2f km/h]"  (gWeather_Wind_owm)    {weather="locationId=owm, type=wind, property=speed"}
+String   Weather_Wind_Direction_owm       "Windrichtung [%s]"  <compass>  (gWeather_Wind_owm)    {weather="locationId=owm, type=wind, property=direction"}
+Number   Weather_Wind_Degree_owm         "Windrichtung in Grad [%.0f °]"   (gWeather_Wind_owm)    {weather="locationId=owm, type=wind, property=degree"}
+//Number   Weather_Wind_Gust_owm            "Böen [%.2f km/h]"  (gWeather_Wind_owm)    {weather="locationId=owm, type=wind, property=gust"}
+//Number   Weather_Wind_Chill_owm           "Wind chill [%.2f °C]"   (gWeather_Wind_owm)    {weather="locationId=owm, type=wind, property=chill"}
+
+// weather station (only Wunderground and Hamweather), needs version 1.7 or greater of the binding
+String   Weather_Station_Name_owm         "Station am Grazer Platz [%s]"   <house>     (gWeather_Station_owm)  {weather="locationId=owm, type=station, property=name"}
+//String   Weather_Station_Id_owm           "Station Id [%s]"          (gWeather_Station_owm)    {weather="locationId=owm, type=station, property=id"}
+Number   Weather_Station_Latitude_owm     "Station Latitude [%.6f]" <location> (gWeather_Station_owm)    {weather="locationId=owm, type=station, property=latitude, scale=6"}
+Number   Weather_Station_Longitude_owm    "Station Longitude [%.6f]" <location> (gWeather_Station_owm)   {weather="locationId=owm, type=station, property=longitude, scale=6"}
+
+

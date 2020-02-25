@@ -1,0 +1,261 @@
+
+
+// String mqOfficePack  "incoming" { mqtt="<[mqttBroker:sensor/officePack/state:state:default]" }
+// String mqOfficePackSet  "outgoing" { mqtt=">[mqttBroker:sensor/officePack/set:state:*:default]" }
+
+// smalle1 sitzt vor dem Ender 
+/*
+tasmota/smalle1/tele/STATE {"Time":"2019-09-24T21:12:26","Uptime":"0T00:50:17","Heap":15,"SleepMode":"Dynamic","Sleep":50,"LoadAvg":19,"POWER1":"ON","POWER2":"ON","Wifi":{"AP":1,"SSId":"orgon","BSSId":"6C:B0:CE:1C:2E:A9","Channel":2,"RSSI":100,"LinkCount":1,"Downtime":"0T00:00:03"}}
+tasmota/smalle1/tele/SENSOR {"Time":"2019-09-24T21:12:26","ENERGY":{"TotalStartTime":"2019-09-23T15:31:03","Total":0.007,"Yesterday":0.000,"Today":0.007,"Period":0,"Power":0,"ApparentPower":0,"ReactivePower":0,"Factor":0.00,"Voltage":219,"Current":0.000}}
+tasmota/smalle4/stat/RESULT
+
+Gosund SP 112       
+
+
+                            {channel=""}
+
+*/
+String mqSmalle1Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm1Rslt"}
+String mqSmalle1Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm1Snsr"}
+String mqSmalle1Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm1Cmd1"}
+String mqSmalle1Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm1Cmd2"}
+Switch smalle1Power1
+Switch smalle1Power2
+DateTime smalle1TotalSince
+Number smalle1Total
+Number smalle1Yesterday
+Number smalle1Today
+Number smalle1Period
+Number smalle1PowerVal
+Number smalle1Apparent
+Number smalle1Reactive
+Number smalle1Factor
+Number smalle1Voltage
+Number smalle1Current
+
+
+String mqSmalle2Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm2Rslt"}
+String mqSmalle2Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm2Snsr"}
+String mqSmalle2Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm2Cmd1"}
+String mqSmalle2Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm2Cmd1"}
+Switch smalle2Power1
+Switch smalle2Power2
+DateTime smalle2TotalSince
+Number smalle2Total
+Number smalle2Yesterday
+Number smalle2Today
+Number smalle2Period
+Number smalle2PowerVal
+Number smalle2Apparent
+Number smalle2Reactive
+Number smalle2Factor
+Number smalle2Voltage
+Number smalle2Current
+
+String mqSmalle3Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm3Rslt"}
+String mqSmalle3Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm3Snsr"}
+String mqSmalle3Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm3Cmd1"}
+String mqSmalle3Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm3Cmd2"}
+Switch smalle3Power1
+Switch smalle3Power2
+DateTime smalle3TotalSince
+Number smalle3Total
+Number smalle3Yesterday
+Number smalle3Today
+Number smalle3Period
+Number smalle3PowerVal
+Number smalle3Apparent
+Number smalle3Reactive
+Number smalle3Factor
+Number smalle3Voltage
+Number smalle3Current
+
+String mqSmalle4Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm4Rslt"}
+String mqSmalle4Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm4Snsr"}
+String mqSmalle4Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm4Cmd1"}
+String mqSmalle4Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm4Cmd2"}
+Switch smalle4Power1
+Switch smalle4Power2
+DateTime smalle4TotalSince
+Number smalle4Total
+Number smalle4Yesterday
+Number smalle4Today
+Number smalle4Period
+Number smalle4PowerVal
+Number smalle4Apparent
+Number smalle4Reactive
+Number smalle4Factor
+Number smalle4Voltage
+Number smalle4Current
+
+// gosund sp 111                                {channel=""}
+
+// smalle5 Ender
+String mqSmalle5Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm5Rslt"}
+String mqSmalle5Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm5Snsr"}
+String mqSmalle5Cmd "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm5Cmd"}
+
+Switch smalle5Power
+DateTime smalle5TotalSince
+Number smalle5Total
+Number smalle5Yesterday
+Number smalle5Today
+Number smalle5Period
+Number smalle5PowerVal
+Number smalle5Apparent
+Number smalle5Reactive
+Number smalle5Factor
+Number smalle5Voltage
+Number smalle5Current
+
+
+// smalle6 Spülmaschine
+String mqSmalle6Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm6Rslt"}
+String mqSmalle6Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm6Cmd"}
+String mqSmalle6Cmd "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm6Cmd"}
+
+Switch smalle6Power
+DateTime smalle6TotalSince
+Number smalle6Total
+Number smalle6Yesterday
+Number smalle6Today
+Number smalle6Period
+Number smalle6PowerVal
+Number smalle6Apparent
+Number smalle6Reactive
+Number smalle6Factor
+Number smalle6Voltage
+Number smalle6Current
+
+
+// smalle7 Waschmaschine
+String mqSmalle7Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm7Rslt"}
+String mqSmalle7Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm7Snsr"}
+String mqSmalle7Cmd "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm7Cmd"}
+
+Switch smalle7Power
+DateTime smalle7TotalSince
+Number smalle7Total
+Number smalle7Yesterday
+Number smalle7Today
+Number smalle7Period
+Number smalle7PowerVal
+Number smalle7Apparent
+Number smalle7Reactive
+Number smalle7Factor
+Number smalle7Voltage
+Number smalle7Current
+
+
+// smalle8 Kühlschrank etc
+String mqSmalle8Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm8Rslt"}
+String mqSmalle8Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm8Snsr"}
+String mqSmalle8Cmd "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm8Cmd"}
+
+Switch smalle8Power
+DateTime smalle8TotalSince
+Number smalle8Total
+Number smalle8Yesterday
+Number smalle8Today
+Number smalle8Period
+Number smalle8PowerVal
+Number smalle8Apparent
+Number smalle8Reactive
+Number smalle8Factor
+Number smalle8Voltage
+Number smalle8Current
+
+
+String mqSmalle9Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm9Rslt"}
+String mqSmalle9Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm9Snsr"}
+String mqSmalle9Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm9Cmd1"}
+String mqSmalle9Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm9Cmd2"}
+Switch smalle9Power1
+Switch smalle9Power2
+DateTime smalle9TotalSince
+Number smalle9Total
+Number smalle9Yesterday
+Number smalle9Today
+Number smalle9Period
+Number smalle9PowerVal
+Number smalle9Apparent
+Number smalle9Reactive
+Number smalle9Factor
+Number smalle9Voltage
+Number smalle9Current
+
+String mqSmalle10Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm10Rslt"}
+String mqSmalle10Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm10Snsr"}
+String mqSmalle10Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm10Cmd1"}
+String mqSmalle10Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm10Cmd2"}
+Switch smalle10Power1
+Switch smalle10Power2
+DateTime smalle10TotalSince
+Number smalle10Total
+Number smalle10Yesterday
+Number smalle10Today
+Number smalle10Period
+Number smalle10PowerVal
+Number smalle10Apparent
+Number smalle10Reactive
+Number smalle10Factor
+Number smalle10Voltage
+Number smalle10Current
+
+String mqSmalle11Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm11Rslt"}
+String mqSmalle11Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm11Snsr"}
+String mqSmalle11Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm11Cmd1"}
+String mqSmalle11Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm11Cmd2"}
+Switch smalle11Power1
+Switch smalle11Power2
+DateTime smalle11TotalSince
+Number smalle11Total
+Number smalle11Yesterday
+Number smalle11Today
+Number smalle11Period
+Number smalle11PowerVal
+Number smalle11Apparent
+Number smalle11Reactive
+Number smalle11Factor
+Number smalle11Voltage
+Number smalle11Current
+
+String mqSmalle12Result "incoming change" {channel="mqtt:topic:mqBroker:tasmota:sm12Rslt"}
+String mqSmalle12Sensor "incoming measurements" {channel="mqtt:topic:mqBroker:tasmota:sm12Snsr"}
+String mqSmalle12Cmd1 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm12Cmd1"}
+String mqSmalle12Cmd2 "outgoing" {channel="mqtt:topic:mqBroker:tasmota:sm12Cmd2"}
+Switch smalle12Power1
+Switch smalle12Power2
+DateTime smalle12TotalSince
+Number smalle12Total
+Number smalle12Yesterday
+Number smalle12Today
+Number smalle12Period
+Number smalle12PowerVal
+Number smalle12Apparent
+Number smalle12Reactive
+Number smalle12Factor
+Number smalle12Voltage
+Number smalle12Current
+
+/*
+// device is not active yet
+
+String mqSmalle13Result "incoming change" {channel=""}
+String mqSmalle13Sensor "incoming measurements" {channel=""}
+String mqSmalle13Cmd "outgoing" {channel=""}
+
+Switch smalle13Power
+DateTime smalle13TotalSince
+Number smalle13Total
+Number smalle13Yesterday
+Number smalle13Today
+Number smalle13Period
+Number smalle13PowerVal
+Number smalle13Apparent
+Number smalle13Reactive
+Number smalle13Factor
+Number smalle13Voltage
+Number smalle13Current
+
+*/

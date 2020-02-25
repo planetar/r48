@@ -1,0 +1,1235 @@
+// smalle1 
+
+
+// switch -> cmd
+rule "triggered by smalle1Power1 changed"
+when Item smalle1Power1 changed
+then
+    var String newState = smalle1Power1.state.toString()
+    mqSmalle1Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle1Power2 changed"
+when Item smalle1Power2 changed
+then
+    var String newState = smalle1Power2.state.toString()
+    mqSmalle1Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle1Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle1Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle1Power1.sendCommand(ovar)
+    } else if (mqSmalle1Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle1Power2.sendCommand(ovar)
+    }
+end
+
+
+
+// Sensor ->
+
+// mqSmalle1Sensor (Type=StringItem, State={"Time":"2019-09-25T12:57:05","ENERGY":{"TotalStartTime":"2019-09-23T15:31:03","Total":0.054,"Yesterday":0.010,"Today":0.044,"Period":0,"Power":4,"ApparentPower":9,"ReactivePower":8,"Factor":0.42,"Voltage":222,"Current":0.040}}, Label=incoming measurements, Category=null)
+rule "triggered by mqSmalle1Sensor changed"
+when Item mqSmalle1Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle1Sensor.state as StringType).toString
+
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle1 Leistung: "+ovar)
+        smalle1PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   //   logInfo("smalle","smalle1 Scheinleistung: "+ovar)
+        smalle1Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle1 ReactivePower: "+ovar)
+        smalle1Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle1 Faktor: "+ovar)
+        smalle1Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle1 Spannung: "+ovar)
+        smalle1Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle1 Strom: "+ovar)
+        smalle1Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle1 Gesamtleistung: "+ovar)
+        smalle1Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle1 gestern: "+ovar)
+        smalle1Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle1 heute: "+ovar)
+        smalle1Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle1 Zeitraum: "+ovar)
+        smalle1Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle1TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle1 seit: "+ovar)
+
+
+    }
+
+end
+
+// smalle 2  Clara Audio
+
+// switch -> cmd
+rule "triggered by smalle2Power1 changed"
+when Item smalle2Power1 changed
+then
+    var String newState = smalle2Power1.state.toString()
+    mqSmalle2Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle2Power2 changed"
+when Item smalle2Power2 changed
+then
+    var String newState = smalle2Power2.state.toString()
+    mqSmalle2Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle2Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle2Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle2Power1.sendCommand(ovar)
+    } else if (mqSmalle2Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle2Power2.sendCommand(ovar)
+    }
+end
+
+
+
+
+rule "triggered by mqSmalle2Sensor changed"
+when Item mqSmalle2Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle2Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle2 Leistung: "+ovar)
+        smalle2PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle2 Scheinleistung: "+ovar)
+        smalle2Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle2 ReactivePower: "+ovar)
+        smalle2Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle2 Faktor: "+ovar)
+        smalle2Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle2 Spannung: "+ovar)
+        smalle2Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle2 Strom: "+ovar)
+        smalle2Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle2 Gesamtleistung: "+ovar)
+        smalle2Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle2 gestern: "+ovar)
+        smalle2Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle2 heute: "+ovar)
+        smalle2Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle2 Zeitraum: "+ovar)
+        smalle2Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle2TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle2 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle3  SK restart fk, bk
+
+// switch -> cmd
+rule "triggered by smalle3Power1 changed"
+when Item smalle3Power1 changed
+then
+    var String newState = smalle3Power1.state.toString()
+    mqSmalle3Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle3Power2 changed"
+when Item smalle3Power2 changed
+then
+    var String newState = smalle3Power2.state.toString()
+    mqSmalle3Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle3Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle3Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle3Power1.sendCommand(ovar)
+    } else if (mqSmalle3Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle3Power2.sendCommand(ovar)
+    }
+end
+
+
+
+
+rule "triggered by mqSmalle3Sensor changed"
+when Item mqSmalle3Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle3Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle3 Leistung: "+ovar)
+        smalle3PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle3 Scheinleistung: "+ovar)
+        smalle3Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle3 ReactivePower: "+ovar)
+        smalle3Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle3 Faktor: "+ovar)
+        smalle3Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle3 Spannung: "+ovar)
+        smalle3Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle3 Strom: "+ovar)
+        smalle3Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle3 Gesamtleistung: "+ovar)
+        smalle3Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle3 gestern: "+ovar)
+        smalle3Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle3 heute: "+ovar)
+        smalle3Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle3 Zeitraum: "+ovar)
+        smalle3Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle3TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle3 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle4  office Audio, usb Luftdaten
+
+// switch -> cmd
+rule "triggered by smalle4Power1 changed"
+when Item smalle4Power1 changed
+then
+    var String newState = smalle4Power1.state.toString()
+    mqSmalle4Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle4Power2 changed"
+when Item smalle4Power2 changed
+then
+    var String newState = smalle4Power2.state.toString()
+    mqSmalle4Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle4Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle4Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle4Power1.sendCommand(ovar)
+    } else if (mqSmalle4Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle4Power2.sendCommand(ovar)
+    }
+end
+
+
+rule "triggered by mqSmalle4Sensor changed"
+when Item mqSmalle4Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle4Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle4 Leistung: "+ovar)
+        smalle4PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle4 Scheinleistung: "+ovar)
+        smalle4Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle4 ReactivePower: "+ovar)
+        smalle4Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle4 Faktor: "+ovar)
+        smalle4Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle4 Spannung: "+ovar)
+        smalle4Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle4 Strom: "+ovar)
+        smalle4Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle4 Gesamtleistung: "+ovar)
+        smalle4Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle4 gestern: "+ovar)
+        smalle4Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle4 heute: "+ovar)
+        smalle4Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle4 Zeitraum: "+ovar)
+        smalle4Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle4TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle4 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle5 Ender
+
+// switch -> cmd
+rule "triggered by smalle5Power changed"
+when Item smalle5Power changed
+then
+    var String newState = smalle5Power.state.toString()
+    mqSmalle5Cmd.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle5Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle5Result.state as StringType).toString
+    if (jsor.contains("POWER")){
+        ovar = transform("JSONPATH", "$.POWER", jsor)
+        smalle5Power.sendCommand(ovar)
+    } 
+end
+
+
+rule "triggered by mqSmalle5Sensor changed"
+when Item mqSmalle5Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle5Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle5 Leistung: "+ovar)
+        smalle5PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle5 Scheinleistung: "+ovar)
+        smalle5Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle5 ReactivePower: "+ovar)
+        smalle5Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle5 Faktor: "+ovar)
+        smalle5Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle5 Spannung: "+ovar)
+        smalle5Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle5 Strom: "+ovar)
+        smalle5Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle5 Gesamtleistung: "+ovar)
+        smalle5Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle5 gestern: "+ovar)
+        smalle5Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle5 heute: "+ovar)
+        smalle5Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle5 Zeitraum: "+ovar)
+        smalle5Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle5TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle5 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle6 Spülmaschine
+
+// switch -> cmd
+rule "triggered by smalle6Power changed"
+when Item smalle6Power changed
+then
+    var String newState = smalle6Power.state.toString()
+    mqSmalle6Cmd.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle6Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle6Result.state as StringType).toString
+    if (jsor.contains("POWER")){
+        ovar = transform("JSONPATH", "$.POWER", jsor)
+        smalle6Power.sendCommand(ovar)
+    } 
+end
+
+
+rule "triggered by mqSmalle6Sensor changed"
+when Item mqSmalle6Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle6Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle6 Leistung: "+ovar)
+        smalle6PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle6 Scheinleistung: "+ovar)
+        smalle6Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle6 ReactivePower: "+ovar)
+        smalle6Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle6 Faktor: "+ovar)
+        smalle6Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle6 Spannung: "+ovar)
+        smalle6Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle6 Strom: "+ovar)
+        smalle6Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle6 Gesamtleistung: "+ovar)
+        smalle6Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle6 gestern: "+ovar)
+        smalle6Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle6 heute: "+ovar)
+        smalle6Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle6 Zeitraum: "+ovar)
+        smalle6Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle6TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle6 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle7 Waschmaschine
+
+// switch -> cmd
+rule "triggered by smalle7Power changed"
+when Item smalle7Power changed
+then
+    var String newState = smalle7Power.state.toString()
+    mqSmalle7Cmd.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle7Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle7Result.state as StringType).toString
+    if (jsor.contains("POWER")){
+        ovar = transform("JSONPATH", "$.POWER", jsor)
+        smalle7Power.sendCommand(ovar)
+    } 
+end
+
+
+rule "triggered by mqSmalle7Sensor changed"
+when Item mqSmalle7Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle7Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle7 Leistung: "+ovar)
+        smalle7PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle7 Scheinleistung: "+ovar)
+        smalle7Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle7 ReactivePower: "+ovar)
+        smalle7Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle7 Faktor: "+ovar)
+        smalle7Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle7 Spannung: "+ovar)
+        smalle7Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle7 Strom: "+ovar)
+        smalle7Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle7 Gesamtleistung: "+ovar)
+        smalle7Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle7 gestern: "+ovar)
+        smalle7Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle7 heute: "+ovar)
+        smalle7Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle7 Zeitraum: "+ovar)
+        smalle7Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle7TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle7 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle8 Kühlschrank
+
+// switch -> cmd
+rule "triggered by smalle8Power changed"
+when Item smalle8Power changed
+then
+    var String newState = smalle8Power.state.toString()
+    mqSmalle8Cmd.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle8Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle8Result.state as StringType).toString
+    if (jsor.contains("POWER")){
+        ovar = transform("JSONPATH", "$.POWER", jsor)
+        smalle8Power.sendCommand(ovar)
+    } 
+end
+
+
+rule "triggered by mqSmalle8Sensor changed"
+when Item mqSmalle8Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle8Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle8 Leistung: "+ovar)
+        smalle8PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle8 Scheinleistung: "+ovar)
+        smalle8Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle8 ReactivePower: "+ovar)
+        smalle8Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle8 Faktor: "+ovar)
+        smalle8Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle8 Spannung: "+ovar)
+        smalle8Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle8 Strom: "+ovar)
+        smalle8Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle8 Gesamtleistung: "+ovar)
+        smalle8Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle8 gestern: "+ovar)
+        smalle8Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle8 heute: "+ovar)
+        smalle8Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle8 Zeitraum: "+ovar)
+        smalle8Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle8TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle8 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// Gosund SP 112 
+// smalle9 
+
+
+// switch -> cmd
+rule "triggered by smalle9Power1 changed"
+when Item smalle9Power1 changed
+then
+    var String newState = smalle9Power1.state.toString()
+    mqSmalle9Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle9Power2 changed"
+when Item smalle9Power2 changed
+then
+    var String newState = smalle9Power2.state.toString()
+    mqSmalle9Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle9Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle9Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle9Power1.sendCommand(ovar)
+    } else if (mqSmalle9Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle9Power2.sendCommand(ovar)
+    }
+end
+
+
+
+// Sensor ->
+
+// mqSmalle9Sensor (Type=StringItem, State={"Time":"2019-09-25T12:57:05","ENERGY":{"TotalStartTime":"2019-09-23T15:31:03","Total":0.054,"Yesterday":0.010,"Today":0.044,"Period":0,"Power":4,"ApparentPower":9,"ReactivePower":8,"Factor":0.42,"Voltage":222,"Current":0.040}}, Label=incoming measurements, Category=null)
+rule "triggered by mqSmalle9Sensor changed"
+when Item mqSmalle9Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle9Sensor.state as StringType).toString
+
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle9 Leistung: "+ovar)
+        smalle9PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   //   logInfo("smalle","smalle9 Scheinleistung: "+ovar)
+        smalle9Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle9 ReactivePower: "+ovar)
+        smalle9Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle9 Faktor: "+ovar)
+        smalle9Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle9 Spannung: "+ovar)
+        smalle9Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle9 Strom: "+ovar)
+        smalle9Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle9 Gesamtleistung: "+ovar)
+        smalle9Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle9 gestern: "+ovar)
+        smalle9Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle9 heute: "+ovar)
+        smalle9Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle9 Zeitraum: "+ovar)
+        smalle9Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle9TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle9 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle10 
+
+
+// switch -> cmd
+rule "triggered by smalle10Power1 changed"
+when Item smalle10Power1 changed
+then
+    var String newState = smalle10Power1.state.toString()
+    mqSmalle10Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle10Power2 changed"
+when Item smalle10Power2 changed
+then
+    var String newState = smalle10Power2.state.toString()
+    mqSmalle10Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle10Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle10Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle10Power1.sendCommand(ovar)
+    } else if (mqSmalle10Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle10Power2.sendCommand(ovar)
+    }
+end
+
+
+
+// Sensor ->
+
+// mqSmalle10Sensor (Type=StringItem, State={"Time":"2019-09-25T12:57:05","ENERGY":{"TotalStartTime":"2019-09-23T15:31:03","Total":0.054,"Yesterday":0.010,"Today":0.044,"Period":0,"Power":4,"ApparentPower":9,"ReactivePower":8,"Factor":0.42,"Voltage":222,"Current":0.040}}, Label=incoming measurements, Category=null)
+rule "triggered by mqSmalle10Sensor changed"
+when Item mqSmalle10Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle10Sensor.state as StringType).toString
+
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+           //logInfo("smalle","smalle10 Leistung: "+ovar)
+        smalle10PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   //   logInfo("smalle","smalle10 Scheinleistung: "+ovar)
+        smalle10Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle10 ReactivePower: "+ovar)
+        smalle10Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle10 Faktor: "+ovar)
+        smalle10Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle10 Spannung: "+ovar)
+        smalle10Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle10 Strom: "+ovar)
+        smalle10Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle10 Gesamtleistung: "+ovar)
+        smalle10Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle10 gestern: "+ovar)
+        smalle10Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle10 heute: "+ovar)
+        smalle10Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle10 Zeitraum: "+ovar)
+        smalle10Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle10TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle10 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle11 
+
+
+// switch -> cmd
+rule "triggered by smalle11Power1 changed"
+when Item smalle11Power1 changed
+then
+    var String newState = smalle11Power1.state.toString()
+    mqSmalle11Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle11Power2 changed"
+when Item smalle11Power2 changed
+then
+    var String newState = smalle11Power2.state.toString()
+    mqSmalle11Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle11Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle11Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle11Power1.sendCommand(ovar)
+    } else if (mqSmalle11Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle11Power2.sendCommand(ovar)
+    }
+end
+
+
+
+// Sensor ->
+
+// mqSmalle11Sensor (Type=StringItem, State={"Time":"2019-09-25T12:57:05","ENERGY":{"TotalStartTime":"2019-09-23T15:31:03","Total":0.054,"Yesterday":0.010,"Today":0.044,"Period":0,"Power":4,"ApparentPower":9,"ReactivePower":8,"Factor":0.42,"Voltage":222,"Current":0.040}}, Label=incoming measurements, Category=null)
+rule "triggered by mqSmalle11Sensor changed"
+when Item mqSmalle11Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle11Sensor.state as StringType).toString
+
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle11 Leistung: "+ovar)
+        smalle11PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   //   logInfo("smalle","smalle11 Scheinleistung: "+ovar)
+        smalle11Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle11 ReactivePower: "+ovar)
+        smalle11Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle11 Faktor: "+ovar)
+        smalle11Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle11 Spannung: "+ovar)
+        smalle11Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle11 Strom: "+ovar)
+        smalle11Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle11 Gesamtleistung: "+ovar)
+        smalle11Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle11 gestern: "+ovar)
+        smalle11Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle11 heute: "+ovar)
+        smalle11Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle11 Zeitraum: "+ovar)
+        smalle11Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle11TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle11 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// smalle12 
+
+
+// switch -> cmd
+rule "triggered by smalle12Power1 changed"
+when Item smalle12Power1 changed
+then
+    var String newState = smalle12Power1.state.toString()
+    mqSmalle12Cmd1.sendCommand(newState)
+end
+
+rule "triggered by smalle12Power2 changed"
+when Item smalle12Power2 changed
+then
+    var String newState = smalle12Power2.state.toString()
+    mqSmalle12Cmd2.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle12Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle12Result.state as StringType).toString
+    if (jsor.contains("POWER1")){
+        ovar = transform("JSONPATH", "$.POWER1", jsor)
+        smalle12Power1.sendCommand(ovar)
+    } else if (mqSmalle12Result.state.toString().contains("POWER2")){
+        ovar = transform("JSONPATH", "$.POWER2", jsor)
+        smalle12Power2.sendCommand(ovar)
+    }
+end
+
+
+
+// Sensor ->
+
+// mqSmalle12Sensor (Type=StringItem, State={"Time":"2019-09-25T12:57:05","ENERGY":{"TotalStartTime":"2019-09-23T15:31:03","Total":0.054,"Yesterday":0.010,"Today":0.044,"Period":0,"Power":4,"ApparentPower":9,"ReactivePower":8,"Factor":0.42,"Voltage":222,"Current":0.040}}, Label=incoming measurements, Category=null)
+rule "triggered by mqSmalle12Sensor changed"
+when Item mqSmalle12Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle12Sensor.state as StringType).toString
+
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle12 Leistung: "+ovar)
+        smalle12PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   //   logInfo("smalle","smalle12 Scheinleistung: "+ovar)
+        smalle12Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle12 ReactivePower: "+ovar)
+        smalle12Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle12 Faktor: "+ovar)
+        smalle12Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle12 Spannung: "+ovar)
+        smalle12Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle12 Strom: "+ovar)
+        smalle12Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle12 Gesamtleistung: "+ovar)
+        smalle12Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle12 gestern: "+ovar)
+        smalle12Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle12 heute: "+ovar)
+        smalle12Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle12 Zeitraum: "+ovar)
+        smalle12Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle12TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle12 seit: "+ovar)
+
+
+    }
+
+end
+
+
+// Sonoff Basic
+// smalle13 - unbenutzt
+
+// switch -> cmd
+rule "triggered by smalle13Power changed"
+when Item smalle13Power changed
+then
+    var String newState = smalle13Power.state.toString()
+    mqSmalle13Cmd.sendCommand(newState)
+end
+
+
+// RESULT -> Switch
+rule "triggered by mqSmalle13Result changed"
+when Item mqRESULT changed
+then
+    var String jsor
+    var String ovar
+    jsor = (mqSmalle13Result.state as StringType).toString
+    if (jsor.contains("POWER")){
+        ovar = transform("JSONPATH", "$.POWER", jsor)
+        smalle13Power.sendCommand(ovar)
+    } 
+end
+
+
+rule "triggered by mqSmalle13Sensor changed"
+when Item mqSmalle13Sensor changed
+then
+    var String jsor
+    var String ovar
+
+    jsor = (mqSmalle13Sensor.state as StringType).toString
+    
+    if (jsor.contains("ENERGY")){
+
+        ovar = transform("JSONPATH", "$.ENERGY.Power", jsor)
+        //   logInfo("smalle","smalle13 Leistung: "+ovar)
+        smalle13PowerVal.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ApparentPower", jsor)
+        //   logInfo("smalle","smalle13 Scheinleistung: "+ovar)
+        smalle13Apparent.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.ReactivePower", jsor)
+        //   logInfo("smalle","smalle13 ReactivePower: "+ovar)
+        smalle13Reactive.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Factor", jsor)
+        //   logInfo("smalle","smalle13 Faktor: "+ovar)
+        smalle13Factor.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Voltage", jsor)
+        //   logInfo("smalle","smalle13 Spannung: "+ovar)
+        smalle13Voltage.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Current", jsor)
+        //   logInfo("smalle","smalle13 Strom: "+ovar)
+        smalle13Current.postUpdate(ovar)
+
+        ovar = transform("JSONPATH", "$.ENERGY.Total", jsor)
+        //   logInfo("smalle","smalle13 Gesamtleistung: "+ovar)
+        smalle13Total.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Yesterday", jsor)
+        //   logInfo("smalle","smalle13 gestern: "+ovar)
+        smalle13Yesterday.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Today", jsor)
+        //   logInfo("smalle","smalle13 heute: "+ovar)
+        smalle13Today.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.Period", jsor)
+        //   logInfo("smalle","smalle13 Zeitraum: "+ovar)
+        smalle13Period.postUpdate(ovar)
+        
+        ovar = transform("JSONPATH", "$.ENERGY.TotalStartTime", jsor)
+        smalle13TotalSince.postUpdate(ovar)
+        //   logInfo("smalle","smalle13 seit: "+ovar)
+
+
+    }
+
+end
+
+
+
+/*
+
+Number smalle1Apparent
+Number smalle1Reactive
+Number smalle1Factor
+Number smalle1Voltage
+Number smalle1Current
+
+
+
+
+var String jsor
+      var String oval
+
+      jsor = (mqLuftdaten.state as StringType).toString
+
+      oval  = transform("JSONPATH", "$.sensor_feinstaub_pressure", jsor)
+      sensor_feinstaub_pressure.postUpdate(oval)
+*/

@@ -1,0 +1,87 @@
+/*
+    zwischen cycle.rules und pir.rules gibt es Zwist, wer für die Farbgebung zuständig sei
+    hier gibt es eine Reihe virtuelle Items, die farb/Brightness-Werte für aktive elemente halten
+    und zwar in Stati: active _act   passive  _pas  und away _weg
+
+    cycle.rules stoesst die Zuweisung der Farb/Bright-Werte an die coloring.items an
+    coloring.rules tabelliert die konkreten Werte
+    pir.rules uebernimmt die Zuweisung von colorings an konkrete items
+
+*/
+
+Number Flag_reColoring
+String reColor
+//String reBuild
+
+// Color items
+Color editColor 
+String editPhase
+String editMember
+String editState
+Switch editSave
+Switch editLoad
+
+Color flurGoColor_act "" <light> (gColoring)
+Color flurGoColor_pas "" <light> (gColoring)
+Color flurGoColor_weg "" <light> (gColoring)
+
+Color flurStripColor_act "" <light> (gColoring)
+Color flurStripColor_pas "" <light> (gColoring)
+Color flurStripColor_weg "" <light> (gColoring)
+
+Color mediStripColor_act "" <light> (gColoring)
+Color mediStripColor_pas "" <light> (gColoring)
+Color mediStripColor_weg "" <light> (gColoring)
+
+Color badStripColor_act "" <light> (gColoring)
+Color badStripColor_pas "" <light> (gColoring)
+Color badStripColor_weg "" <light> (gColoring)
+
+Color kuecheStripColor_act "" <light> (gColoring)
+Color kuecheStripColor_pas "" <light> (gColoring)
+Color kuecheStripColor_weg "" <light> (gColoring)
+
+Color girSKStripColor_act "" <light> (gColoring)
+Color girSKStripColor_pas "" <light> (gColoring)
+Color girSKStripColor_weg "" <light> (gColoring)
+
+// akt. können tradfri Color items nicht korrekt verwaltet werden
+// insoweit ist dies nur ein placeholder
+Color bedSKColor_act "" <light> (gColoring)
+Color bedSKColor_pas "" <light> (gColoring)
+Color bedSKColor_weg "" <light> (gColoring)
+
+
+// dimmer items
+Dimmer wlBadKante_act "" <light> (gColoring)
+Dimmer wlBadKante_pas "" <light> (gColoring)
+Dimmer wlBadKante_weg "" <light> (gColoring)
+
+Dimmer wlFlurKante_act "" <light> (gColoring)
+Dimmer wlFlurKante_pas "" <light> (gColoring)
+Dimmer wlFlurKante_weg "" <light> (gColoring)
+
+Dimmer wlKuecheStrip_act "" <light> (gColoring)
+Dimmer wlKuecheStrip_pas "" <light> (gColoring)
+Dimmer wlKuecheStrip_weg "" <light> (gColoring)
+
+Dimmer tfOfficeLight_act "" <light> (gColoring)
+Dimmer tfOfficeLight_pas "" <light> (gColoring)
+Dimmer tfOfficeLight_weg "" <light> (gColoring)
+
+Dimmer tfOfficePanel_act "" <light> (gColoring)
+Dimmer tfOfficePanel_pas "" <light> (gColoring)
+Dimmer tfOfficePanel_weg "" <light> (gColoring)
+
+Dimmer tfOfficeKlar_act "" <light> (gColoring)
+Dimmer tfOfficeKlar_pas "" <light> (gColoring)
+Dimmer tfOfficeKlar_weg "" <light> (gColoring)
+
+Dimmer tfBadSpot_act "" <light> (gColoring)
+Dimmer tfBadSpot_pas "" <light> (gColoring)
+Dimmer tfBadSpot_weg "" <light> (gColoring)
+
+Dimmer tfSKSpot_act "" <light> (gColoring)
+Dimmer tfSKSpot_pas "" <light> (gColoring)
+Dimmer tfSKSpot_weg "" <light> (gColoring)
+

@@ -1,0 +1,33 @@
+Group  gSteckdosen "Steckdosen" <poweroutlet> (r48)
+
+String steckdose16Switch "QuailBad"  <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose16-control:input", channel="exec:command:steckdose16-status:output", autoupdate="true" }
+String steckdose08Switch "QuailBett"    <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose08-control:input", channel="exec:command:steckdose08-status:output", autoupdate="true" }
+
+String steckdose07Switch "QuailMedi"     <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose07-control:input",channel="exec:command:steckdose07-status:output", autoupdate="true" }
+String steckdose06Switch "QuailKueche"  <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose06-control:input", channel="exec:command:steckdose06-status:output",  autoupdate="true" }
+String steckdose05Switch "QuailFlur"    <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose05-control:input", channel="exec:command:steckdose05-status:output", autoupdate="true" }
+
+String steckdose04Switch "WetterStation"  <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose04-control:input", channel="exec:command:steckdose04-status:output", autoupdate="true" }
+String steckdose03Switch "BalkonLicht"  <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose03-control:input", channel="exec:command:steckdose03-status:output", autoupdate="true" }
+String steckdose02Switch "FensterLicht" <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose02-control:input", channel="exec:command:steckdose02-status:output", autoupdate="true" }
+String steckdose01Switch "BuddhaLicht"  <poweroutlet> (gSteckdosen) [ "Switchable" ] { channel="exec:command:steckdose01-control:input", channel="exec:command:steckdose01-status:output", autoupdate="true" }
+
+/*
+// ghoma blinkt und der Aufruf sagt Not found  -  auskommentiert, um log-Spam zu stoppen
+Switch steckdose_ghoma_01	"G-Homa Socket 1"	{ http=">[ON:GET:http://192.168.50.48:3000/on/710afa] >[OFF:GET:http://192.168.50.48:3000/off/710afa] <[http://192.168.50.48:3000/state/710afa:60000:MAP(onoff.map)]" }
+*/
+
+
+
+/*
+Group  gFSD "Steckdosen" <poweroutlet>
+Switch FSD16Switch "QuailOffice"  <poweroutlet> (gFSD, gOffice) [ "Switchable" ] { channel="exec:command:steckdose16-control:input", channel="exec:command:steckdose16-status:output", autoupdate="true" }
+Switch FSD08Switch "QuailFlur"  <poweroutlet> (gFSD, gSchlafkammer) [ "Switchable" ] { channel="exec:command:steckdose08-control:input", channel="exec:command:steckdose08-status:output", autoupdate="true" }
+
+
+
+Switch FSD04Switch "Kammerlicht"    <poweroutlet> (gFSD, gKueche) [ "Switchable" ] { channel="exec:command:steckdose04-control:input", channel="exec:command:steckdose04-status:output", autoupdate="true" }
+Switch FSD03Switch "BalkonLicht"  <poweroutlet> (gFSD, gBalkon) [ "Switchable" ] { channel="exec:command:steckdose03-control:input", channel="exec:command:steckdose03-status:output", autoupdate="true" }
+Switch FSD02Switch "FensterLicht" <poweroutlet> (gFSD,gSchlafkammer) [ "Switchable" ] { channel="exec:command:steckdose02-control:input", channel="exec:command:steckdose02-status:output", autoupdate="true" }
+Switch FSD01Switch "BuddhaLicht"  <poweroutlet> (gFSD,gSchlafkammer) [ "Switchable" ] { channel="exec:command:steckdose01-control:input", channel="exec:command:steckdose01-status:output", autoupdate="true" }
+*/

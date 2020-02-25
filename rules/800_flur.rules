@@ -1,0 +1,375 @@
+/*
+    //
+*/
+
+
+/*
+//das käme vom flur-Light/Pir/multi-sensor poak01
+// Werte 0 bis 3, flurIntense für 3,5, 8 minuten
+// kleines extra: wenn abgelaufen, soll das poak01 im control-byte signlisiert werden, 
+// damit das teil die LED wieder zurücksetzt, wenn die Wirkung im Realen beendet ist.
+
+Number flurSonderWunsch "flurIntense-Selector"
+
+Number flurLightLevel
+
+Number binState_Flur
+
+//
+Number hueDimmerSwitchButton "button [%d]" <wallswitch>
+DateTime hueDimmerSwitchButtonLastChange "last change [%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS]" <time> 
+
+// r48.items dash.rule pir.rules 
+Switch IntenseFlur "Flur Hell" (gFlur) [ "Switchable" ] { expire="2m,command=OFF" } 
+
+
+if(bettreifTimer3 === null) {
+            logInfo("bettreifTimer", "Setting bettreifTimer3 to ON and creating timer")
+            bettreifTimer3 = createTimer(now.plusMinutes(8), [|
+                logInfo("bettreifTimer1", "bettreifTimer1 expired and setting to OFF")
+                officePanel.sendCommand(0)
+                officeLicht.sendCommand(0)
+                officeSpot.sendCommand(0)
+                StateBtn_night.postUpdate(ON)
+                bettreifTimer3 = null
+            ])
+        } else {
+            logInfo("bettreifTimer1", "bettreifTimer3 rescheduled")
+            bettreifTimer3.reschedule(now.plusMinutes(2))
+        }
+*/
+
+var Timer flurTimer = null
+var Number tooFast=5
+
+
+/*
+    flurSonderWunsch wird von der Kiste auf dem roten Bord gesetzt,
+    grün ist 1, blau ist 2, grünblau 3, aus ist 0
+    hier wird bei change ein Timer gesetzt und dnn IntenseFlur mit ON angetippt, wo dann Farben gestzt werden.
+    klappt soweit, aber timelag
+    und das Rücksetzen des Interfaces klappt nicht
+*/
+
+rule "rule triggered  by flurSonderWunsch changed"
+when 	
+    Item  flurSonderWunsch changed
+then
+    logInfo("flurSonderWunsch","flurSonderwunsch changed to "+flurSonderWunsch.state)
+    var fSW=flurSonderWunsch.state
+    var int fswDuration=0
+    if (fSW==0){
+        logInfo("flurSonderWunsch","flurSonderwunsch zuende")
+        // timer void
+        flurTimer = null
+        // flag reset
+        // lights to normal
+        IntenseFlur.sendCommand(OFF)
+    } else if (fSW==1){
+        logInfo("flurSonderWunsch","flurSonderwunsch Stufe 1")
+        fswDuration=3
+        flurTimer=createTimer(now.plusMinutes(fswDuration), [|
+                logInfo("flurTimer", "flurTimer (1) expired and setting to OFF")
+                flurSonderWunsch.postUpdate(0)
+            ])
+        IntenseFlur.sendCommand(ON)
+    } else if (fSW==2){    
+        logInfo("flurSonderWunsch","flurSonderwunsch Stufe 2")
+        fswDuration=5
+        flurTimer=createTimer(now.plusMinutes(fswDuration), [|
+                logInfo("flurTimer", "flurTimer (2) expired and setting to OFF")
+                flurSonderWunsch.postUpdate(0)
+            ])
+        IntenseFlur.sendCommand(ON)
+    } else if (fSW==3){
+        logInfo("flurSonderWunsch","flurSonderwunsch Stufe 3")
+        fswDuration=12
+        flurTimer=createTimer(now.plusMinutes(fswDuration), [|
+                logInfo("flurTimer", "flurTimer (3) expired and setting to OFF")
+                flurSonderWunsch.postUpdate(0)
+            ])
+        IntenseFlur.sendCommand(ON)
+    } else {
+        logInfo("flurSonderWunsch","flurSonderwunsch reagiert unerwartet")
+    }
+
+end
+
+
+rule "IntenseFlur received command"
+when 
+    Item IntenseFlur received command
+then
+    logInfo("dash", "IntenseFlur received command "+receivedCommand)
+    var fSW=flurSonderWunsch.state
+    if (receivedCommand==ON) {
+        if (fSW==0){
+            flurGo.sendCommand("165,15,100")
+            flurStrip.sendCommand("215,15,100")
+            wifiLed2_white.sendCommand( 100 )            
+        } else if (fSW==1){
+            flurGo.sendCommand("23,75,60")
+            flurStrip.sendCommand("35,85,60")
+            wifiLed2_white.sendCommand( 60 )
+         
+        } else if (fSW==2){  
+            flurGo.sendCommand("35,45,70")
+            flurStrip.sendCommand("245,55,70")
+            wifiLed2_white.sendCommand( 70 )
+
+        } else if (fSW==3){
+            flurGo.sendCommand("160,25,90")
+            flurStrip.sendCommand("120,45,90")
+            wifiLed2_white.sendCommand( 90 )
+        } else {
+            logInfo("flurSonderWunsch","flurSonderwunsch reagiert unerwartet")
+        }
+    } else {
+            flurGo.sendCommand(flurGoColor_pas.state.toString)
+            flurStrip.sendCommand(flurStripColor_pas.state.toString)
+            wifiLed2_white.sendCommand( wlFlurKante_pas.state as Number )
+        }
+
+    
+end
+
+// daAction_Flur
+rule "rule triggered  by daAction_Flur received command ON"
+when 	
+    Item  daAction_Flur received command ON
+then
+	//logInfo("presence", "da_Daniel changed to "+da_Daniel.state)
+  
+  // auf sicht sollten hier noch mehrere Indikatoren mit einbezogen werden
+  if (da_jmd.state==ON ) { 
+    PirState_Flur1.sendCommand(ON)
+    PirState_Flur4.sendCommand(ON)
+    PirState_Flur2.sendCommand(ON)
+    PirState_Flur3.sendCommand(ON)
+  } else {
+    // flurSonderWunsch und IntenseFlur aus
+    flurSonderWunsch.postUpdate(0)
+    IntenseFlur.sendCommand(OFF)
+  }
+  
+end
+
+
+
+
+rule "rule triggered  by PirState_Garde"
+when 	
+    Item  PirState_Garde changed
+then
+    
+    if (PirState_Garde.state==ON){
+        //logInfo("PirFlur", "Pir Garde  triggert")
+        gardeSpot.sendCommand(ON)
+    } else {
+        gardeSpot.sendCommand(OFF)
+    }
+
+    
+end
+
+
+
+
+rule "rule triggered  by PirState_Flur1 ON"
+when 	
+    Item  PirState_Flur1 received command ON
+then
+    //var String goState
+    //var String stState
+
+    // log time check with pirBad, filter 
+    pirLastTriggered_Flur1.postUpdate( new DateTimeType() )
+    evalTriggerTimes_Flur.sendCommand(ON)
+
+    Thread::sleep(5)
+    
+    var flurMillis = (pirLastTriggered_Flur1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var badMillis = (pirLastTriggered_Bad1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta = Math.abs(flurMillis - badMillis)
+
+    if (delta<tooFast){logInfo("pir","zeitgleicher Aufruf, pir_Flur1 ignoriert "+delta);return;}
+
+    
+   
+    if (PirState_Flur4.state==ON){
+        //logInfo("PirFlur", "Pir Flur1   triggert")
+        PirState_Flur.sendCommand(ON)
+    } else {
+        //logInfo("PirFlur", "Pir Flur1   wurde gefiltert")
+    }
+
+end
+
+rule "rule triggered  by PirState_Flur4 ON"
+when 	
+    Item  PirState_Flur4 received command ON
+then
+    
+    pirLastTriggered_Flur4.postUpdate( new DateTimeType() )
+
+	//logInfo("PirFlur", "PirState_Flur4 got command ON")
+    evalTriggerTimes_Flur.sendCommand(ON)
+
+    if (PirState_Flur1.state==ON){
+        //logInfo("PirFlur", "Pir Flur 4  triggert")
+        PirState_Flur.sendCommand(ON)
+    } else {
+        //logInfo("PirFlur", "Pir Flur 4 wurde gefiltert")
+        return;
+    }
+
+    
+end
+
+
+rule "rule triggered  by PirState_Flur ON"
+when 	
+    Item  PirState_Flur received command ON
+then
+    // sensor hochpeppen
+    rush_lux_1.sendCommand(ON)
+    //logInfo("PirFlur", "PirState_Flur got command ON while PirState_Flur1 "+PirState_Flur1.state +" and PirState_Flur2 "+PirState_Flur2.state)
+
+    // special state, keep off
+    if (IntenseFlur.state==ON) {return;}
+    // RemoteFlurActive : in Ruhe lassen
+    if (RemoteFlurActive.state==ON) {return;}
+
+    // strip
+    if (PirState_Flur1.state==ON){
+        if (pirActive_Flur_Strip.state==ON) { 
+            if (da_jmd.state==ON){
+                flurStrip.sendCommand(flurStripColor_act.state.toString)
+            } else {
+                flurStrip.sendCommand(flurStripColor_weg.state.toString)
+            }
+        }
+    }
+    // go   
+    if (PirState_Flur2.state==ON){
+        if (pirActive_Flur_Go.state==ON) { 
+            if (da_jmd.state==ON){
+                flurGo.sendCommand(flurGoColor_act.state.toString)
+            } else {
+                flurGo.sendCommand(flurGoColor_weg.state.toString)
+            }
+            
+            //logInfo("PirFlur", "flurGo "+flurGoColor_act.state.toString)
+        }
+    }
+    // kante
+    if (pirActive_Flur_Kante.state==ON) { 
+        if (sensor_lux_1.state<23){
+            if (da_jmd.state==ON){
+                if (newArrayList("salon","late","goodnight","night","deepnight").contains(Current_BtnState.state.toString)){
+                    // gardelicht an
+                    gardeSpot.sendCommand(ON)
+                } else {
+                    wifiLed2_white.sendCommand(wlFlurKante_act.state.toString)
+                } 
+            } else {
+                    wifiLed2_white.sendCommand(wlFlurKante_weg.state.toString)
+                    // und jetzt action, um RFID eine Weile blinken zu lassen
+                    alert_Rfid.sendCommand(ON)
+            }
+        }
+    }
+
+end
+
+rule "rule triggered  by PirState_Flur OFF"
+when 	
+    Item  PirState_Flur received command OFF
+then
+	//logInfo("PirFlur", "PirState_Flur got command OFF while "+Flag_Pir_Flur.state.toString)
+    if (IntenseFlur.state==ON) {return;}
+    if (RemoteFlurActive.state==ON) {return;}
+
+    // sensor hochpeppen
+    if ( PirState_Flur2.state.toString=="OFF"){rush_lux_1.sendCommand(OFF)}
+
+ 
+    // strip   
+    if (pirActive_Flur_Strip.state==ON) {
+        flurStrip.sendCommand(flurStripColor_pas.state.toString)
+    }
+    
+
+    // go   
+    if (pirActive_Flur_Go.state==ON) { 
+        flurGo.sendCommand(flurGoColor_pas.state.toString)
+    }
+  
+    // kante
+    if (pirActive_Flur_Kante.state==ON) { 
+        wifiLed2_white.sendCommand(wlFlurKante_pas.state.toString) 
+    }
+        gardeSpot.sendCommand(OFF)
+end
+
+
+
+ 
+
+// pir2_Flur 
+
+rule "rule triggered  by PirState_Flur2 ON"
+when 	
+    Item  PirState_Flur2 received command ON
+then
+    
+    pirLastTriggered_Flur2.postUpdate( new DateTimeType() )
+
+     Thread::sleep(2)
+    
+    var flur1Millis = (pirLastTriggered_Flur1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var flur2Millis = (pirLastTriggered_Flur2.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var flur3Millis = (pirLastTriggered_Flur3.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var badMillis = (pirLastTriggered_Bad1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var delta1 = Math.abs(flur2Millis - badMillis)
+    var delta2 = Math.abs(flur2Millis - flur1Millis)
+    var delta3 = Math.abs(flur2Millis - flur3Millis)
+
+    if (delta1<tooFast ||delta2<tooFast){logInfo("pir","zeitgleicher Aufruf, pir_Flur2 ignoriert "+delta1+" "+delta2+" "+delta3);return;}
+
+
+	//logInfo("PirFlur", "PirState_Flur2 got command ON "+delta1+" "+delta2+" "+delta3)
+
+    if (PirState_Flur3.state==ON){
+        //logInfo("PirFlur", "Pir Flur2   triggert")
+        PirState_Flur.sendCommand(ON)
+    } else {
+        //logInfo("PirFlur", "Pir Flur2   wurde gefiltert")
+    }
+
+
+end
+
+
+
+
+rule "rule triggered  by PirState_Flur3 ON"
+when 	
+    Item  PirState_Flur3 received command ON
+then
+    
+    pirLastTriggered_Flur3.postUpdate( new DateTimeType() )
+
+	//logInfo("PirFlur", "PirState_Flur4 got command ON")
+    evalTriggerTimes_Flur.sendCommand(ON)
+
+    if (PirState_Flur2.state==ON){
+        //logInfo("PirFlur", "Pir Flur 3  triggert")
+        PirState_Flur.sendCommand(ON)
+    } else {
+        //logInfo("PirFlur", "Pir Flur 3 wurde gefiltert")
+        return;
+    }
+
+    
+end

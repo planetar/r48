@@ -1,0 +1,5 @@
+Bridge lirc:bridge:kiwi [ host="kiwi.intern", portNumber="8765" ] {
+    Thing remote i24 [ remote="i24" ]
+}
+
+ 

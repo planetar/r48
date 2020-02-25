@@ -1,0 +1,32 @@
+
+
+rule "OpenHAB system started - astro"
+when
+    System started
+then
+    createTimer(now.plusSeconds(180)) [ |
+        logInfo("RULE", "--> astro init")
+        if (now.isAfter((Astro_Sunset_Time.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli) ||
+            now.isBefore((Astro_Sunrise_Time.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli)
+        ) {
+            logInfo("RULE", "--> Night_State ON")
+            postUpdate(Astro_Night_State, ON)
+        } else {
+            logInfo("RULE", "--> Night_State OFF")
+            postUpdate(Astro_Night_State, OFF)
+        }
+    ]
+end
+
+rule "Update NightState"
+when
+    Item Astro_Sun_Elevation changed
+then
+    if(Astro_Sun_Elevation.state >  0){
+        if(Astro_Night_State.state != OFF) postUpdate(Astro_Night_State, OFF)
+    } else {
+        if(Astro_Night_State.state != ON) postUpdate(Astro_Night_State, ON)
+    }
+end
+
+//

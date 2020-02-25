@@ -1,0 +1,93 @@
+
+// hier soll mal alles über Gruppen geregelt sein
+
+sitemap groupie label="groupie" {
+    Frame label="Wohnung" icon="house"{
+
+        Group item=gWohnung
+    }
+
+    Frame label="Wetter" icon="cloud"{
+
+        Group item=gWeather
+    }
+    
+    Frame label="Luftgüte" {
+
+        Group item=gSensorFeinstaub
+    }
+    
+    //gAstro
+    Frame label="Cosmos" {
+
+        Group item=gAstro
+    }
+   
+    Frame label="Hue" icon= dimmer{
+
+        Group item=gHueItems
+    
+    }
+    Frame label="PIR" {
+        Group item=gPirStates
+    }
+    Frame label="Internet" {
+
+        Group item=gSpeedtest
+    }
+    //Frame label="FSD" {
+
+      //  Group item=gFSD
+    //}
+
+    Text  label="Funksteckdosen" icon=switch{
+        Frame label="Funksteckdosen" {
+            Switch item=steckdose16Switch label="16 QuailBad"     mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose08Switch label="08 QuailBett"    mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose07Switch label="07 QuailMedi"  mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose06Switch label="06 QuailKueche"  mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose05Switch label="05 QuailFlur"    mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose04Switch label="04 WetterStation"  mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose03Switch label="03 Balkon"       mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose02Switch label="02 Fensterlicht" mappings=[ "ON"="ON", "OFF"="OFF" ]
+            Switch item=steckdose01Switch label="01 Buddhalicht"  mappings=[ "ON"="ON", "OFF"="OFF" ]
+        }
+    }
+    /*
+    Text label="IR-LED" icon=light {
+        Frame label="IR-Led" {
+             String item=LedPower label="An/Aus"  mappings=["An"="An", "Aus"="Aus"]
+             String item=LedBright label="Helligkeit"  mappings=["+"="+", "-"="-"]
+             String item=LedColor label="Farbe"  mappings=["Rot"="Rot", "Grün"="Grün", "Blau"="Blau"]
+        }
+
+    }
+    */
+    
+    Frame label="Presence" {
+
+        Group item=gDa_Daniel
+
+    }
+   
+
+    Frame label="StateBtn" {
+        Group item=gStateBtn
+    }
+    Frame label="IR-Led" {
+        Group item=gIR
+    }
+    Frame label="Sensors" {
+        Group item=gSensors
+    }
+  
+    Frame label="Remotes" {
+        Group item=gRemotes
+    }
+     
+    Frame label="Health" {
+        Group item=gHealth
+    }
+    
+}
+

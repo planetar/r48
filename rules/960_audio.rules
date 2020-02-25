@@ -1,0 +1,68 @@
+/*
+Switch audio_mute_all "audio toggle mute" (Audio)
+Switch audio_power_all "audio toggle power" (Audio)
+Switch audio_group_all "audio group alle" (Audio) 
+Switch audio_group_core "audio group core" (Audio)
+Switch audio_group_sk "audio group SK Küche" (Audio)
+
+
+Dimmer ccMedi_Volume (Audios) { channel="chromecast:audio:medi:volume" }
+Switch ccMedi_Mute  (Audios) { channel="chromecast:audio:medi:mute" }
+
+
+Dimmer ccFlur_Volume (Audios){ channel="chromecast:audio:flur:volume" }
+Switch ccFlur_Mute   (Audios){ channel="chromecast:audio:flur:mute" }
+String ccFlur_location (Audios){ channel="chromecast:audio:flur:location" }
+String ccFlur_artist (Audios){ channel="chromecast:audio:flur:artist" }
+String ccFlur_title (Audios){ channel="chromecast:audio:flur:title" }
+
+Player ccKueche_Music (Audios){ channel="chromecast:audio:kueche:control" }
+Dimmer ccKueche_Volume (Audios) { channel="chromecast:audio:kueche:volume" }
+Switch ccKueche_Mute  (Audios) { channel="chromecast:audio:kueche:mute" }
+
+Player ccBad_Music (Audios){ channel="chromecast:audio:bad:control" }
+Dimmer ccBad_Volume (Audios){ channel="chromecast:audio:bad:volume" }
+Switch ccBad_Mute   (Audios){ channel="chromecast:audio:bad:mute" }
+
+Player ccBett_Music (Audios){ channel="chromecast:audio:bett:control" }
+Dimmer ccBett_Volume (Audios) { channel="chromecast:audio:bett:volume" }
+Switch ccBett_Mute  (Audios) { channel="chromecast:audio:bett:mute" }
+
+Player ccOffice_Music (Audios){ channel="chromecast:audio:office:control" }
+Dimmer ccOffice_Volume (Audios){ channel="chromecast:audio:office:volume" }
+Switch ccOffice_Mute   (Audios){ channel="chromecast:audio:office:mute" }
+
+Player ccClara_Music (Audios){ channel="chromecast:audio:clara:control" }
+Dimmer ccClara_Volume (Audios){ channel="chromecast:audio:clara:volume" }
+Switch ccClara_Mute   (Audios){ channel="chromecast:audio:clara:mute" }
+
+*/
+
+
+rule "rule triggered  by audio_mute_all received command"
+when 	
+    Item  audio_mute_all received command
+then
+	//logInfo("presence", "da_Luise changed to "+da_Luise.state)
+  
+  // auf sicht sollten hier noch mehrere Indikatoren mit einbezogen werden
+  if ( audio_mute_all.state==ON ) { 
+    // durch alle ccDev: derzeit mute? (nix): in array_muted vermerken, mute setzen
+  } else {
+      // hat arr_muted einträge? durch die alle: in array muted entfernen, unmute
+      // arr_muted keine Einträge: durch alle ccDev, unmute
+  }
+
+end
+
+
+
+
+
+rule "rule triggered  by ccAlle_appName changed"
+when 	
+    Item  ccAlle_appName changed
+then
+	
+
+end

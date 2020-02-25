@@ -1,0 +1,141 @@
+/*
+    hueDimmerSwitchButtonLastChange
+
+    hueDimmerSwitchButton
+
+    BUTTON	        STATE	        CODE
+    Button 1 (ON)	
+                    INITIAL_PRESSED	1000
+                    HOLD	        1001
+                    SHORT RELEASED	1002
+                    LONG RELEASED	1003
+    Button 2 (DIM UP)	
+                    INITIAL_PRESSED	2000
+                    HOLD	        2001
+                    SHORT RELEASED	2002
+                    LONG RELEASED	2003
+    Button 3 (DIM DOWN)	
+                    INITIAL_PRESSED	3000
+                    HOLD	        3001
+                    SHORT RELEASED	3002
+                    LONG RELEASED	3003
+    Button 4 (OFF)	
+                    INITIAL_PRESSED	4000
+                    HOLD        	4001
+                    SHORT RELEASED	4002
+                    LONG RELEASED	4003
+
+*/
+var Timer dauerDelayed = null
+var Number hueDimmerCmd = 0
+var String nada = ""
+
+rule "triggered by system start hue"
+when 
+    System started
+then
+    RemoteFlurActive.postUpdate(OFF)
+    DauerMittel.postUpdate(10)
+    DauerEtwas.postUpdate(5)
+    logInfo("medi","init hue  ")
+end
+
+//
+rule "hueDimmerSwitchButtonLastChange changed"
+when
+    Item hueDimmerSwitchButtonLastChange changed
+then
+    hueDimmerCmd = hueDimmerSwitchButton.state 
+
+    {logInfo("hueDimmer", "Button "+hueDimmerCmd+" Go: "+flurGo.state.toString+" Strip: "+flurStrip.state.toString)}
+   
+    // Verzweigung nach Button
+    // 4000 4001 4002 4003  OFF
+    if (hueDimmerCmd==4000 || hueDimmerCmd==4002) { RemoteFlurActive.sendCommand(OFF); dauerDelayed = null;logInfo("RemoteFlurActive", "RemoteFlurActive Set to OFF and nulled timer")}
+    // 4003 alles OFF (optional)
+    if (hueDimmerCmd==4003 ) { RemoteFlurActive.sendCommand(OFF); dauerDelayed = null;logInfo("RemoteFlurActive", "RemoteFlurActive Set to OFF and nulled timer")}
+    //
+
+    // 1002 On Short
+    if (hueDimmerCmd==1002 ) {    
+        // RemoteFlurActive mit Timer dauerDelayed 
+        RemoteFlurActive.sendCommand(ON)
+        if(dauerDelayed === null) {
+            logInfo("RemoteFlurActive", "RemoteFlurActive Setting to ON and creating timer")
+            
+            dauerDelayed = createTimer(now.plusMinutes(10), [|
+                logInfo("RemoteFlurActive", "RemoteFlurActive Timer expired and setting to OFF")
+                RemoteFlurActive.sendCommand(OFF)
+                //dauerDelayed.reschedule(now)
+                dauerDelayed = null
+            ])
+        } else {
+            logInfo("RemoteFlurActive", "Timer rescheduled")
+            dauerDelayed.reschedule(now.plusMinutes(3))
+        }
+    }
+    //
+    // 1003 On Long
+    // optional
+
+    /*
+    // Timer-Event für DauerMittel nach Ablauf RemoteFlurActive auf false setzen
+
+    // RemoteFlurActive mit Timer dauerDelayed mit Timer
+			if(dauerDelayed === null) {
+				logInfo("RemoteFlurActive", "RemoteFlurActive Setting to ON and creating timer")
+				dauerDelayed = createTimer(now.plusMinutes(DauerMittel.state), [|
+					logInfo("RemoteFlurActive", "RemoteFlurActive Timer expired and setting to OFF")
+					RemoteFlurActive.sendCommand(OFF)
+
+					dauerDelayed = null
+				])
+			} else {
+				logInfo("RemoteFlurActive", "Timer rescheduled")
+				dauerDelayed.reschedule(now.plusMinutes(DauerEtwas))
+			}
+
+    */
+end
+
+
+// nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais29_On.sh",10000)
+
+rule "flurGo changed"
+when
+    Item flurGo changed
+then
+    //logInfo("flurGo", "flurGo changed "+" trigger "+triggeringItem)
+    var currentState = flurGo.state as HSBType
+    var bright100=currentState.getBrightness()
+    if (bright100==100){return;}  // das ist die zuruck-auf-100 Reaktion des buggy binding
+    var bright255=bright100*2.55
+    nada = executeCommandLine("/usr/bin/python /local/scripts/hue_cmd/hue_cmd.py 1 "+bright255,10000)
+    //logInfo("flurGo", bright255+" result: "+nada)
+end
+rule "flurStrip changed"
+when
+    Item flurStrip changed
+then
+    //logInfo("flurStrip", "flurStrip changed "+" trigger "+triggeringItem)
+    var currentState = flurStrip.state as HSBType
+    var bright100=currentState.getBrightness()
+    if (bright100==100){return;}  // das ist die zuruck-auf-100 Reaktion des buggy binding
+    var bright255=bright100*2.55
+    nada = executeCommandLine("/usr/bin/python /local/scripts/hue_cmd/hue_cmd.py 2 "+bright255,10000)
+    //logInfo("flurStrip", bright255+" result: "+nada)
+end
+
+// /usr/bin/python /local/scripts/hue_cmd/hue_cmd.py 12 100
+rule "mediStrip changed"
+when
+    Item mediStrip changed
+then
+    var currentState = mediStrip.state as HSBType
+    var bright100=currentState.getBrightness()
+    if (bright100==100){return;}  // das ist die zuruck-auf-100 Reaktion des buggy binding
+    var bright255=bright100*2.55
+    
+    nada = executeCommandLine("/usr/bin/python /local/scripts/hue_cmd/hue_cmd.py 12 "+bright255,10000)
+    //logInfo("mediStrip", bright255+" result: "+nada)
+end

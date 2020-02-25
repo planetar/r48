@@ -1,0 +1,90 @@
+Group    r48                "r48"                   <house>
+Group    gWohnung           "Wohnung"               <house>         (r48)
+
+Group    gBalkon            "Balkon"                <garden>        (gWohnung)
+Group    gBad               "Bad"                   <bath>          (gWohnung)
+Group    gSchlafkammer      "Schlafzimmer"          <bedroom>       (gWohnung)
+Group    gFlur              "Flur"                  <corridor>      (gWohnung)
+Group    gMedi             "Luise"                 <girl_3>        (gWohnung)
+Group    gKueche            "Küche"                 <kitchen>       (gWohnung)
+Group    gClara             "Clara"                 <woman_1>       (gWohnung)
+Group    gOffice            "Office"                <office>        (gWohnung)
+
+Group    gSpeedtest <"network-icon"> (r48)
+Group    gDash               "dash Toggle"    <network> (r48)
+Group    gIR <icon> (gSchlafkammer)
+
+
+String testItem "testItem"
+
+
+// Dash
+
+
+Switch dashConnect_01 "dashOra"  <network> (gDash) { expire="20s,command=OFF" }
+Switch dashConnect_02 "dashDur"  <network> (gDash) { expire="20s,command=OFF" }
+Switch dashConnect_03 "dashBern" <network> (gDash) { expire="20s,command=OFF" }
+Switch dashConnect_04 "dashNive" <network> (gDash) { expire="20s,command=OFF" }
+
+Number Flag_dash01 { expire="20s,command=0" }
+Number Flag_dash02 { expire="20s,command=0" }
+Number Flag_dash03 { expire="20s,command=0" }
+Number Flag_dash04 { expire="20s,command=0" }
+
+
+
+// Schalter für SonderProgramme
+
+Switch IntenseFlur "Flur Hell" (gFlur) [ "Switchable" ]  { expire="10m,command=OFF" }
+Switch IntenseBad  "Bad Hell" (gBad) [ "Switchable" ] { expire="60m,command=OFF" }
+Switch IntenseSK   "Schlafkammer Hell" (gSchlafkammer) [ "Switchable" ] { expire="2m,command=OFF" }
+Switch KuschelnSK  "Schlafkammer Kuscheln" (gSchlafkammer) [ "Switchable" ] { expire="10m,command=OFF" }
+Switch SchrankSK   "Schrank hell" (gSchlafkammer) [ "Switchable" ] { expire="4m,command=OFF" }
+Switch bettReif    "bettReif" (gFlur) [ "Switchable" ] { expire="4m,command=OFF" }
+
+
+// Settings
+
+Number DauerMittel
+Number DauerEtwas
+
+Switch RemoteFlurActive
+Switch allowFlurBrightnessRegulation
+Switch allowFlurColorCycle
+
+
+// SpeedTest
+
+
+
+String      SpeedtestSummary        "Speedtest [%s]"             <"speedtest_network">       (gSpeedtest)
+Number      SpeedtestResultPing     "Ping [%.3f ms]"             <"speedtest_next5">         (gSpeedtest)
+Number      SpeedtestResultDown     "Downlink [%.2f Mbit/s]"     <"speedtest_download">      (gSpeedtest)
+Number      SpeedtestResultUp       "Uplink [%.2f Mbit/s]"       <"speedtest_upload">        (gSpeedtest)
+String      SpeedtestRunning        "Speedtest running ... [%s]" <"speedtest_new">           (gSpeedtest)
+Switch      SpeedtestRerun          "Start manually"             <"speedtest_reload2">       (gSpeedtest)
+DateTime    SpeedtestResultDate     "Last executed [%1$td.%1$tm.%1$tY, %1$tH:%1$tM Uhr]"   <"speedtest_problem4">      (gSpeedtest)
+
+
+// IR
+
+
+// von LedColor nutze ich den Farbkreis
+// und die Up/down button, die ON/OFF senden, was ich entsprechend ummuenze
+Color LedColor  "Farbe" <icon> (gIR)
+
+// ON/OFF 
+Switch LedSwitch "Aus/An " <icon> (gIR)
+
+// das item nehme ich zur Umrechnung
+Color testColor
+
+// den kollegen benutze ich gar nicht, koennte aber...
+//String i24Transmit {channel="lirc:remote:f642d87f:i24:transmit"}
+
+String i24Transmit {channel="lirc:remote:kiwi:i24:transmit"}
+
+
+// 26, 27 bezieht sich auf GPIO pins auf Tael, über die je ein Relais gesteuert wird
+Switch platzHalt26
+Switch platzHalt27

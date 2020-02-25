@@ -1,0 +1,668 @@
+/*
+
+es gibt über den Tag eine Reihe von phasen, die durchlaufen wird.
+diesen Phasen ist ein grund-verhalten zugeordnet.
+es gibt ganz verschiedene Faktoren, die die bewegung durch die phasen treiben.
+
+fruehMorgens - Weckzeit- morgens - Aufbruch - Tag - Rückkehr - Dämmerung - Abend - spaetAbends - insBett - Schlafenszeit 
+
+diese phasen sind für die bewohner nicht deckungsgleich, luise's Schlafenszeit ist mein spaetAbends. 
+Aufbruch - Tag - Rueckkehr sind auch ganz unterschiedlich bei homeOffice oder bueroFron
+
+aus Astro haben wir Sonnenaufgang und Untergang, die zu Beleuchtung auch wichtiger Faktor sind.
+
+Kummer hatte ich anfangs mit Timing. Sachen gehen mal, mal nicht. 
+eine Latte von steckdose0XSwitch.sendCommand() wird uU nur die erste aendern, das ui ist mal zurückgesetzt, mal nicht...
+gelernt, dass Thread::sleep(50) die rechte Syntax ist, um 50 ms delay einzuschieben. Die FSD brauchen aber 300+ ms, mit 300 funzt das meiste meistens...
+Auch sind die FSD und die Switches, die sie darstellen, manchmal out of sync. Manuell hilft dann ein Aus-An-Aus. 
+So eine Sequenz also Sync-tanz, irgendwann am Vormittag ...
+
+(Idee)
+jeder bewohner hat ein grundraster, das gut in einem Kalender darstellbar wäre
+zusätzlich hat jeder bewohner für schlüsselmomente - geheSchlafen, Weckzeit, Aufbruch, Rueckkehr - auch Buttons, 
+die direkt geklickt oder aus Indikatoren gesetzt werden
+(/Idee)
+
+StateBtn_early            "Frühlicht"       
+StateBtn_morning          "Morgenlicht"     
+StateBtn_day              "Taglicht"        
+StateBtn_noon             "Mittaglicht"     
+StateBtn_afternoon        "Nachmittaglicht" 
+StateBtn_dusk             "Dämmerlicht"     
+StateBtn_evening          "Abendlicht"      
+StateBtn_late             "Spätlicht"       
+StateBtn_goodnight        "GuteNachtlicht"  
+StateBtn_night            "Nachtlicht"     
+StateBtn_away             "Weglicht"        
+
+
+Mit zunehmender Bevölkerung an Aktoren und Sensoren braucht es hier Updates.
+Das Farbenspiel möchte auch neue Regeln. Derzeit läuft es 360° in zwei gegenläufigen Kreisen (Hue) mit irgendwelchen Startwerten zu best. Phasen,
+Saturation und brightness sind nur an den Startwerten festgelegt.
+Stattdessen soll bestimmten Phasen ein Wertebereich zugeordnet sein, 300 - 60 für Rottöne, der Kreis soll dann in den Bereichen laufen. 
+So kann man physiologische Farbsteuerung hinbekommen, also Rottöne zur Nacht hin, waches Grün, Blau am Tage.
+Brightness sollte dann von der aktuellen Dusternis/Helligkeit geregelt werden.
+
+
+*/
+
+var String currentPhase
+var String ColorHue="345,100,14"
+var String ColorHue1="345,100,14"
+var String ColorHue2="345,100,14"
+
+var DecimalType colorInc_1 = new DecimalType(-1)
+var DecimalType colorInc_2 = new DecimalType(1)
+var String[] statesArray = newArrayList("early","morning","day","noon","afternoon","dusk","evening","salon","late","goodnight","night","away")
+
+var HueRange_1 = newArrayList(0,360)
+var HueRange_2 = newArrayList(0,360)
+var HueRange_3 = newArrayList(0,360)
+
+var Timer redLightDelayed = null
+
+// init
+
+rule "triggered by system start cycle"
+when 
+    System started
+then
+	var PointType grabLoc=new PointType("52.4895775,13.366324218749995")
+	location_clara.postUpdate(grabLoc)
+	logInfo("start","init cycle  ")
+end
+
+
+
+/*
+
+		Phasen
+
+*/
+
+// StateBtn_early
+rule "rule triggered by StateBtn_early"
+
+when 
+	Item StateBtn_early received update
+then
+	if (StateBtn_early.state == ON) {
+			
+			currentPhase="early"			
+			Current_BtnState.postUpdate("early")
+	}
+end
+
+// StateBtn_morning 
+rule "rule triggered by StateBtn_morning"
+
+when 
+	Item StateBtn_morning received update
+then
+	if (StateBtn_morning.state == ON) {
+
+			currentPhase="morning"
+			Current_BtnState.postUpdate("morning")
+	}
+
+end
+
+
+// StateBtn_day
+rule "rule triggered by StateBtn_day"
+
+when 
+	Item StateBtn_day received update
+then
+	if (StateBtn_day.state == ON) {
+
+			currentPhase="day"
+			Current_BtnState.postUpdate("day")
+	}
+
+end
+
+// StateBtn_noon
+rule "rule triggered by StateBtn_noon"
+
+when 
+	Item StateBtn_noon received update
+then
+	if (StateBtn_noon.state == ON) {
+
+			currentPhase="noon"
+			Current_BtnState.postUpdate("noon")
+	}
+
+end
+
+// StateBtn_afternoon
+rule "rule triggered by StateBtn_afternoon"
+
+when 
+	Item StateBtn_afternoon received update
+then
+	if (StateBtn_afternoon.state == ON) {
+
+			currentPhase="afternoon"
+			
+			pirActive_Flur_Kante.sendCommand("ON")
+			Current_BtnState.postUpdate("afternoon")
+	}
+
+end
+
+// StateBtn_dusk
+rule "rule triggered by StateBtn_dusk"
+
+when 
+	Item StateBtn_dusk received update
+then
+	if (StateBtn_dusk.state == ON) {
+
+			currentPhase="dusk"
+			
+			pirActive_SK_spot2.sendCommand("ON")
+
+			if (da_Daniel.state.toString == "ON")
+			{
+				// officeLight an
+				officeLicht.sendCommand("80")
+				officePanel.sendCommand("20")
+				klarLicht.sendCommand("4")
+
+			}
+			Current_BtnState.postUpdate("dusk")
+	}
+
+end
+
+
+
+// StateBtn_evening
+rule "rule triggered by StateBtn_evening"
+
+when 
+	Item StateBtn_evening received update
+then
+	if (StateBtn_evening.state == ON) {
+			
+			currentPhase="evening"
+			
+			if (da_Daniel.state.toString == "ON")
+			{
+				// officeLight an
+				officeLicht.sendCommand("80")
+				officePanel.sendCommand("40")
+				klarLicht.sendCommand("4")
+			}
+			Current_BtnState.postUpdate("evening")
+	}
+
+end
+
+// StateBtn_salon
+rule "rule triggered by StateBtn_salon"
+
+when 
+	Item StateBtn_salon received update
+then
+	if (StateBtn_salon.state == ON) {
+			
+			currentPhase="salon"
+			Current_BtnState.postUpdate("salon")
+	}
+
+end
+
+// StateBtn_late
+rule "rule triggered by StateBtn_late"
+
+when 
+	Item StateBtn_late received update
+then
+	if (StateBtn_late.state == ON) {
+			
+			currentPhase="late"
+			
+			if (da_Daniel == "ON")
+			{
+
+			}
+			
+			Current_BtnState.postUpdate("late")
+	}
+
+end
+
+
+// StateBtn_goodnight
+rule "rule triggered by StateBtn_goodnight"
+
+when 
+	Item StateBtn_goodnight received update
+then
+	if (StateBtn_goodnight.state == ON) {
+		// goodnight ist eine Phase, die nicht im Cycle ist, sondern nur manuell gerufen wird.
+		// derzeit nur von dp
+		// 
+
+			// Spot im Bad
+			badSpot.sendCommand(7)
+
+			// OfficeLight dunkler
+			officeLicht.sendCommand(7)
+			officePanel.sendCommand(7)
+
+			// KlarLight sanft
+			klarLicht.sendCommand(1)
+
+			// redlight on
+
+
+			//steckdose16Switch.sendCommand("ON")
+			//Thread::sleep(300)
+			if (da_Daniel == "ON")
+			{
+				// buddhaLight an
+				//steckdose01Switch.sendCommand("ON")
+				//pirActive_SK_Bettkante.sendCommand("ON")
+
+			}
+
+			Current_BtnState.postUpdate("goodnight")
+			
+	}
+
+end
+
+// StateBtn_night
+rule "rule triggered by StateBtn_night"
+
+when 
+	Item StateBtn_night received update
+then
+	if (StateBtn_night.state == ON) {
+			// alles reset und aus
+			
+			currentPhase="night"
+			
+			
+			// Flur ganz mini
+			
+			
+			// // Spotlight
+			// schrankSpot1.sendCommand(0)
+			// schrankSpot2.sendCommand(0)
+			// schrankSpot3.sendCommand(0)
+
+			// Spot im Bad
+			badSpot.sendCommand(0)
+
+			// Luise
+			// lokal in medi.rules mediCycleAction
+			/*
+			mediStrip.sendCommand(0)
+			mediStehLampe.sendCommand(0)
+			mediSpot1.sendCommand(0)
+			mediSpot2.sendCommand(0)
+			*/
+
+			// OfficeLight 
+			officeLicht.sendCommand("0")
+			klarLicht.sendCommand("0")
+			officePanel.sendCommand("0")
+			officeSpot.sendCommand("0")
+
+			// Kueche
+			PirState_Kueche.sendCommand("OFF")
+			PirState_Kueche2.sendCommand("OFF")
+
+
+
+
+		Current_BtnState.postUpdate("night")
+	}
+
+end
+
+// StateBtn_away ist etwas anders, da nicht zeitlich sondern durch Abwesenheit getriggert.
+// lässt Hue unverändert, setzt Brightness auf 0 und FSD auf OFF
+rule "rule triggered by StateBtn_away"
+
+when 
+	Item StateBtn_away received update
+then
+	if (StateBtn_away.state == ON) {
+		// so weit auch : reset und alles (fast)n aus
+			
+			currentPhase="away"
+			
+
+			// Spotlight
+			schrankSpot1.sendCommand(0)
+			schrankSpot2.sendCommand(0)
+			schrankSpot3.sendCommand(0)
+
+			// Spot im Bad
+			badSpot.sendCommand(0)
+
+			// OfficeLight 
+			officeLicht.sendCommand("0")
+			klarLicht.sendCommand("0")
+
+
+			
+
+			Current_BtnState.postUpdate("away")
+
+
+	}
+
+end
+
+
+/*
+
+			Treiber
+
+*/
+
+
+// Current_BtnState received update
+rule "rule triggered by Current_BtnState"
+
+when 
+	Item Current_BtnState received update
+then
+	
+	var String curState = Current_BtnState.state.toString()
+
+	for ( aState : statesArray) {
+		if (aState==curState) {
+			reColor.sendCommand(aState)
+		} else {
+			
+			//postUpdate("StateBtn_"+aState,"OFF")
+			sendCommand("StateBtn_"+aState,"OFF")
+			postUpdate("StateBtn_"+aState,"OFF")
+			
+		}
+		Thread::sleep(5)
+	}
+
+	// lokale
+	cycleAction_Office.sendCommand(curState)
+	cycleAction_Medi.sendCommand(curState)
+	cycleAction_Clara.sendCommand(curState)
+	cycleAction_SK.sendCommand(curState)
+	cycleAction_Kueche.sendCommand(curState)
+	cycleAction_Bad.sendCommand(curState)
+	cycleAction_Flur.sendCommand(curState)
+	cycleAction_Balkon.sendCommand(curState)
+end
+
+// diese Regel setzt StateBtn nach Astro_Day_Phase
+rule "rule triggered by Astro_Day_Phase changed"
+when
+	Item Astro_Day_Phase changed
+
+then
+	if (Astro_Day_Phase.state == "CIVIL_DAWN") {
+		StateBtn_early.sendCommand("ON")
+	}
+	if (Astro_Day_Phase.state == "SUN_RISE") {
+		StateBtn_morning.sendCommand("ON")
+	}
+	if (Astro_Day_Phase.state == "CIVIL_DUSK") {
+		StateBtn_dusk.sendCommand("ON")
+	}
+	if (Astro_Day_Phase.state == "NAUTIC_DUSK") {
+		StateBtn_evening.sendCommand("ON")
+	}
+end
+
+// hier sind Regeln, die StateBtn nach festen Zeiten triggern
+rule "rule triggered by cron 09.00"
+when
+	Time cron "0 0 9 * * ? *"
+then
+	StateBtn_day.sendCommand("ON")
+end
+
+rule "rule triggered by cron 11.30"
+when
+	Time cron "0 30 11 * * ? *"
+then
+	StateBtn_noon.sendCommand("ON")
+end
+
+rule "rule triggered by cron 14.00"
+when
+	Time cron "0 0 14 * * ? *"
+then
+	StateBtn_afternoon.sendCommand("ON")
+end
+
+rule "rule triggered by cron 21.30"
+when
+	Time cron "0 30 21 1/1 * ? *"
+then
+	StateBtn_salon.sendCommand("ON")
+end
+
+// Luise & Anton sind da, late kurz vor elf
+rule "rule triggered by cron 22.45"
+when
+	Time cron "0 45 22 * * ? *"
+then
+	// 'early late' nur, wenn Luise / anton da sind
+	if (da_Luise.state==ON || da_Gast.state==ON){
+		StateBtn_late.sendCommand("ON")
+	}
+end
+
+// me: late mit Mitternacht
+rule "rule triggered by cron 23.59"
+when 
+	Time cron "0 59 23 * * ? *" 
+then
+		StateBtn_late.sendCommand("ON")
+end
+
+
+rule "rule triggered by cron 01.45"
+when
+	Time cron "0 45 1 * * ? *"
+then
+	if (da_Daniel.state==OFF){
+		StateBtn_night.sendCommand("ON")
+	}
+end
+
+
+// diese Regel versucht, beim Start die rechte Phase zu initialisieren
+// var String[] statesArray = newArrayList("early","morning","day","noon","afternoon","dusk","evening","late","goodnight","night","away")
+
+rule "estimatePhase received update"
+  when
+    Item estimatePhase received update
+  then
+    
+    var Number jezze = new LocalTime().getLocalMillis()
+    var String phase = ""
+    //if (now.isAfter((Astro_Sunset_Time.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli){}
+    
+    //if((new LocalTime().getLocalMillis()) >= (new LocalTime(23, 0, 0, 0).getLocalMillis()))
+
+    // ab 01.45 night
+    if (jezze >= (new LocalTime(1, 45, 0, 0).getLocalMillis()) ) {
+        phase="night"
+        logInfo("estimatePhase",phase)
+    }
+
+    // mrgengrauen
+    if (Astro_Day_Phase.state == "CIVIL_DAWN") {
+		phase="early"
+        logInfo("estimatePhase",phase)
+	}
+
+    // nch Sonnenaufgang
+    if ( now.isAfter((Astro_Sunrise_Time.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli)){
+        phase="morning"
+        logInfo("estimatePhase",phase)
+    }
+
+    // ab 9.00 day
+    if (jezze >= (new LocalTime(9, 0, 0, 0).getLocalMillis()) ) {
+        phase="day"
+        logInfo("estimatePhase",phase)
+    }
+
+    // ab 11.30 noon
+    if (jezze >= (new LocalTime(11, 30, 0, 0).getLocalMillis()) ) {
+        phase="noon"
+        logInfo("estimatePhase",phase)
+    }
+
+    // ab 14.00 afternoon
+    if (jezze >= (new LocalTime(14, 00, 0, 0).getLocalMillis()) ) {
+        phase="afternoon"
+        logInfo("estimatePhase",phase)
+    }
+
+    // Dämmerung
+	if (Astro_Day_Phase.state == "CIVIL_DUSK") {
+		phase="dusk"
+        logInfo("estimatePhase",phase)
+	}
+
+    // ist duster
+    if (isGloomy.state==ON){
+        phase="dusk"
+        logInfo("estimatePhase",phase)
+    }
+
+    // dunkel
+	if (Astro_Day_Phase.state == "NAUTIC_DUSK") {
+		phase="evening"
+        logInfo("estimatePhase",phase)
+	}
+
+    // ab 20.30 evening
+    if (jezze >= (new LocalTime(20, 30, 0, 0).getLocalMillis()) ) {
+        phase="evening"
+        logInfo("estimatePhase",phase)
+    }
+
+    // 21.30 salon
+    if (jezze >= (new LocalTime(21, 30, 0, 0).getLocalMillis()) ) {
+        phase="salon"
+        logInfo("estimatePhase",phase)
+    }
+
+    // ab 23.59 late
+    if (jezze >= (new LocalTime(23, 59, 59, 0).getLocalMillis()) ) {
+        phase="late"
+        logInfo("estimatePhase",phase)
+    }
+
+    logInfo("estimatePhase","es ist etwa "+phase)
+    sendCommand("StateBtn_"+phase,"ON")
+    
+  end
+
+
+
+rule "rule triggered every minute by  Astro_Current_DateTime changed"
+
+when
+	Item  Astro_Current_DateTime changed
+then
+	//logInfo("Timely", "minutely")
+
+
+	// FlurColorCycle
+	if (allowFlurColorCycle.state.toString=="ON"){
+		if (flurGoColor_act.state instanceof HSBType) {
+			var HSBType currentState
+			currentState = flurGoColor_act.state as HSBType
+			logInfo("currentState 1", currentState.toString())
+			
+			var DecimalType hue = currentState.getHue() 
+			var PercentType sat = currentState.getSaturation()
+			var PercentType bright = currentState.getBrightness()
+
+			
+
+			// increment und check
+			//(hue += colorInc_1) as DecimalType
+			hue = new DecimalType(hue += colorInc_1)
+
+			logInfo("hue mit inc", hue.toString())
+
+			if (hue > 359) { hue = new DecimalType(1) }
+			if (hue < 1) { hue = new DecimalType(359) }
+
+			logInfo("hue", hue.toString())
+
+			flurGo.sendCommand(new HSBType(hue,sat,bright))
+			flurGoColor_act.sendCommand(new HSBType(hue,sat,bright))
+		}
+
+		if (flurStripColor_act.state instanceof HSBType) {
+			var HSBType currentState
+			currentState = flurStripColor_act.state as HSBType
+			logInfo("currentState 2", currentState.toString())
+			
+			var DecimalType hue = currentState.getHue()
+			var PercentType sat = currentState.getSaturation()
+			var PercentType bright = currentState.getBrightness()
+
+			
+
+			// increment und check
+			hue = new DecimalType(hue += colorInc_2)
+
+			logInfo("hue mit inc", hue.toString())
+
+			if (hue > 359) { hue = new DecimalType(1) }
+			if (hue < 1) { hue = new DecimalType(359) }
+			
+			//logInfo("hue 2", hue.toString())
+
+			flurStrip.sendCommand(new HSBType(hue,sat,bright))
+			flurStripColor_act.sendCommand(new HSBType(hue,sat,bright))
+
+
+		} 
+	}
+
+	// intenseBad ColorCycle
+	if (IntenseBad.state==ON) {
+		if (wifiLed1_color.state instanceof HSBType) {
+			var HSBType currentState
+			currentState = wifiLed1_color.state as HSBType
+						
+			var DecimalType hue = currentState.getHue()
+			var PercentType sat = currentState.getSaturation()
+			var PercentType bright = currentState.getBrightness()
+
+
+			// increment und check
+			hue = new DecimalType(hue += colorInc_1)
+
+			if (hue > 360) { hue = new DecimalType(hue -= 360) }
+			if (hue < 0) { hue = new DecimalType(hue += 360) }
+			
+			wifiLed1_color.sendCommand(new HSBType(hue,sat,bright))
+			wifiLed1_white.sendCommand(wlBadKante_act.state.toString)
+
+		}
+ 	} 
+
+	checkLight_Medi.sendCommand(ON)
+	checkLight_Office.sendCommand(ON)
+	//checkLight_Kueche.sendCommand(ON)
+end
+

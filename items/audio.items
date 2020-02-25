@@ -1,0 +1,5 @@
+Switch audio_mute_all "audio toggle mute" (Audio)
+Switch audio_power_all "audio toggle power" (Audio)
+Switch audio_group_all "audio group alle" (Audio) 
+Switch audio_group_core "audio group core" (Audio)
+Switch audio_group_sk "audio group SK Küche" (Audio)

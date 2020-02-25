@@ -1,0 +1,89 @@
+Group gHealth  (r48)
+Group gKoel (gHealth)
+Group gMoa (gHealth)
+Group gTieke (gHealth)
+Group gTael (gHealth)
+Group gKiwi (gHealth)
+
+String          mqHealth_koel   "Roh"                    { channel="mqtt:topic:mqBroker:raspiHealth:koelHlth" }
+Number health_koel_temp " [%.1f]°" (gKoel)
+Number health_koel_volt  " [%.1f]°"(gKoel)
+Number health_koel_clock  " [%.1f]°"(gKoel)
+Number health_koel_ram " [%.1f]°" (gKoel)
+Number health_koel_gram  " [%.1f]°"(gKoel)
+String health_koel_cpuload
+String health_koel_memuse
+Switch health_koel_frequency_capped (gKoel)
+Switch health_koel_frequency_capped_once (gKoel)
+Switch health_koel_under_voltage (gKoel)
+Switch health_koel_under_voltage_once (gKoel)
+Switch health_koel_throttled (gKoel)
+Switch health_koel_throttled_once (gKoel)
+Number health_koel_load
+
+String          mqHealth_moa   "Roh"                    { channel="mqtt:topic:mqBroker:raspiHealth:moaHlth" }
+Number health_moa_temp  " [%.1f]°" (gMoa)
+Number health_moa_volt  " [%.1f]°" (gMoa)
+Number health_moa_clock " [%.1f]°"  (gMoa)
+Number health_moa_ram  " [%.1f]°" (gMoa)
+Number health_moa_gram  " [%.1f]°" (gMoa)
+String health_moa_cpuload
+String health_moa_memuse
+Switch health_moa_frequency_capped  (gMoa)
+Switch health_moa_frequency_capped_once  (gMoa)
+Switch health_moa_under_voltage  (gMoa)
+Switch health_moa_under_voltage_once  (gMoa)
+Switch health_moa_throttled  (gMoa)
+Switch health_moa_throttled_once  (gMoa)
+Number health_moa_load
+String          mqHealth_kiwi   "Roh"                    { channel="mqtt:topic:mqBroker:raspiHealth:kiwiHlth" }
+
+Number health_kiwi_temp  " [%.1f]°" (gKiwi)
+Number health_kiwi_volt  " [%.1f]°" (gKiwi)
+Number health_kiwi_clock  " [%.1f]°" (gKiwi)
+Number health_kiwi_ram  " [%.1f]°" (gKiwi)
+Number health_kiwi_gram  " [%.1f]°" (gKiwi)
+String health_kiwi_cpuload
+String health_kiwi_memuse
+Switch health_kiwi_frequency_capped  (gKiwi)
+Switch health_kiwi_frequency_capped_once  (gKiwi)
+Switch health_kiwi_under_voltage  (gKiwi)
+Switch health_kiwi_under_voltage_once  (gKiwi)
+Switch health_kiwi_throttled  (gKiwi)
+Switch health_kiwi_throttled_once  (gKiwi)
+Number health_kiwi_load
+
+String          mqHealth_tieke   "Roh"                    { channel="mqtt:topic:mqBroker:raspiHealth:tiekeHlth" }
+
+Number health_tieke_temp  " [%.1f]°" (gTieke)
+Number health_tieke_volt  " [%.1f]°" (gTieke)
+Number health_tieke_clock  " [%.1f]°" (gTieke)
+Number health_tieke_ram  " [%.1f]°" (gTieke)
+Number health_tieke_gram  " [%.1f]°" (gTieke)
+String health_tieke_cpuload
+String health_tieke_memuse
+Switch health_tieke_frequency_capped  (gTieke)
+Switch health_tieke_frequency_capped_once  (gTieke)
+Switch health_tieke_under_voltage  (gTieke)
+Switch health_tieke_under_voltage_once  (gTieke)
+Switch health_tieke_throttled  (gTieke)
+Switch health_tieke_throttled_once  (gTieke)
+Number health_tieke_load
+
+
+String          mqHealth_tael   "Roh"                    { channel="mqtt:topic:mqBroker:raspiHealth:taelHlth" }
+
+Number health_tael_temp  " [%.1f]°"  (gTael)
+Number health_tael_volt  " [%.1f]°"  (gTael)
+Number health_tael_clock   " [%.1f]°" (gTael)
+Number health_tael_ram   " [%.1f]°" (gTael)
+Number health_tael_gram   " [%.1f]°" (gTael)
+String health_tael_cpuload 
+String health_tael_memuse
+Switch health_tael_frequency_capped   (gTael)
+Switch health_tael_frequency_capped_once   (gTael)
+Switch health_tael_under_voltage   (gTael)
+Switch health_tael_under_voltage_once   (gTael)
+Switch health_tael_throttled   (gTael)
+Switch health_tael_throttled_once   (gTael)
+Number health_tael_load

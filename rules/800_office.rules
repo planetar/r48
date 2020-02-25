@@ -1,0 +1,426 @@
+/*
+
+
+*/
+
+var String  result 
+var Integer ok_Calls=0
+val Integer ok_CallsLimit=3
+var int officeLightingLevel = 3
+var Integer lux_lowerBound = 60
+var Integer lux_upperBound = 145
+val Integer dusterLimit=55
+var Boolean isOfficeEmpty=false
+var Boolean isOfficeDuster=false
+
+var String dp_da
+var String jmd_da
+
+rule "triggered by system start office"
+when 
+    System started
+then
+    pirLastTriggered_OfficeDesk.postUpdate( new DateTimeType() )
+    pirLastTriggered_OfficePack.postUpdate( new DateTimeType() )
+    pirLastTriggered_OfficeTuer.postUpdate( new DateTimeType() )
+    logInfo("ofc","init Office  ")
+end
+
+
+
+// PIR 
+
+// Office
+rule "rule triggered  by PirState_OfficeDesk received command ON"
+when 	
+    Item  PirState_OfficeDesk received command 
+then
+    
+
+    if (receivedCommand == "ON" || receivedCommand == ON) {
+
+        PirState_Office.sendCommand(receivedCommand)
+
+        pirLastTriggered_OfficeDesk.postUpdate( new DateTimeType() )
+        // if (pirActive_OfficeSpot.state==ON) {officeSpot.sendCommand(0)}
+        atDesk_Daniel.sendCommand("ON") 
+        //logInfo("PirState_Office", "PirState_OfficeDesk command ON " )
+                
+     
+    }
+
+end
+
+rule "rule triggered  by PirState_OfficeTuer received command ON"
+when 	
+    Item  PirState_OfficeTuer received command 
+then
+    if (receivedCommand == "ON" || receivedCommand == ON) {
+        
+        // test auf (fehl)alarm-dichte. im schicken gehäuse geht der Sensor auf Dauerfeuer, wohl die Nähe zur Wii-Antenne des NodeMcu
+        var officeTuerMillis = (pirLastTriggered_OfficeTuer.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+        gerade.postUpdate(new DateTimeType())
+        var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+        var delta = nowMillis - officeTuerMillis
+        pirLastTriggered_OfficeTuer.postUpdate( new DateTimeType() )
+        logInfo("PirState_Office", "PirState_OfficeTuer command ON after " + delta/(1000*60)+" min ("+delta/1000 +"sec)")
+
+        // Action
+        // officeSpot soll angehn als NachtLicht on Enter
+
+        // pirState_Office integriert die beiden
+       PirState_Office.sendCommand(ON)
+       klarLicht.sendCommand(6)
+
+        if (isOfficeDuster == true ){
+            led_ok.sendCommand('{"state":"ON","effect":"kelvin","kelvin":1900,"bright":24}')
+        }
+       
+    } else {
+        if (PirState_Flur1.state==ON) {
+           officeSpot.sendCommand(0)
+           klarLicht.sendCommand(0)
+        }
+    }
+  
+
+end
+
+rule "rule triggered  by PirState_Office received command "
+when 	
+    Item  PirState_Office received command 
+then
+    if (receivedCommand == "ON" || receivedCommand == ON) {
+        if (newArrayList("early","morning","dusk","evening","late","salon","goodnight","night").contains(Current_BtnState.state.toString)) { 
+            officeSpot.sendCommand(1)
+        }
+        if (ok_Calls<ok_CallsLimit){
+            led_ok.sendCommand('{"state":"ON","effect":"kelvin","kelvin":1700,"bright":24}')
+            led_fm.sendCommand('{"state":"ON","effect":"om","bright":8}')
+
+            ok_Calls++
+        } else {
+            //logInfo("ofc","ok_Calls: "+ok_Calls)
+            }
+    }
+    else {
+        
+        atDesk_Daniel.sendCommand("OFF")
+        officeSpot.sendCommand(0)
+        led_ok.sendCommand('{"state":"OFF"}')
+        ok_Calls=0;
+    }
+
+end
+
+
+
+rule "office triggered minutely"
+
+when
+    Time cron "0 0/1 * * * ?"   // every minute
+then
+// isOfficeEmpty wird true, wenn pirLastTriggered_OfficeDesk - now > grenze ist und pirLastTriggered_OfficeTuer entsprechend
+    gerade.postUpdate(new DateTimeType())
+    var deskMoveMillis = (pirLastTriggered_OfficeDesk.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var tuerMoveMillis = (pirLastTriggered_OfficeTuer.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var deltaDesk = nowMillis - deskMoveMillis
+    var deltaTuer = nowMillis - tuerMoveMillis
+    if ((deltaDesk > 8*60*1000) && (deltaTuer > 8*60*1000)){ 
+        isOfficeEmpty = true
+
+        // dann mal licht aus
+        officeLicht.sendCommand(0);   
+        officePanel.sendCommand(0)
+        //led_mm.sendCommand('{"state":"ON",bright":0}')  // funzt gefühlt gar nicht
+        //logInfo("ofcMinutely","isOfficeEmpty ist true, Licht aus.")
+
+
+    }
+    else {
+        {isOfficeEmpty = false}
+        //led_mm.sendCommand('{"state":"ON",bright":1}')
+    }
+
+    // isOfficeDuster
+    if (sensor_luminosity_OfficePack.state <dusterLimit){isOfficeDuster=true} else {isOfficeDuster=false }
+    
+    // officeLightingLevel nachführen
+    if (atDesk_Daniel.state==ON){
+        if (sensor_luminosity_OfficePack.state <lux_lowerBound){officeLightingLevel+=3}
+        else if (sensor_luminosity_OfficePack.state > lux_upperBound){officeLightingLevel-=1}
+
+        if (officeLightingLevel<0){officeLightingLevel=0}
+        else if (officeLightingLevel>12){officeLightingLevel=12}
+
+        officeLightLevel.sendCommand(officeLightingLevel)
+
+
+        if (sensor_luminosity_OfficePack.state <dusterLimit){
+            led_ok.sendCommand('{"state":"ON","effect":"kelvin","kelvin":2000,"bright":24}')
+            ok_Calls++
+        }
+    }
+end
+
+
+
+
+rule "rule triggered  by officeLightLevel changed"
+
+when 	
+    Item  officeLightLevel changed
+then
+    var level = officeLightLevel.state
+    var actPanel = pirActive_OfficePanel.state==ON
+    ////logInfo("officeLightLevel", "officeLightLevel now "+level+" pirActive_OfficeLevel.state "+pirActive_OfficeLevel.state)
+    
+    if (da_jmd.state==ON){
+        //if (PirState_Office.state==ON){
+        if (isOfficeEmpty==false){
+            if (newArrayList("afternoon","dusk","evening","salon","late").contains(Current_BtnState.state.toString)) { 
+                if (pirActive_OfficeLevel.state.toString=="ON") {
+                    
+                    if (level==0) {officeLicht.sendCommand(0); if (actPanel){officePanel.sendCommand(0)};}
+                    else if (level==1) {officeLicht.sendCommand(1);   if (actPanel){officePanel.sendCommand(0)};}
+                    else if (level==2) {officeLicht.sendCommand(18);  if (actPanel){officePanel.sendCommand(0)};}
+                    else if (level==3) {officeLicht.sendCommand(18);  if (actPanel){officePanel.sendCommand(1)};}
+                    else if (level==4) {officeLicht.sendCommand(35);  if (actPanel){officePanel.sendCommand(1)};}
+                    else if (level==5) {officeLicht.sendCommand(52);  if (actPanel){officePanel.sendCommand(1)};}
+                    else if (level==6) {officeLicht.sendCommand(52);  if (actPanel){officePanel.sendCommand(18)};}
+                    else if (level==7) {officeLicht.sendCommand(69);  if (actPanel){officePanel.sendCommand(18)};}
+                    else if (level==8) {officeLicht.sendCommand(69);  if (actPanel){officePanel.sendCommand(35)};}
+                    else if (level==9) {officeLicht.sendCommand(86);  if (actPanel){officePanel.sendCommand(18)};}
+                    else if (level==10) {officeLicht.sendCommand(86);  if (actPanel){officePanel.sendCommand(35)};}
+                    else if (level==11) {officeLicht.sendCommand(100); if (actPanel){officePanel.sendCommand(35)};}
+                    else if (level==12) {officeLicht.sendCommand(100); if (actPanel){officePanel.sendCommand(52)};}
+                    
+                }
+            }
+        }
+    }
+end
+
+
+
+rule "triggered by cycleAction_Office changed"
+when 
+    Item cycleAction_Office changed
+then
+    logInfo("cycleAction_Office", "cycleAction_Office changed "+cycleAction_Office.state.toString)
+    var state=cycleAction_Office.state.toString
+
+    if (state=="night"){
+        if (atDesk_Daniel.state==OFF){
+            officeLicht.sendCommand(0)
+            officePanel.sendCommand(0)
+            klarLicht.sendCommand(0)
+            officeSpot.sendCommand(0)
+            led_ok.sendCommand('{"state":"OFF"}')
+            led_fm.sendCommand('{"state":"OFF"}')
+
+            pirActive_OfficeLevel.sendCommand(OFF)
+        }
+    }
+
+    if (state=="early" || state=="morning"){
+        bettReif.postUpdate(OFF)
+        if (atDesk_Daniel.state==OFF){
+            officeLicht.sendCommand(0)
+            officePanel.sendCommand(0)
+            klarLicht.sendCommand(0)
+            officeSpot.sendCommand(0)
+
+            pirActive_OfficeLevel.sendCommand(OFF)
+        }
+    } else if (state=="day" ){
+        
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+    }  else if (state=="noon" ){
+        
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+    }   else if (state=="afternoon" ){
+        
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+    }   else if (state=="dusk" ){
+        
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+    }   else if (state=="evening" ){
+        
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+    }   else if (state=="salon" ){
+        
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+    }   else if (state=="late" ){
+        
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+        // led_ok.sendCommand('{"state":"ON","effect":"farbGlitter","stepTime":280,"bright":32}')
+    }   else if (state=="night" ){
+        
+        led_ok.sendCommand('{"state":"OFF","stepTime":280,"bright":2}')
+        if (atDesk_Daniel.state==ON){
+            
+           
+        }
+    }
+
+
+end
+
+// daAction_Office
+rule "rule triggered  by daAction_Office received command"
+when 	
+    Item  daAction_Office received command 
+then
+
+    dp_da  = da_Daniel.state.toString()
+    jmd_da = da_jmd.state.toString()
+
+	logInfo("presence", "daAction Offfice "+jmd_da+"/"+dp_da)
+  
+    if (jmd_da=="OFF") {
+
+        var String oLVal=officeLicht.state.toString
+        var String oPVal=officePanel.state.toString
+        var String kLVal=klarLicht.state.toString
+        var String paVal=pirActive_OfficeLevel.state.toString
+
+        //logInfo("test",officeLicht.state)
+        logInfo("presence", "presence light save oLVal="+oLVal+" oPVal="+oPVal+" kLVal="+kLVal+" paVal="+paVal)
+
+        officeLicht.sendCommand(OFF)
+        officePanel.sendCommand(OFF)
+        klarLicht.sendCommand(OFF)
+
+
+        led_ok.sendCommand('{"state":"OFF"}')
+        ok_Calls =0
+        
+       
+
+      /*  
+        result = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py set da,office,officeLicht "+oLVal,10000)
+        Thread::sleep(800)
+        result = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py set da,office,officePanel "+oPVal,10000)
+        Thread::sleep(800)
+        result = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py set da,office,klarLicht 8",10000) //klarLicht.state.toString
+        Thread::sleep(800)
+        result = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py set da,office,paOfficeLevel "+paVal,10000)
+        
+*/
+
+
+    } else if (da_jmd.state==ON) {
+        //var oLVal
+        // var String oPVal 
+        // var String kLVal
+        // var String paVal
+        // var String oLVal 
+/*
+        oLVal = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py get da,office,officeLicht ",10000)
+        logInfo("test",oLVal)
+
+        oPVal = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py get da,office,officePanel ",10000) 
+        kLVal = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py get da,office,klarLicht ",10000) 
+        paVal = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py get da,office,paOfficeLevel ",10000) 
+
+        logInfo("presence", "presence light restore: oLVal="+oLVal+" oPVal="+oPVal+" kLVal="+kLVal+" paVal="+paVal)
+        sendCommand("officeLicht",oLVal.toString)
+
+        logInfo("presence","officePanel")
+        sendCommand("officePanel",oPVal.toString)
+
+        logInfo("presence","klarLicht")
+        sendCommand("klarLicht",kLVal.toString)
+
+        logInfo("presence","pirActive_OfficeLevel")
+        pirActive_OfficeLevel.sendCommand(paVal)
+*/
+        //if (ok_Calls<ok_CallsLimit){
+            led_ok.sendCommand('{"state":"ON","effect":"shiftBand","stepTime":120,"bright":16}')
+            ok_Calls++
+            led_fm.sendCommand('{"state":"ON","effect":"matrixOm","bright":1}')
+            // '{"state":"ON","effect":"matrixOm","bright":1}'
+
+        //}
+       
+    }
+  
+end
+
+
+
+rule "rule triggered  by atDesk_Daniel changed"
+when 	
+    Item  atDesk_Daniel changed
+then
+
+    if (atDesk_Daniel.state.toString=="ON"){
+        //pebbleNotification("daniel", "atDesk?", "at Desk is ON")
+        //if (isGloomy.state==ON) {
+        if (isOfficeDuster==true) {
+            if (pirActive_OfficeSpot.state.toString=="ON"){
+                //officeSpot.sendCommand(1)
+                sendCommand("officeSpot","6")
+            }
+
+            if (officeLicht.state==0){
+                sendCommand("officeLicht","70")
+
+                if (pirActive_OfficePanel.state.toString=="ON"){
+                    sendCommand("officePanel","16")
+                }   
+            }
+        }
+    }
+    else {
+        //pebbleNotification("daniel", "atDesk?", "at Desk is OFF")
+        if (pirActive_OfficeSpot.state.toString=="ON"){
+            sendCommand("officeSpot","0")
+        }
+    }
+end
+
+/*
+Switch rush_officePack "pack  schnell" 
+Switch loopDisp_officePack "loop durch Screens"
+Switch refDisp_officePack "erfrische Screen"
+Switch scanWifi_officePack "scanne Wifi Netze"
+
+
+*/
+
+rule "rule triggered  by officePack settings changed"
+when 	
+    Item  rush_officePack received command or
+    Item  loopDisp_officePack received command or
+    Item  refDisp_officePack received command or
+    Item  scanWifi_officePack received command 
+
+then
+    var String msg = '{"loopDsp":"'+loopDisp_officePack.state.toString()+'","rushLux":"'+rush_officePack.state.toString()+'","refDsp":"'+refDisp_officePack.state.toString()+'","scanWifi":"'+scanWifi_officePack.state.toString()+'"}'
+    logInfo("tst",msg)
+    mqOfficePackSet.sendCommand(msg)
+end

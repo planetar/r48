@@ -1,0 +1,149 @@
+/*
+    die amazon dash button booten nach Click und suchen bei DHCP nach einer IP, dabei erwischt sie ein sniffer und 
+    setzt dashConnect_xx auf ON
+
+*/
+var bettreifTimer1
+var bettreifTimer2
+//var bettreifTimer3
+var bettreifTimer3
+
+// init
+rule "triggered by system start dash"
+when 
+    System started
+then
+    dashConnect_01.postUpdate("OFF")
+    dashConnect_02.postUpdate("OFF")
+
+    dashConnect_03.postUpdate("OFF")
+    dashConnect_04.postUpdate("OFF")
+    
+    Flag_dash01.postUpdate(0)
+    Flag_dash02.postUpdate(0)
+
+    Flag_dash03.postUpdate(0)
+    Flag_dash04.postUpdate(0)
+    logInfo("medi","init dash  ")
+end
+
+
+rule "dashConnect_01 received command ON"
+when 
+    Item dashConnect_01 received command ON
+then
+    if (Flag_dash01.state==1) { return; } else { Flag_dash01.sendCommand(1)}
+    logInfo("dash", "dashOra tipped")
+    if (IntenseBad.state==ON) {IntenseBad.sendCommand(OFF)} else {IntenseBad.sendCommand(ON)}
+end
+
+
+rule "dashConnect_02 received command ON"
+when 
+    Item dashConnect_02 received command ON
+then
+    if (Flag_dash02.state==1) { return; } else { Flag_dash02.sendCommand(1)}
+    logInfo("dash", "dashDur tipped")
+    if (LedSwitch.state==ON) {LedSwitch.sendCommand(OFF)} else {LedSwitch.sendCommand(ON)}
+    //reColor.sendCommand("dusk")
+end
+
+rule "dashConnect_03 received command ON"
+when 
+    Item dashConnect_03 received command ON
+then
+    if (Flag_dash03.state==1) { return; } else { Flag_dash03.sendCommand(1)}
+    logInfo("dash", "dashBern tipped")
+    if (IntenseFlur.state==ON) {IntenseFlur.sendCommand(OFF)} else {IntenseFlur.sendCommand(ON)}    
+end
+
+rule "dashConnect_04 received command ON"
+when 
+    Item dashConnect_04 received command ON
+then
+
+    if (Flag_dash04.state==1) { return; } else { Flag_dash04.sendCommand(1)}
+    logInfo("dash", "dashNive tipped")
+
+    reColor.sendCommand("recolor")
+    if (IntenseSK.state==ON) {IntenseSK.sendCommand(OFF)} else {IntenseSK.sendCommand(ON)} 
+    //if (PirState_Bad.state==ON) {PirState_Bad.sendCommand(OFF)} else {PirState_Bad.sendCommand(ON)}
+end
+
+
+/*
+
+*/
+
+
+rule "IntenseSK received command"
+when 
+    Item IntenseSK received command
+then
+    logInfo("dash", "IntenseSK received command "+receivedCommand)
+
+    if (receivedCommand==ON) {
+        // buddhaLicht
+
+        // FensterLicht
+        steckdose01Switch.sendCommand("ON")
+        Thread::sleep(300)
+        steckdose01Switch.postUpdate("OFF")
+        Thread::sleep(300)
+        steckdose01Switch.sendCommand("ON")
+        Thread::sleep(300)
+        steckdose02Switch.postUpdate("OFF")
+        Thread::sleep(300)
+        steckdose02Switch.sendCommand("ON")	
+
+        // BettLicht
+        bettLicht.sendCommand("ON")
+        
+        // SpotLicht 1 2 3
+        schrankSpot1.sendCommand("ON")
+        schrankSpot2.sendCommand("ON")
+        schrankSpot3.sendCommand("ON")
+
+        
+        // Bettkante
+        LedSwitch.sendCommand(ON)
+        
+
+        if (newArrayList("late","goodnight").contains(Current_BtnState.state.toString)) {
+            // badSpot
+            badSpot.sendCommand(tfBadSpot_act.state.toString)
+        }
+        
+    } else {
+        
+        // buddhaLicht
+        // steckdose01Switch.sendCommand("OFF")
+
+        // FensterLicht
+        // steckdose02Switch.sendCommand("OFF")
+        
+            steckdose01Switch.postUpdate("ON")
+			Thread::sleep(300)
+			steckdose01Switch.sendCommand("OFF")
+			Thread::sleep(300)
+			steckdose02Switch.postUpdate("ON")
+			Thread::sleep(300)
+			steckdose02Switch.sendCommand("OFF")	
+
+        // BettLicht
+        bettLicht.sendCommand("OFF")
+        
+        // SpotLicht 1 2 3
+        schrankSpot1.sendCommand("OFF")
+        schrankSpot2.sendCommand("OFF")
+        schrankSpot3.sendCommand("OFF")
+
+
+        
+        // Bettkante
+        LedSwitch.sendCommand(OFF)
+        
+    }
+    
+    
+end

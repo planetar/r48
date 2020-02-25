@@ -1,0 +1,646 @@
+
+var Timer redLightDelayed=null
+var Timer balkonLightDelayed=null
+
+var bettreifTimer1
+var bettreifTimer2
+var bettreifTimer3
+
+var tocCount=0
+var spotBright=6
+
+val Integer dusterLimit=15
+var Boolean isDuster=false
+var Boolean isEmpty=false
+
+var String[] modesArray = newArrayList("aus","zart","sanft","weich","wach","hell","pir")
+var String curMode="pir"
+
+rule "triggered by system start SK"
+when 
+    System started
+then
+    tocCount=0
+    spotBright=6
+    pirLastTriggered_SK1.postUpdate( new DateTimeType() )
+    pirLastTriggered_SK2.postUpdate( new DateTimeType() )
+    skLicht_pir.sendCommand(ON)
+    logInfo("SK","init SK  ")
+end
+
+
+rule "SK triggered minutely"
+
+when
+    Time cron "0 0/1 * * * ?"   // every minute
+then
+    //logInfo("SK","pirLastTriggered_SK     1: "+ pirLastTriggered_SK1.state+"    2: "+ pirLastTriggered_SK2.state)
+    gerade.postUpdate(new DateTimeType())
+    var schrankMoveMillis = (pirLastTriggered_SK2.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var tuerMoveMillis    = (pirLastTriggered_SK1.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var nowMillis = (gerade.state as DateTimeType).zonedDateTime.toInstant.toEpochMilli
+    var deltaSchrank = nowMillis - schrankMoveMillis
+    var deltaTuer = nowMillis - tuerMoveMillis
+
+    // isSkEmpty
+    if ((deltaSchrank > 8*60*1000) && (deltaTuer > 8*60*1000)){
+        isEmpty = true
+    }
+    else {
+        {isEmpty = false}
+    }
+
+    // isDuster
+    if (sensor_lux_3.state < dusterLimit){isDuster=true} else {isDuster=false }
+end
+
+// SK
+rule "rule triggered  by PirState_SK received command ON"
+when 	
+    Item  PirState_SK received command ON
+then
+    if (curMode=="pir"){
+        pirLastTriggered_SK1.postUpdate( new DateTimeType() )
+        //logInfo("PirState_SK", "PirState_SK got command ON")
+        var Number bright=0
+        //var Number intense=0
+            if (Current_BtnState.state.toString == "dusk") {
+                bright=25
+            } else if (Current_BtnState.state.toString == "afternoon") {
+                bright=0
+            } else if (Current_BtnState.state.toString == "evening") {
+                bright=30
+            } else if (Current_BtnState.state.toString == "late") {
+                bright=6
+            } else if (Current_BtnState.state.toString == "salon") {
+                bright=20
+            } else if (Current_BtnState.state.toString == "goodnight") {
+                bright=10
+            } 
+            //intense=bright*3
+            logInfo("PirState_SK", "PirState_SK got command ON and bright is "+bright)
+            
+        if (bright > 0) {
+            
+            //logInfo("PirState_SK", "PirState_SK set to shine")
+            // if (pirActive_SK_spot1.state==ON) {schrankSpot1.sendCommand(bright)}
+            // if (pirActive_SK_spot2.state==ON) {schrankSpot2.sendCommand(bright)}
+            // if (pirActive_SK_spot3.state==ON) {schrankSpot3.sendCommand(bright)}
+            
+            if (pirActive_SK_buddha.state==ON) {steckdose01Switch.sendCommand("ON")}
+            if (pirActive_SK_fenster.state==ON) {steckdose02Switch.sendCommand("ON")}
+            if (pirActive_SK_balkon.state==ON) {steckdose03Switch.sendCommand("ON")}
+
+
+            if (pirActive_SK_Bettkante.state==ON) {led_bk.sendCommand('{"state":"ON"}')}
+            if (pirActive_SK_Fensterkante.state==ON) {led_fk.sendCommand('{"state":"ON"}')}
+            // if (pirActive_SK_Bettkante.state==ON) {led_bk_Power.sendCommand("ON")}
+            // if (pirActive_SK_Fensterkante.state==ON) {led_fk_Power.sendCommand("ON")}
+        
+            
+        }
+    }
+
+    
+
+end
+ 
+
+   
+
+rule "rule triggered  by PirState_SK received command OFF"
+
+when 	
+    Item  PirState_SK received command OFF
+then
+    //if (Flag_Pir_SK.state == 1) {
+     
+    if (curMode=="pir"){   
+        
+        
+        if (skSteady.state==ON) {return;}
+        //logInfo("PirState_SK", "PirState_SK reset to 0")
+
+        if (pirActive_SK_Bettkante.state==ON) {led_bk.sendCommand('{"state":"OFF"}')}
+        if (pirActive_SK_Fensterkante.state==ON) {led_fk.sendCommand('{"state":"OFF"}')}
+
+        if (pirActive_SK_buddha.state==ON) {steckdose01Switch.sendCommand("OFF")}
+        if (pirActive_SK_fenster.state==ON) {steckdose02Switch.sendCommand("OFF")}
+        if (pirActive_SK_balkon.state==ON) {steckdose03Switch.sendCommand("OFF")}
+        Flag_Pir_SK.postUpdate(0)
+    }
+
+    
+	
+end
+
+
+// SK2, das ist der Sensor in der linken Schrank'hälfte'
+rule "rule triggered  by PirState_SK2 received command ON"
+when 	
+    Item  PirState_SK2 received command ON
+then
+   logInfo("pirSK","pir SK2 hat ausgelöst")
+    var Number bright=30
+    if (pirActive_SK_spot1.state==ON) {schrankSpot1.sendCommand(bright)}
+    if (pirActive_SK_spot2.state==ON) {schrankSpot2.sendCommand(bright)}
+    wifiLed4_power.sendCommand(ON)
+    //if (pirActive_SK_spot3.state==ON) {schrankSpot3.sendCommand(bright)}
+end
+
+rule "rule triggered  by PirState_SK2 received command OFF"
+when 	
+    Item  PirState_SK2 received command OFF
+then
+    if (pirActive_SK_spot1.state==ON) {schrankSpot1.sendCommand(OFF)}
+    if (pirActive_SK_spot2.state==ON) {schrankSpot2.sendCommand(OFF)}
+    //if (pirActive_SK_spot3.state==ON) {schrankSpot3.sendCommand(OFF)}
+    wifiLed4_power.sendCommand(OFF)
+end
+
+
+rule "rule triggered  by TocState_SK received command ON"
+when 	
+    Item  TocState_SK received command ON
+then
+        var Number b1=schrankSpot1.state as Number    
+        var Number b2=schrankSpot2.state as Number         
+        //var Number b3=schrankSpot3.state as Number 
+        
+
+        tocCount++
+        logInfo("TocState_SK", "TocState_SK got command ON and spotbBright was "+spotBright)
+        if (tocCount==0){spotBright=6}
+        else if (tocCount==1){spotBright=33}
+        else if (tocCount==2){spotBright=66}
+        else if (tocCount==3){spotBright=99}
+        else if (tocCount==4){spotBright=6;tocCount=0}
+
+        if (pirActive_SK_spot1.state==ON && b1>0) {schrankSpot1.sendCommand(spotBright)}
+        if (pirActive_SK_spot2.state==ON && b2>0) {schrankSpot2.sendCommand(spotBright)}
+             
+end
+
+
+
+
+// daAction_SK
+rule "rule triggered  by daAction_SK changed"
+when 	
+    Item  daAction_SK received command ON
+then
+	logInfo("presence", "daAction SK "+da_jmd.state)
+  
+    if (da_jmd.state==OFF) {
+        
+        skLicht_aus.sendCommand(ON)
+    
+    } else if (da_jmd.state==ON) {
+        // 
+        skLicht_pir.sendCommand(ON)
+    }
+  
+end
+
+// cycleAction_SK
+
+rule "triggered by cycleAction_SK changed"
+when 
+    Item cycleAction_SK changed
+then
+    logInfo("cycleAction_SK", "cycleAction_SK changed "+cycleAction_SK.state.toString)
+    var state=cycleAction_SK.state.toString
+
+    // if (newArrayList("dusk","evening","late","salon","goodnight","night").contains(Current_BtnState.state.toString)) { 
+    //         pirActive_SK_fenster.state=OFF
+    //         pirActive_SK_spot2.state=ON
+    // }
+   // newArrayList("early","morning","day","noon","afternoon","dusk","evening","salon","late","goodnight","night","away")
+    
+    if (curMode=="pir"){   
+
+    if (state=="early"){
+	
+    }
+    if (state=="morning"){
+        pirActive_SK_Fensterkante.sendCommand("ON")
+    }
+    if (state=="day"){
+
+       led_fk.sendCommand('{"effect":"kelvin","bright":12,"kelvin":1100}')
+    }
+    if (state=="noon"){
+
+    }
+    if (state=="afternoon"){
+        led_fk.sendCommand('{"effect":"kelvin","bright":16,"kelvin":800}')
+    }
+
+    if (state=="dusk"){
+
+        pirActive_SK_Bettkante.sendCommand("ON")
+        led_fk.sendCommand('{"effect":"kelvin","bright":18,"kelvin":900}')
+        led_bk.sendCommand('{"bright":24,"effect":"rangeWave","stepTime":90,"colorHsv":{"h":7,"s":250,"v":185}}')		
+    }
+    if (state=="evening"){
+		led_fk.sendCommand('{"effect":"kelvin","bright":32,"kelvin":850}')
+    }
+ 
+    if (state=="salon"){
+        led_fk.sendCommand('{"effect":"kelvin","bright":24,"kelvin":1000}')
+        pirActive_SK_buddha.sendCommand("OFF")
+        //pirActive_SK_fenster.sendCommand("ON")	
+    }
+    if (state=="late"){
+        led_fk.sendCommand('{"bright":24,"effect":"rangeWave","stepTime":90,"colorHsv":{"h":32,"s":250,"v":135}}')
+        pirActive_SK_fenster.sendCommand("OFF")
+    }
+    if (state=="goodnight"){
+        //LEDStrip_BettKante_Power.sendCommand(ON)
+        led_fk.sendCommand('{"bright":32,"effect":"rangeWave","stepTime":90,"colorHsv":{"h":32,"s":250,"v":135}}')
+        pirActive_SK_buddha.sendCommand("OFF")
+        pirActive_SK_fenster.sendCommand("OFF")	
+    }
+    if (state=="night"){
+        //LEDStrip_BettKante_Power.sendCommand(ON)
+        steckdose03Switch.sendCommand("ON")
+
+        steckdose01Switch.sendCommand(0)
+        steckdose02Switch.sendCommand(0)
+        bettLicht.sendCommand(0)
+        led_fk.sendCommand('{"bright":16,"effect":"solid","stepTime":90,"colorHsv":{"h":28,"s":250,"v":135}}')
+        led_bk.sendCommand('{"bright":12,"effect":"solid","stepTime":90,"colorHsv":{"h":7,"s":250,"v":128}}')
+        //led_fk_Power.sendCommand("OFF")
+        pirActive_SK_Fensterkante.sendCommand("OFF")
+
+        // redlight mi Timer
+        if(redLightDelayed === null) {
+            logInfo("redLightDelayed", "Setting to ON and creating timer")
+            redLightDelayed = createTimer(now.plusMinutes(8), [|
+                logInfo("redLightDelayed", "Timer expired and setting to OFF")
+                //LEDStrip_BettKante_Power.sendCommand(OFF)
+                led_fk.sendCommand('{"state":"OFF"}')
+                led_bk.sendCommand('{"state":"OFF"}')
+                //led_fk_Power.sendCommand("OFF")
+                //led_bk_Power.sendCommand("OFF")
+                //steckdose03Switch.sendCommand("OFF")
+                redLightDelayed = null
+
+            ])
+        } else {
+            logInfo("FILE", "Timer rescheduled")
+            redLightDelayed.reschedule(now.plusMinutes(2))
+        }
+
+
+        // IR redlight mi Timer
+        if(balkonLightDelayed === null) {
+            logInfo("redLightDelayed", "Setting to ON and creating timer")
+            balkonLightDelayed = createTimer(now.plusMinutes(1), [|
+                logInfo("balkonLightDelayed", "Timer expired and setting to OFF")
+                //LEDStrip_BettKante_Power.sendCommand(OFF)
+                steckdose03Switch.sendCommand("OFF")
+                //led_fk_Power.sendCommand("OFF")
+                led_fk.sendCommand('{"state":"OFF"}')
+                balkonLightDelayed = null
+            ])
+        } else {
+            logInfo("FILE", "Timer rescheduled")
+            balkonLightDelayed.reschedule(now.plusMinutes(1))
+        }
+
+
+			pirActive_SK_buddha.sendCommand("OFF")
+			pirActive_SK_fenster.sendCommand("OFF")
+
+			// if (da_Daniel.state.toString == "ON")
+			// {
+			// 	steckdose01Switch.sendCommand("OFF")
+			// 	steckdose03Switch.sendCommand("ON")
+			// 	pirActive_SK_balkon.sendCommand("ON")
+
+        		
+			// }        
+	
+    }
+    }
+
+end
+
+/*
+    modes
+
+
+*/
+
+
+rule "rule triggered  by skLicht_aus received command ON"
+
+when 	
+    Item  skLicht_aus received command ON
+then
+    curMode="aus"
+    for ( aState : modesArray) {
+		if (aState!=curMode) {
+			sendCommand("skLicht_"+aState,"OFF")		
+		}
+	}
+    
+  /*      
+        pirActive_SK_buddha.sendCommand("OFF")
+        pirActive_SK_fenster.sendCommand("OFF")	
+        pirActive_SK_Fensterkante.sendCommand("OFF")
+        pirActive_SK_Bettkante.sendCommand("OFF")
+ */
+        // buddha, fensterLicht balkonLicht
+        steckdose01Switch.sendCommand(0)
+        steckdose02Switch.sendCommand(0) 
+        steckdose03Switch.sendCommand(0)
+
+        schrankSpot1.sendCommand(0)
+       
+
+        bettLicht.sendCommand(0)
+        led_fk.sendCommand('{"state":"OFF"}')
+        led_bk.sendCommand('{"state":"OFF"}')
+ 
+
+	
+end
+
+rule "rule triggered  by skLicht_zart received command ON"
+
+when 	
+    Item  skLicht_zart received command ON
+then
+    curMode="zart"
+    for ( aState : modesArray) {
+		if (aState!=curMode) {
+			sendCommand("skLicht_"+aState,"OFF")		
+		}
+	}
+    
+ //
+        steckdose01Switch.sendCommand(0)
+        steckdose02Switch.sendCommand(0) 
+        steckdose03Switch.sendCommand(0)
+        bettLicht.sendCommand(0)
+        schrankSpot1.sendCommand(0)
+        schrankSpot2.sendCommand(0)
+
+        led_fk.sendCommand('{"bright":6,"effect":"solid","stepTime":90,"colorHsv":{"h":30,"s":250,"v":135}}')
+        led_bk.sendCommand('{"bright":5,"effect":"solid","stepTime":90,"colorHsv":{"h":1,"s":250,"v":128}}')
+	
+end
+
+rule "rule triggered  by skLicht_sanft received command ON"
+
+when 	
+    Item  skLicht_sanft received command ON
+then
+     curMode="sanft"
+    for ( aState : modesArray) {
+		if (aState!=curMode) {
+			sendCommand("skLicht_"+aState,"OFF")		
+		}
+	}
+    
+  //
+            steckdose01Switch.sendCommand(0)
+        steckdose02Switch.sendCommand(0) 
+        steckdose03Switch.sendCommand(0)
+        bettLicht.sendCommand(0)
+        schrankSpot1.sendCommand(0)
+      
+
+        led_fk.sendCommand('{"bright":16,"effect":"solid","stepTime":90,"colorHsv":{"h":28,"s":250,"v":135}}')
+        led_bk.sendCommand('{"bright":12,"effect":"solid","stepTime":90,"colorHsv":{"h":7,"s":250,"v":128}}')   
+    
+	
+end
+
+rule "rule triggered  by skLicht_weich received command ON"
+when 	
+    Item  skLicht_weich received command ON
+then
+     curMode="weich"
+    for ( aState : modesArray) {
+		if (aState!=curMode) {
+			sendCommand("skLicht_"+aState,"OFF")		
+		}
+	}
+   
+    //
+         steckdose01Switch.sendCommand(0)
+        steckdose02Switch.sendCommand(0) 
+        steckdose03Switch.sendCommand(0)
+        bettLicht.sendCommand(0)
+        schrankSpot1.sendCommand(0)
+        schrankSpot2.sendCommand(0)
+
+        led_fk.sendCommand('{"state":"ON","bright":64,"effect":"rangeWave","stepTime":440,"colorHsv":{"h":31,"s":250,"v":235}}')
+        led_bk.sendCommand('{"state":"ON","bright":54,"effect":"rangeWave","stepTime":340,"colorHsv":{"h":8,"s":250,"v":225}}')
+  
+   
+       
+    
+	
+end
+
+rule "rule triggered  by skLicht_wach received command ON"
+
+when 	
+    Item  skLicht_wach received command ON
+then
+    curMode="wach"
+    for ( aState : modesArray) {
+		if (aState!=curMode) {
+			sendCommand("skLicht_"+aState,"OFF")		
+		}
+	}
+   
+    //
+       
+            steckdose01Switch.sendCommand(0)
+        steckdose02Switch.sendCommand(0) 
+        steckdose03Switch.sendCommand(0)
+        bettLicht.sendCommand(0)
+        schrankSpot1.sendCommand(0)
+        
+
+        led_fk.sendCommand('{"state":"ON","bright":88,"effect":"rangeWave","stepTime":340,"colorHsv":{"h":28,"s":250,"v":235}}')
+        led_bk.sendCommand('{"state":"ON","bright":64,"effect":"rangeWave","stepTime":340,"colorHsv":{"h":7,"s":250,"v":225}}')
+
+	
+end
+
+
+rule "rule triggered  by skLicht_hell received command ON"
+
+when 	
+    Item  skLicht_hell received command ON
+then
+    curMode="hell"
+    for ( aState : modesArray) {
+		if (aState!=curMode) {
+			sendCommand("skLicht_"+aState,"OFF")		
+		}
+	}
+
+   
+  //
+           
+        steckdose01Switch.sendCommand("ON")
+        steckdose02Switch.sendCommand("ON") 
+        steckdose03Switch.sendCommand(0)
+
+        bettLicht.sendCommand(80)
+        schrankSpot1.sendCommand(60)
+        
+
+        led_fk.sendCommand('{"bright":240,"effect":"solid","stepTime":90,"colorHsv":{"h":28,"s":45,"v":250}}')
+        led_bk.sendCommand('{"bright":240,"effect":"solid","stepTime":90,"colorHsv":{"h":2,"s":45,"v":250}}')
+       
+    
+	
+end
+
+rule "rule triggered  by skLicht_pir received command ON"
+
+when 	
+    Item  skLicht_pir received command ON
+then
+     curMode="pir"
+    for ( aState : modesArray) {
+		if (aState!=curMode) {
+			sendCommand("skLicht_"+aState,"OFF")		
+		}
+	}
+    
+    // Action!
+       
+    
+	
+end
+
+
+/*
+    ON
+    Licht zum Einkuscheln, Weich, dann sanft, dann zart, dann aus
+
+    OFF
+    timer weg
+*/
+
+rule "rule triggered  by KuschelnSK received command"
+
+when 	
+    Item  KuschelnSK received command 
+then
+    if (receivedCommand==ON){
+        // phase nightLight
+        StateBtn_night.postUpdate(ON)
+        // SK weiches Licht
+        skLicht_weich.sendCommand(ON)
+
+        // timer für 1. Wechsel
+        bettreifTimer1 = createTimer(now.plusMinutes(2), [|
+                logInfo("SK", "einKuscheln Timer1 expired")
+                skLicht_sanft.sendCommand(ON)
+                
+                bettreifTimer1 = null
+            ])
+
+        // timer für 2. Wechsel
+        bettreifTimer2 = createTimer(now.plusMinutes(3), [|
+                logInfo("SK", "einKuscheln Timer2 expired")
+                skLicht_zart.sendCommand(ON)
+                
+                bettreifTimer2 = null
+            ])
+
+        // timer für 3. Wechsel
+        bettreifTimer3 = createTimer(now.plusMinutes(4), [|
+                logInfo("SK", "einKuscheln Timer3 expired")
+                skLicht_aus.sendCommand(ON)
+                
+                bettreifTimer3 = null
+            ])
+
+    } else {
+        
+        // timer weg
+        bettreifTimer1 = null
+        bettreifTimer2 = null
+        bettreifTimer3 = null
+
+
+    }
+
+
+	
+end
+
+
+
+
+
+rule "bettReif received command"
+when 
+    Item bettReif changed
+then
+    logInfo("dash", "bettReif received command "+bettReif.state.toString)
+
+    if (bettReif.state==ON) {
+        StateBtn_goodnight.postUpdate(ON)
+        // Timer1 
+        if(bettreifTimer1 === null) {
+            logInfo("bettreifTimer1", "Setting bettreifTimer1 to ON and creating timer")
+            bettreifTimer1 = createTimer(now.plusMinutes(1), [|
+                logInfo("bettreifTimer1", "bettreifTimer1 expired and setting to OFF")
+                officePanel.sendCommand(0)
+                officeLicht.sendCommand(0)
+                officeSpot.sendCommand(1)
+                
+                bettreifTimer1 = null
+            ])
+        } else {
+            logInfo("bettreifTimer", "bettreifTimer1 rescheduled")
+            bettreifTimer1.reschedule(now.plusMinutes(2))
+        }
+        // Timer2 
+        if(bettreifTimer2 === null) {
+            logInfo("bettreifTimer", "Setting bettreifTimer2 to ON and creating timer")
+            bettreifTimer2 = createTimer(now.plusMinutes(4), [|
+                logInfo("bettreifTimer", "bettreifTimer2 expired and setting to OFF")
+                officePanel.sendCommand(0)
+                officeLicht.sendCommand(0)
+                officeSpot.sendCommand(0)
+                
+                bettreifTimer2 = null
+            ])
+        } else {
+            logInfo("bettreifTimer", "bettreifTimer2 rescheduled")
+            bettreifTimer2.reschedule(now.plusMinutes(2))
+        }
+        // Timer3
+        if(bettreifTimer3 === null) {
+            logInfo("bettreifTimer", "Setting bettreifTimer3 to ON and creating timer")
+            bettreifTimer3 = createTimer(now.plusMinutes(8), [|
+                logInfo("bettreifTimer1", "bettreifTimer1 expired and setting to OFF")
+                officePanel.sendCommand(0)
+                officeLicht.sendCommand(0)
+                officeSpot.sendCommand(0)
+                StateBtn_night.postUpdate(ON)
+                bettreifTimer3 = null
+            ])
+        } else {
+            logInfo("bettreifTimer1", "bettreifTimer3 rescheduled")
+            bettreifTimer3.reschedule(now.plusMinutes(2))
+        }
+    }
+    if (bettReif.state==OFF) {
+        // tja...
+
+    }
+end 

@@ -1,0 +1,177 @@
+// Tradfris 
+
+/*
+    das tradfri-binding macht leider fortgesetzt Kummer, mit dem Update des tradfri-software auf 1.8.25 ging der Kontakt zum eingerichteten GW und seinen Things komplett verloren und 
+    dazu ein crasheroo von java-exceptions
+    die Palette von Massnahmen:
+    - in der paper-ui das Stopuhr-Icon klicken (disable/enable)
+    - in openhab-cli das TRADFRI bundle finden und restarten
+    - das Binding uninstall/install
+    - systemctl stop openhab2, /var/lib/openhab2/cache und tmp ausleeren
+    - reinstall der openhab2 2.4 
+    blieb alles fruchtlos, aber am Ende dieser Kette kam ich immerhin an den Punkt, wo ein auto-discovered thing mit dem Tradfri-GW wieder online ging.
+    Letztlich blieb nichts, als die item entsprechend umzuschreiben, die Oeriginale sind auskommentiert hier noch erhalten.
+
+    Evtl könnte ich auf ein python-interface zu Tradfri ausweichen...
+
+
+
+*/
+
+// bettlicht
+Dimmer bettLicht_Temp   "bettLicht_Temp" (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0210:gwb8d7af2b2e3d:65550:color_temperature" }
+Color bettLicht         "bettLicht"      (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0210:gwb8d7af2b2e3d:65550:color" }
+
+// schrankSpot
+Dimmer schrankSpot1      "schrankSpot1"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65562:brightness" }
+Dimmer schrankSpot2      "schrankSpot2"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65563:brightness"}
+Dimmer schrankSpot3      "schrankSpot3"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65564:brightness" }
+
+
+// klarlicht
+Dimmer klarLicht_Temp   "klarlicht_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65546:color_temperature" }
+Dimmer klarLicht        "klarlicht"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65546:brightness" }
+
+// officelicht
+Dimmer officeLicht_Temp   "officelicht_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65548:color_temperature" }
+Dimmer officeLicht        "officelicht"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65548:brightness" }
+
+// officePanel
+Dimmer officePanel_Temp   "officePanel_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65552:color_temperature" }
+Dimmer officePanel        "officePanel"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65552:brightness" }
+
+// officeSpot
+Dimmer officeSpot        "officeSpot"      (gOffice) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65554:brightness" }
+
+// claraLicht
+Dimmer claraLicht_Temp   "claraLicht_Temp" (gClara) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65556:color_temperature" }
+Dimmer claraLicht        "claraLicht"      (gClara) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65556:brightness" }
+
+// mediStehLampe
+Dimmer mediStehLampe_Temp   "mediStehLampe_Temp" (gMedi) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65558:color_temperature" }
+Dimmer mediStehLampe        "mediStehLampe"      (gMedi) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65558:brightness" }
+
+// luiseSpot
+
+Group gMediSpot         "mediSpots"       (gMedi) [ "Lighting" ]  
+
+Dimmer mediSpot1        "mediSpot1"      (gMediSpot) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65559:brightness" }
+Dimmer mediSpot2        "mediSpot2"      (gMediSpot) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65560:brightness" }
+
+// badSpot
+Dimmer badSpot        "badSpot"      (gBad) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65567:brightness" }
+
+// spot in der gaderobe
+Dimmer gardeSpot        "gardeSpot"      (gFlur) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65570:brightness" }
+//remotes
+
+//officeRemote
+Number officeLichtRemote_Battery    "officeRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65547:battery_level" }
+Switch officeLichtRemote_Replace    "officeRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65547:battery_low" }
+
+//officeSpotRemote
+Number officePanelRemote_Battery    "officePanelRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65551:battery_level" }
+Switch officePanelRemote_Replace    "officePanelRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65551:battery_low" }
+
+//naamlosRemote
+Number naamlosRemote_Battery    "officeSpotRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65569:battery_level" }
+Switch naamlosRemote_Replace    "officeSpotRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65569:battery_low" }
+
+//bettRemote
+Number bettRemote_Battery    "bettRemote_Level"  (gRemotes)  [ "Lighting" ]   { channel="tradfri:0830:gwb8d7af2b2e3d:65549:battery_level" }
+Switch bettRemote_Replace    "bettRemote_Replace" (gRemotes) [ "Lighting" ]   { channel="tradfri:0830:gwb8d7af2b2e3d:65549:battery_low" }
+
+//claraLichtRemote
+Number claraLichtRemote_Battery    "claraLichtRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65555:battery_level" }
+Switch claraLichtRemote_Replace    "claraLichtRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65555:battery_low" }
+
+//luiseRemote
+Number luiseRemote_Battery    "luiseLichtRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65568:battery_level" }
+Switch luiseRemote_Replace    "luiseLichtRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65568:battery_low" }
+
+//badRemote
+Number badRemote_Battery    "luiseLichtRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65566:battery_level" }
+Switch badRemote_Replace    "luiseLichtRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65566:battery_low" }
+
+ 
+
+/*
+// so gehen die tradfri items mit der in tradfri.things konfigurierten bridge
+// als backup stehen lassen
+
+// bettlicht
+Dimmer bettLicht_Temp   "bettLicht_Temp" (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0210:trada:bettLicht:color_temperature" }
+Color bettLicht         "bettLicht"      (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0210:trada:bettLicht:color" }
+
+// schrankSpot
+Dimmer schrankSpot1      "schrankSpot1"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:trada:schrankSpot1:brightness" }
+Dimmer schrankSpot2      "schrankSpot2"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:trada:schrankSpot2:brightness" }
+Dimmer schrankSpot3      "schrankSpot3"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:trada:schrankSpot3:brightness" }
+
+
+// klarlicht
+Dimmer klarLicht_Temp   "klarlicht_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:trada:klarLicht:color_temperature" }
+Dimmer klarLicht        "klarlicht"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:trada:klarLicht:brightness" }
+
+// officelicht
+Dimmer officeLicht_Temp   "officelicht_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:trada:officeLicht:color_temperature" }
+Dimmer officeLicht        "officelicht"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:trada:officeLicht:brightness" }
+
+// officePanel
+Dimmer officePanel_Temp   "officePanel_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:trada:officePanel:color_temperature" }
+Dimmer officePanel        "officePanel"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:trada:officePanel:brightness" }
+
+// officeSpot
+Dimmer officeSpot        "officeSpot"      (gOffice) [ "Lighting" ] { channel="tradfri:0100:trada:officeSpot:brightness" }
+
+// claraLicht
+Dimmer claraLicht_Temp   "claraLicht_Temp" (gClara) [ "Lighting" ] { channel="tradfri:0220:trada:claraLicht:color_temperature" }
+Dimmer claraLicht        "claraLicht"      (gClara) [ "Lighting" ] { channel="tradfri:0220:trada:claraLicht:brightness" }
+
+// mediStehLampe
+Dimmer mediStehLampe_Temp   "mediStehLampe_Temp" (gMedi) [ "Lighting" ] { channel="tradfri:0220:trada:mediStehlampe:color_temperature" }
+Dimmer mediStehLampe        "mediStehLampe"      (gMedi) [ "Lighting" ] { channel="tradfri:0220:trada:mediStehlampe:brightness" }
+
+// luiseSpot
+
+Group gMediSpot         "mediSpots"       (gMedi) [ "Lighting" ]  
+
+Dimmer mediSpot1        "mediSpot1"      (gMediSpot) [ "Lighting" ] { channel="tradfri:0100:trada:mediSpot1:brightness" }
+Dimmer mediSpot2        "mediSpot2"      (gMediSpot) [ "Lighting" ] { channel="tradfri:0100:trada:mediSpot2:brightness" }
+
+// badSpot
+Dimmer badSpot        "badSpot"      (gBad) [ "Lighting" ] { channel="tradfri:0100:trada:badSpot:brightness" }
+
+// spot in der gaderobe
+Dimmer gardeSpot        "gardeSpot"      (gFlur) [ "Lighting" ] { channel="tradfri:0100:trada:gardeSpot:brightness" }
+//remotes
+
+//officeRemote
+Number officeRemote_Battery    "officeRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:trada:officeRemote:battery_level" }
+Switch officeRemote_Replace    "officeRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:trada:officeRemote:battery_low" }
+
+//officeSpotRemote
+Number officePanelRemote_Battery    "officePanelRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:trada:officePanelRemote:battery_level" }
+Switch officePanelRemote_Replace    "officePanelRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:trada:officePanelRemote:battery_low" }
+
+//officeSpotRemote
+Number officeSpotRemote_Battery    "officeSpotRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:trada:officeSpotRemote:battery_level" }
+Switch officeSpotRemote_Replace    "officeSpotRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:trada:officeSpotRemote:battery_low" }
+
+//bettRemote
+Number bettRemote_Battery    "bettRemote_Level"  (gRemotes)  [ "Lighting" ]   { channel="tradfri:0830:trada:65549:battery_level" }
+Switch bettRemote_Replace    "bettRemote_Replace" (gRemotes) [ "Lighting" ]   { channel="tradfri:0830:trada:65549:battery_low" }
+
+//claraLichtRemote
+Number claraLichtRemote_Battery    "claraLichtRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:trada:claraLichtRemote:battery_level" }
+Switch claraLichtRemote_Replace    "claraLichtRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:trada:claraLichtRemote:battery_low" }
+
+//luiseRemote
+Number luiseRemote_Battery    "luiseLichtRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:trada:mediRemote:battery_level" }
+Switch luiseRemote_Replace    "luiseLichtRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:trada:mediRemote:battery_low" }
+
+//badRemote
+Number badRemote_Battery    "luiseLichtRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:trada:badRemote:battery_level" }
+Switch badRemote_Replace    "luiseLichtRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:trada:badRemote:battery_low" }
+
+*/

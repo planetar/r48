@@ -1,0 +1,765 @@
+/*
+    das ist die hartkodierte Basis der Farbtabellen 
+    unterschieden nach phase, hue, saturation, brightness, 
+    color und dimmer - items
+
+    es gibt das eine aktive item recolor, das in  Item reColor received command  mit einer phase als parameter 
+    die Teil-Tabelle liest und in die diversen item einschreibt.
+
+    und weil hartkodiert eben etwas unflexibel ist, gibt es nun mit 
+    executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",flurGoColor,act",10000)
+    eine ReInkarnation von Lingo/get/setVars, die dieses ellenlange script in 12 Zeilen .son staucht und zudem 
+    dynamisches und persistentes editing aus der gui erlaubt.
+    
+*/
+
+// overRide
+var String ovride
+
+// flurGo
+var DecimalType hue_flurGo = new DecimalType(350)
+// flurStrip
+var DecimalType hue_flurStrip = new DecimalType(278)
+// mediStrip
+var DecimalType hue_mediStrip = new DecimalType(35)
+// wlBad
+var DecimalType hue_badStrip = new DecimalType(206)
+// wlKueche
+var DecimalType hue_kuecheStrip = new DecimalType(134)
+// girSK
+var DecimalType hue_bettStrip = new DecimalType(62)
+
+// bedSK
+var DecimalType hue_bettLicht = new DecimalType(62)
+
+var PercentType sat_a = new PercentType(10)
+var PercentType sat_p = new PercentType(90)
+var PercentType sat_w = new PercentType(90)
+
+var PercentType sat_flurGo = new PercentType(60)
+var PercentType sat_flurStrip = new PercentType(70)
+var PercentType sat_mediStrip = new PercentType(95)
+var PercentType sat_badStrip = new PercentType(50)
+var PercentType sat_kuecheStrip = new PercentType(90)
+var PercentType sat_bettStrip = new PercentType(100)
+var PercentType sat_bettLicht = new PercentType(50)
+
+var PercentType bright_flurGo = new PercentType(70)
+var PercentType bright_flurStrip = new PercentType(1)
+var PercentType bright_flurKante = new PercentType(1)
+var PercentType bright_mediStrip = new PercentType(1)
+var PercentType bright_badStrip = new PercentType(3)
+var PercentType bright_badKante = new PercentType(3)
+var PercentType bright_kuecheStrip = new PercentType(8)
+
+var PercentType bright_bettStrip = new PercentType(3)
+var PercentType bright_bettLicht = new PercentType(1)
+var PercentType bright_OfficeLight = new PercentType(0)
+var PercentType bright_OfficePanel = new PercentType(0)
+var PercentType bright_OfficeKlar = new PercentType(0)
+var PercentType bright_BadSpot = new PercentType(0)
+var PercentType bright_SKSpot = new PercentType(0)
+var PercentType bright_p = new PercentType(5)
+var PercentType bright_w = new PercentType(1)
+
+var String[] statesArray = newArrayList("early","morning","day","noon","afternoon","dusk","evening","salon","late","goodnight","night","away")
+var String phase="early"
+// init
+
+rule "triggered by system start - coloring"
+when 
+    System started
+then
+    statesArray = newArrayList("early","morning","day","noon","afternoon","dusk","evening","salon","late","goodnight","night","away")
+    reColor.sendCommand("day")
+    logInfo("medi","init coloring  ")
+end
+
+ 
+rule "reColor received command"
+when 
+    Item reColor received command
+then
+    statesArray = newArrayList("early","morning","day","noon","afternoon","dusk","evening","salon","late","goodnight","night","away")
+    if (statesArray.contains(receivedCommand)){phase=receivedCommand.toString} else {phase=Current_BtnState.state.toString}
+    logInfo("reColor", "reColor got command "+receivedCommand)
+    Flag_reColoring.postUpdate(1)
+
+    switch phase {
+        case "early": {
+            hue_flurGo = new DecimalType(270)
+            hue_flurStrip = new DecimalType(160)
+            hue_badStrip = new DecimalType(206)
+            hue_kuecheStrip = new DecimalType(134)
+            hue_bettStrip = new DecimalType(150)
+            hue_bettLicht = new DecimalType(180)
+
+            sat_flurGo = new PercentType(60)
+            sat_flurStrip = new PercentType(70)
+            sat_badStrip = new PercentType(50)
+            sat_kuecheStrip = new PercentType(90)
+            sat_bettStrip = new PercentType(100)
+            sat_bettLicht = new PercentType(50)
+
+
+            sat_a = new PercentType(80)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(10)
+            bright_flurStrip = new PercentType(1)
+            bright_flurKante = new PercentType(1)            
+            bright_badStrip = new PercentType(3)
+            bright_badKante = new PercentType(3)
+            bright_kuecheStrip = new PercentType(8)
+            bright_bettStrip = new PercentType(3)
+            bright_OfficeLight = new PercentType(0)
+            bright_OfficePanel = new PercentType(0)
+            bright_OfficeKlar = new PercentType(0)
+            bright_BadSpot = new PercentType(0)
+            bright_SKSpot = new PercentType(0)
+
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(1)
+        }
+
+        case 'morning': {
+            hue_flurGo = new DecimalType(120)
+            hue_flurStrip = new DecimalType(240)
+            hue_badStrip = new DecimalType(96)
+            hue_kuecheStrip = new DecimalType(134)
+            hue_bettStrip = new DecimalType(240)
+            hue_bettLicht = new DecimalType(240)
+
+            
+            sat_flurGo = new PercentType(75)
+            sat_flurStrip = new PercentType(65)
+            sat_badStrip = new PercentType(80)
+            sat_kuecheStrip = new PercentType(80)
+            sat_bettStrip = new PercentType(100)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(75)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+
+            bright_flurGo = new PercentType(30)
+            bright_flurStrip = new PercentType(9)
+            bright_flurKante = new PercentType(3)
+            bright_badStrip = new PercentType(3)
+            bright_badKante = new PercentType(3)
+            bright_kuecheStrip = new PercentType(3)
+            bright_bettStrip = new PercentType(3)
+            bright_OfficeLight = new PercentType(0)
+            bright_OfficePanel = new PercentType(0)
+            bright_OfficeKlar = new PercentType(0)
+            bright_BadSpot = new PercentType(0)
+            bright_SKSpot = new PercentType(3)
+
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(1)
+        }
+
+        case 'day': {
+            hue_flurGo = new DecimalType(120)
+            hue_flurStrip = new DecimalType(180)
+            hue_badStrip = new DecimalType(106)
+            hue_kuecheStrip = new DecimalType(114)
+            hue_bettStrip = new DecimalType(240)
+            hue_bettLicht = new DecimalType(240)
+
+            
+            sat_flurGo = new PercentType(60)
+            sat_flurStrip = new PercentType(60)
+            sat_badStrip = new PercentType(80)
+            sat_kuecheStrip = new PercentType(80)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(60)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+
+            bright_flurGo = new PercentType(30)
+            bright_flurStrip = new PercentType(13)
+            bright_flurKante = new PercentType(3)
+            bright_badStrip = new PercentType(3)
+            bright_badKante = new PercentType(3)
+            bright_kuecheStrip = new PercentType(23)
+            bright_bettStrip = new PercentType(3)
+            bright_OfficeLight = new PercentType(3)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(3)
+            bright_SKSpot = new PercentType(3)
+
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(1)
+        }
+
+        case 'noon':  {
+            hue_flurGo = new DecimalType(180)
+            hue_flurStrip = new DecimalType(200)
+            hue_badStrip = new DecimalType(126)
+            hue_kuecheStrip = new DecimalType(94)
+            hue_bettStrip = new DecimalType(80)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(80)
+            sat_flurStrip = new PercentType(60)
+            sat_badStrip = new PercentType(80)
+            sat_kuecheStrip = new PercentType(80)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(40)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(23)
+            bright_flurStrip = new PercentType(13)
+            bright_flurKante = new PercentType(5)
+            bright_badStrip = new PercentType(3)
+            bright_badKante = new PercentType(3)
+            bright_kuecheStrip = new PercentType(3)
+            bright_bettStrip = new PercentType(3)
+            bright_OfficeLight = new PercentType(3)
+            bright_OfficePanel = new PercentType(3)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(3)
+            bright_SKSpot = new PercentType(3)
+
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(1)
+        }
+
+        case 'afternoon': {
+            hue_flurGo = new DecimalType(212)
+            hue_flurStrip = new DecimalType(42)
+            hue_badStrip = new DecimalType(146)
+            hue_kuecheStrip = new DecimalType(164)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(240)
+
+            
+            sat_flurGo = new PercentType(70)
+            sat_flurStrip = new PercentType(80)
+            sat_badStrip = new PercentType(80)
+            sat_kuecheStrip = new PercentType(80)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(55)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            if (isGloomy.state==ON){
+
+                bright_flurGo = new PercentType(78)
+                bright_flurStrip = new PercentType(73)
+                bright_flurKante = new PercentType(7)
+                bright_badStrip = new PercentType(23)
+                bright_badKante = new PercentType(33)
+                bright_kuecheStrip = new PercentType(33)
+                bright_bettStrip = new PercentType(3)
+                bright_OfficeLight = new PercentType(83)
+                bright_OfficePanel = new PercentType(23)
+                bright_OfficeKlar = new PercentType(13)
+                bright_BadSpot = new PercentType(3)
+                bright_SKSpot = new PercentType(23)
+                bright_bettLicht = new PercentType(21) 
+                bright_p = new PercentType(0)
+                bright_w = new PercentType(1)
+
+            } else {
+                
+                bright_flurGo = new PercentType(18)
+                bright_flurStrip = new PercentType(23)
+                bright_flurKante = new PercentType(5)
+                bright_badStrip = new PercentType(3)
+                bright_badKante = new PercentType(13)
+                bright_kuecheStrip = new PercentType(3)
+                bright_bettStrip = new PercentType(10)
+                bright_OfficeLight = new PercentType(3)
+                bright_OfficePanel = new PercentType(3)
+                bright_OfficeKlar = new PercentType(3)
+                bright_BadSpot = new PercentType(3)
+                bright_SKSpot = new PercentType(3)
+                bright_bettLicht = new PercentType(1) 
+                bright_p = new PercentType(0)
+                bright_w = new PercentType(1)
+            }
+        }
+
+
+        case 'dusk': {
+            hue_flurGo = new DecimalType(90)
+            hue_flurStrip = new DecimalType(265)
+            hue_badStrip = new DecimalType(166)
+            hue_kuecheStrip = new DecimalType(64)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(90)
+            sat_flurStrip = new PercentType(68)
+            sat_badStrip = new PercentType(80)
+            sat_kuecheStrip = new PercentType(60)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(60)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(63)
+            bright_flurStrip = new PercentType(73)
+            bright_flurKante = new PercentType(8)
+            bright_badStrip = new PercentType(43)
+            bright_badKante = new PercentType(53)
+            bright_kuecheStrip = new PercentType(63)
+            bright_bettStrip = new PercentType(5)
+            bright_OfficeLight = new PercentType(93)
+            bright_OfficePanel = new PercentType(33)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(3)
+            bright_SKSpot = new PercentType(3)
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(1)
+        }
+
+        case 'evening': {
+            hue_flurGo = new DecimalType(12)
+            hue_flurStrip = new DecimalType(340)
+            hue_badStrip = new DecimalType(306)
+            hue_kuecheStrip = new DecimalType(18)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(70)
+            sat_flurStrip = new PercentType(72)
+            sat_badStrip = new PercentType(90)
+            sat_kuecheStrip = new PercentType(90)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(70)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(43)
+            bright_flurStrip = new PercentType(94)
+            bright_flurKante = new PercentType(5)
+            bright_badStrip = new PercentType(23)
+            bright_badKante = new PercentType(23)
+            bright_kuecheStrip = new PercentType(33)
+            bright_bettStrip = new PercentType(20)
+            bright_OfficeLight = new PercentType(90)
+            bright_OfficePanel = new PercentType(33)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(3)
+            bright_SKSpot = new PercentType(3)
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(0)
+        }
+
+        case 'salon': {
+            hue_flurGo = new DecimalType(12)
+            hue_flurStrip = new DecimalType(340)
+            hue_badStrip = new DecimalType(306)
+            hue_kuecheStrip = new DecimalType(18)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(80)
+            sat_flurStrip = new PercentType(75)
+            sat_badStrip = new PercentType(95)
+            sat_kuecheStrip = new PercentType(95)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(70)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(43)
+            bright_flurStrip = new PercentType(54)
+            bright_flurKante = new PercentType(4)
+            bright_badStrip = new PercentType(23)
+            bright_badKante = new PercentType(23)
+            bright_kuecheStrip = new PercentType(33)
+            bright_bettStrip = new PercentType(20)
+            bright_OfficeLight = new PercentType(90)
+            bright_OfficePanel = new PercentType(33)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(3)
+            bright_SKSpot = new PercentType(3)
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(0)
+        }
+
+        case 'late': {
+            hue_flurGo = new DecimalType(12)
+            hue_flurStrip = new DecimalType(358)
+            hue_badStrip = new DecimalType(151)
+            hue_kuecheStrip = new DecimalType(50)
+            hue_bettStrip = new DecimalType(0)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(99)
+            sat_flurStrip = new PercentType(98)
+            sat_badStrip = new PercentType(90)
+            sat_kuecheStrip = new PercentType(80)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(80)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(96)
+
+            bright_flurGo = new PercentType(1)
+            bright_flurStrip = new PercentType(3)
+            bright_flurKante = new PercentType(3)
+            bright_badStrip = new PercentType(9)
+            bright_badKante = new PercentType(13)
+            bright_kuecheStrip = new PercentType(9)
+            bright_bettStrip = new PercentType(1)
+            bright_OfficeLight = new PercentType(80)
+            bright_OfficePanel = new PercentType(33)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(3)
+            bright_SKSpot = new PercentType(3)
+            bright_bettLicht = new PercentType(5) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(0)
+        }
+
+
+
+        case 'goodnight': {
+            hue_flurGo = new DecimalType(352)
+            hue_flurStrip = new DecimalType(7)
+            hue_badStrip = new DecimalType(356)
+            hue_kuecheStrip = new DecimalType(344)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(100)
+            sat_flurStrip = new PercentType(100)
+            sat_badStrip = new PercentType(90)
+            sat_kuecheStrip = new PercentType(90)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(85)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(1)
+            bright_flurStrip = new PercentType(2)
+            bright_flurKante = new PercentType(2)
+            bright_badStrip = new PercentType(13)
+            bright_badKante = new PercentType(13)
+            bright_kuecheStrip = new PercentType(6)
+            bright_bettStrip = new PercentType(3)
+            bright_OfficeLight = new PercentType(3)
+            bright_OfficePanel = new PercentType(10)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(9)
+            bright_SKSpot = new PercentType(3)
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(0)
+        }
+
+
+        case 'night': {
+            hue_flurGo = new DecimalType(355)
+            hue_flurStrip = new DecimalType(3)
+            hue_badStrip = new DecimalType(6)
+            hue_kuecheStrip = new DecimalType(35)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(100)
+            sat_flurStrip = new PercentType(100)
+            sat_badStrip = new PercentType(95)
+            sat_kuecheStrip = new PercentType(93)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(90)
+
+            sat_a = new PercentType(98)
+            sat_p = new PercentType(98)
+            sat_w = new PercentType(98)
+
+            bright_flurGo = new PercentType(2)
+            bright_flurStrip = new PercentType(1)
+            bright_flurKante = new PercentType(0)
+            bright_badStrip = new PercentType(1)
+            bright_badKante = new PercentType(0)
+            bright_kuecheStrip = new PercentType(1)
+            bright_bettStrip = new PercentType(2)
+            bright_OfficeLight = new PercentType(1)
+            bright_OfficePanel = new PercentType(0)
+            bright_OfficeKlar = new PercentType(0)
+            bright_BadSpot = new PercentType(0)
+            bright_SKSpot = new PercentType(0)
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(0)
+        }
+
+
+        case 'away': {
+            hue_flurGo = new DecimalType(350)
+            hue_flurStrip = new DecimalType(278)
+            hue_badStrip = new DecimalType(206)
+            hue_kuecheStrip = new DecimalType(134)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(100)
+            sat_flurStrip = new PercentType(100)
+            sat_badStrip = new PercentType(80)
+            sat_kuecheStrip = new PercentType(80)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(90)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(1)
+            bright_flurStrip = new PercentType(1)
+            bright_flurKante = new PercentType(1)
+            bright_badStrip = new PercentType(1)
+            bright_badKante = new PercentType(1)
+            bright_kuecheStrip = new PercentType(1)
+            bright_bettStrip = new PercentType(1)
+            bright_OfficeLight = new PercentType(1)
+            bright_OfficePanel = new PercentType(0)
+            bright_OfficeKlar = new PercentType(0)
+            bright_BadSpot = new PercentType(0)
+            bright_SKSpot = new PercentType(3)
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(0)
+        }
+
+        default: {
+            hue_flurGo = new DecimalType(350)
+            hue_flurStrip = new DecimalType(278)
+            hue_badStrip = new DecimalType(206)
+            hue_kuecheStrip = new DecimalType(134)
+            hue_bettStrip = new DecimalType(62)
+            hue_bettLicht = new DecimalType(62)
+
+            
+            sat_flurGo = new PercentType(100)
+            sat_flurStrip = new PercentType(100)
+            sat_badStrip = new PercentType(80)
+            sat_kuecheStrip = new PercentType(80)
+            sat_bettStrip = new PercentType(80)
+            sat_bettLicht = new PercentType(80)
+
+            sat_a = new PercentType(90)
+            sat_p = new PercentType(90)
+            sat_w = new PercentType(90)
+
+            bright_flurGo = new PercentType(3)
+            bright_flurStrip = new PercentType(3)
+            bright_flurKante = new PercentType(1)
+            bright_badStrip = new PercentType(3)
+            bright_badKante = new PercentType(1)
+            bright_kuecheStrip = new PercentType(3)
+            bright_bettStrip = new PercentType(3)
+            
+            bright_OfficeLight = new PercentType(3)
+            bright_OfficeKlar = new PercentType(3)
+            bright_BadSpot = new PercentType(3)
+            bright_SKSpot = new PercentType(3)
+            bright_bettLicht = new PercentType(1) 
+            bright_p = new PercentType(0)
+            bright_w = new PercentType(0)
+        }
+       
+    }
+
+
+    if (isGloomy.state == OFF){
+
+        bright_badStrip = new PercentType(0)
+        bright_kuecheStrip = new PercentType(0)
+        bright_badKante = new PercentType(0)
+
+    } else {
+
+        bright_flurKante += 10
+    }
+    // TBD !! 
+    // ovride s einpflegen
+    // misstrauisch testen
+
+
+    // flurGoColor_act
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",flurGoColor,act",10000)
+    logInfo("coloring","flurGoColor_act ovride:     "+ovride)
+    if (ovride != "None"){sendCommand("flurGoColor_act",ovride)}
+    else { flurGoColor_act.sendCommand(new HSBType(hue_flurGo,sat_flurGo,bright_flurGo) as Number)     }
+
+    // flurGoColor_pas
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",flurGoColor,pas",10000)
+    logInfo("coloring","flurGoColor_pas ovride:     "+ovride)
+    if (ovride != "None"){sendCommand("flurGoColor_pas",ovride)}
+    else { flurGoColor_pas.sendCommand(new HSBType(hue_flurGo,sat_p,bright_p) as Number) }
+
+    // flurGoColor_weg
+    flurGoColor_weg.sendCommand(new HSBType(hue_flurGo,sat_w,bright_w) as Number)
+
+
+    // flurStripColor_act
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",flurStripColor,act",10000)
+    logInfo("coloring","flurStripColor_act ovride: "+ovride)
+    if (ovride != "None"){sendCommand("flurStripColor_act",ovride)}
+    else { flurStripColor_act.sendCommand(new HSBType(hue_flurStrip,sat_flurStrip,bright_flurStrip) as Number) }
+    
+    // flurStripColor_pas
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",flurGoColor,pas",10000)
+    logInfo("coloring","flurStripColor_pas ovride: "+ovride)
+    if (ovride != "None"){sendCommand("flurStripColor_pas",ovride)}
+    else { flurStripColor_pas.sendCommand(new HSBType(hue_flurStrip,sat_p,bright_p) as Number) }
+
+    // flurStripColor_weg
+    flurStripColor_weg.sendCommand(new HSBType(hue_flurStrip,sat_w,bright_w) as Number)
+
+ 
+    // mediStripColor_act
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",mediStripColor,act",10000)
+    logInfo("coloring","mediStripColor_act ovride: "+ovride)
+    if (ovride != "None"){sendCommand("mediStripColor_act",ovride)}
+    else { mediStripColor_act.sendCommand(new HSBType(hue_mediStrip,sat_mediStrip,bright_mediStrip) as Number) }
+
+    // mediStripColor_pas
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",mediStripColor,pas",10000)
+    logInfo("coloring","mediStripColor_pas ovride: "+ovride)
+    if (ovride != "None"){sendCommand("mediStripColor_pas",ovride)}
+    else { mediStripColor_pas.sendCommand(new HSBType(hue_mediStrip,sat_p,bright_p) as Number) }
+    
+    // mediStripColor_weg
+    mediStripColor_weg.sendCommand(new HSBType(hue_mediStrip,sat_w,bright_w) as Number)
+
+
+    // badStripColor_act
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",badStripColor,act",10000)
+    logInfo("coloring","badStripColor_act ovride: "+ovride)
+    if (ovride != "None"){sendCommand("badStripColor_act",ovride)}
+    else { badStripColor_act.sendCommand(new HSBType(hue_badStrip,sat_badStrip,bright_badStrip) as Number) }
+
+    // badStripColor_pas
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",badStripColor,pas",10000)
+    logInfo("coloring","badStripColor_pas ovride: "+ovride)    
+    if (ovride != "None"){sendCommand("badStripColor_pas",ovride)}
+    else { badStripColor_pas.sendCommand(new HSBType(hue_badStrip,sat_p,bright_p) as Number) }
+        
+    // badStripColor_weg
+    badStripColor_weg.sendCommand(new HSBType(hue_badStrip,sat_w,bright_w) as Number)
+
+
+    // kuecheStripColor_act
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",kuecheStripColor,act",10000)
+    logInfo("coloring","kuecheStripColor_act ovride: "+ovride)
+    if (ovride != "None"){sendCommand("kuecheStripColor_act",ovride)}
+    else { kuecheStripColor_act.sendCommand(new HSBType(hue_kuecheStrip,sat_kuecheStrip,bright_kuecheStrip) as Number) }
+
+    // kuecheStripColor_pas
+    ovride = executeCommandLine("python /local/scripts/hashMap/hashMap.py get "+phase+",kuecheStripColor,pas",10000)
+    logInfo("coloring","kuecheStripColor_pas ovride: "+ovride)    
+    if (ovride != "None"){ sendCommand("kuecheStripColor_pas",ovride)}
+    else { kuecheStripColor_pas.sendCommand(new HSBType(hue_kuecheStrip,sat_p,bright_p) as Number) }
+
+    // kuecheStripColor_weg
+    kuecheStripColor_weg.sendCommand(new HSBType(hue_kuecheStrip,sat_w,bright_w) as Number)
+
+    /*
+   
+    flurGoColor_act.sendCommand(new HSBType(hue_flurGo,sat_flurGo,bright_flurGo) as Number)
+    flurGoColor_pas.sendCommand(new HSBType(hue_flurGo,sat_p,bright_p) as Number)
+    flurGoColor_weg.sendCommand(new HSBType(hue_flurGo,sat_w,bright_w) as Number)
+
+    
+    flurStripColor_act.sendCommand(new HSBType(hue_flurStrip,sat_flurStrip,bright_flurStrip) as Number)
+    flurStripColor_pas.sendCommand(new HSBType(hue_flurStrip,sat_p,bright_p) as Number)
+    flurStripColor_weg.sendCommand(new HSBType(hue_flurStrip,sat_w,bright_w) as Number)
+
+    mediStripColor_act.sendCommand(new HSBType(hue_mediStrip,sat_mediStrip,bright_mediStrip) as Number)
+    mediStripColor_pas.sendCommand(new HSBType(hue_mediStrip,sat_p,bright_p) as Number)
+    mediStripColor_weg.sendCommand(new HSBType(hue_mediStrip,sat_w,bright_w) as Number)
+
+    badStripColor_act.sendCommand(new HSBType(hue_badStrip,sat_badStrip,bright_badStrip) as Number)
+    badStripColor_pas.sendCommand(new HSBType(hue_badStrip,sat_p,bright_p) as Number)
+    badStripColor_weg.sendCommand(new HSBType(hue_badStrip,sat_w,bright_w) as Number)
+
+    kuecheStripColor_act.sendCommand(new HSBType(hue_kuecheStrip,sat_kuecheStrip,bright_kuecheStrip) as Number)
+    kuecheStripColor_pas.sendCommand(new HSBType(hue_kuecheStrip,sat_p,bright_p) as Number)
+    kuecheStripColor_weg.sendCommand(new HSBType(hue_kuecheStrip,sat_w,bright_w) as Number)
+    */
+
+    girSKStripColor_act.sendCommand(new HSBType(hue_bettStrip,sat_bettStrip,bright_bettStrip) as Number)
+    girSKStripColor_pas.sendCommand(new HSBType(hue_bettStrip,sat_p,bright_p) as Number)
+    girSKStripColor_weg.sendCommand(new HSBType(hue_bettStrip,sat_w,bright_w) as Number)
+
+    bedSKColor_act.sendCommand(new HSBType(hue_bettLicht,sat_bettLicht,bright_bettLicht) as Number)
+    bedSKColor_pas.sendCommand(new HSBType(hue_bettLicht,sat_p,bright_p) as Number)
+    bedSKColor_weg.sendCommand(new HSBType(hue_bettLicht,sat_w,bright_w) as Number)
+
+
+    wlBadKante_act.sendCommand(bright_badKante as Number)
+    wlBadKante_pas.sendCommand(bright_p as Number)
+    wlBadKante_weg.sendCommand(bright_w as Number) 
+
+    wlFlurKante_act.sendCommand(bright_flurKante as Number) 
+    wlFlurKante_pas.sendCommand(bright_p as Number) 
+    wlFlurKante_weg.sendCommand(bright_w as Number) 
+/*
+    kuecheStripColor_act.sendCommand(bright_kuecheStrip as Number) 
+    kuecheStripColor_pas.sendCommand(bright_w as Number) 
+    kuecheStripColor_weg.sendCommand(bright_w as Number) 
+*/
+    tfOfficeLight_act.sendCommand(bright_OfficeLight as Number) 
+    tfOfficeLight_pas.sendCommand(bright_p as Number) 
+    tfOfficeLight_weg.sendCommand(bright_w as Number) 
+
+    tfOfficePanel_act.sendCommand(bright_OfficePanel as Number) 
+    tfOfficePanel_pas.sendCommand(bright_p as Number) 
+    tfOfficePanel_weg.sendCommand(bright_w as Number) 
+
+    tfOfficeKlar_act.sendCommand(bright_OfficeKlar as Number) 
+    tfOfficeKlar_pas.sendCommand(bright_p as Number) 
+    tfOfficeKlar_weg.sendCommand(bright_w as Number) 
+
+    tfBadSpot_act.sendCommand(bright_BadSpot as Number) 
+    tfBadSpot_pas.sendCommand(bright_p as Number) 
+    tfBadSpot_weg.sendCommand(bright_w as Number) 
+
+    tfSKSpot_act.sendCommand(bright_SKSpot as Number) 
+    tfSKSpot_pas.sendCommand(bright_p as Number) 
+    tfSKSpot_weg.sendCommand(bright_w as Number) 
+
+    
+    Flag_reColoring.postUpdate(0)
+end

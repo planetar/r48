@@ -1,0 +1,5 @@
+String mediMatrix_target
+String matrixKante_target
+
+Number ofcDelta_Temp "temp officeDesk - officePack"
+Number ofcDelta_Hum  "hum officeDesk - officePack"

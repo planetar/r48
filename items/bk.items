@@ -1,0 +1,61 @@
+Group LEDStrip_Status "LEDStrip Status" (r48)
+
+// TBD
+/*
+// die schalten ON OFF
+Switch led_bk_Power "BettKante Power" (LEDStrip_Status){mqtt=">[mqttBroker:led/bk/set:command:*:MAP(LEDStripEffectJSON.map)]"}
+Switch led_fk_Power "FensterKante Power" (LEDStrip_Status){mqtt=">[mqttBroker:led/fk/set:command:*:MAP(LEDStripEffectJSON.map)]"}
+Switch led_ok_Power "OfficeKante Power" (LEDStrip_Status){mqtt=">[mqttBroker:led/ok/set:command:*:MAP(LEDStripEffectJSON.map)]"}
+Switch led_mk_Power "MatrixKante Power" (LEDStrip_Status){mqtt=">[mqttBroker:led/mk/set:command:*:MAP(LEDStripEffectJSON.map)]"}
+Switch led_mm_Power "MediMatrix Power" (LEDStrip_Status){mqtt=">[mqttBroker:led/mm/set:command:*:MAP(LEDStripEffectJSON.map)]"}
+
+
+// die erlauben, einen frei formulierten set zu übergeben
+String led_bk "BettKante Strip"     {channel="mqtt:topic:mqBroker:lights:bkLed"}
+String led_fk "FensterKante Strip"  {channel="mqtt:topic:mqBroker:lights:fkLed"}
+String led_ok "OfficeKante Strip"   {channel="mqtt:topic:mqBroker:lights:okLed"}
+String led_fm "FlurMatrix"          {channel="mqtt:topic:mqBroker:lights:fmLed"}
+String led_mm "MediMatrix"          {channel="mqtt:topic:mqBroker:lights:mmLed"}
+String led_rm "rotaMatrix"          {channel="mqtt:topic:mqBroker:lights:rmLed"}
+String led_tl "tokoLights"          {channel="mqtt:topic:mqBroker:lights:tlLed"}
+*/
+// dbg-watch to detect when a strip contoller went south
+// led/fk/dbg {"dbg":null}
+// led/bk/dbg {"dbg":null} 
+// String mqPirBad3     "incoming" { mqtt="<[mqttBroker:pir/bad3/state:state:default]" }
+/*
+String led_bk_dbg "BettKante dbg" {mqtt="<[mqttBroker:led/bk/dbg:state:default]"}
+String led_fk_dbg "FensterKante dbg" {mqtt="<[mqttBroker:led/fk/dbg:state:default]"}
+*/
+/*
+
+led/fk/set {"state":"ON","colorHsv":{"h":11,"s":250,"v":180},"range":17,"quart":23,"transition":60,effect:"rangeWave"}
+mosquitto_pub -u dp -P autan -t led/fk/set -m '{"state":"ON","colorHsv":{"h":15,"s":255,"v":36},"range":23,"quart":73,"transition":60,effect:"rangeWave"}'
+
+*/
+/*
+// die folgenden items waren für einen vorigen Ansatz mit diesen Strips und Controller und sind jetzt nur noch soda
+String LEDStrip_BettKante "BettKante Strip" {mqtt=">[mqttBroker:led/bk/set:state:*:default]"}
+Switch LEDStrip_BettKante_Power "BettKante Power" (LEDStrip_Status){mqtt=">[mqttBroker:led/bk/set:command:*:MAP(LEDStripEffectJSON.map)]"}
+Number LEDStrip_BettKante_FX "BettKante Fx" (LEDStrip_Status){mqtt=">[mqttBroker:led/bk/set:command:*:MAP(LEDStripEffectJSON.map)]"}
+Color LEDStrip_BettKante_Color "BettKante Color"	<rgb>	(LEDStrip_Status)
+Color LEDStrip_BettKante_Color2 "BettKante Color2"	<rgb>	(LEDStrip_Status)
+Number LEDStrip_BettKante_Speed "BettKante Speed [%.0f]"		(LEDStrip_Status)
+Number LEDStrip_BettKante_Intensity "BettKante Intensity [%d]" (LEDStrip_Status)
+String bk_msg "message from the bottle" 
+*/
+
+Number Farbton "Farbton als Drittelkreis"
+Number FarbtonOffset "FarbtonOffset von 0"
+Number FarbtonSaturation "FarbtonSaturation"
+Number FarbtonBrightness 
+Color  FarbtonColor
+String FarbtonBeschreibung
+
+
+Number Farbton2 "Farbton als Drittelkreis"
+Number FarbtonOffset2 "FarbtonOffset von 0"
+Number FarbtonSaturation2 "FarbtonSaturation"
+Number FarbtonBrightness2 
+Color  FarbtonColor2
+String FarbtonBeschreibung2
