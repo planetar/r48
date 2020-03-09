@@ -73,19 +73,11 @@ rule "rule triggered  by PirState_Kueche received command ON"
 when 	
     Item  PirState_Kueche received command ON
 then
-    //pirLastTriggered_Kueche.postUpdate( new DateTimeType() ) 
-	//logInfo("PirState_Kueche", "PirState_Kueche got command ON")
+
     if (isGloomy.state==ON){
         schrankSpot3.sendCommand(ON)
     }
 
-    //platzHalt27.sendCommand(ON)
-  
-    // if (Astro_Sun_Elevation.state < 0) { 
-    //     steckdose03Switch.postUpdate(OFF)
-    //     Thread::sleep(30)
-    //     steckdose03Switch.sendCommand("ON") 
-    // }
 end
 
 rule "rule triggered  by PirState_Kueche received command OFF"
@@ -96,11 +88,7 @@ then
 	//logInfo("PirState_Kueche", "PirState_Kueche got command OFF")
  
     schrankSpot3.sendCommand(OFF)
-    //platzHalt27.sendCommand(OFF)
- 
-    // steckdose03Switch.postUpdate(ON)
-    // Thread::sleep(30)
-    // steckdose03Switch.sendCommand("OFF")
+
 end
 
 
@@ -116,7 +104,7 @@ then
     
     wifiLed3_color.sendCommand(kuecheStripColor_act.state.toString)
 
-    // abends auch kochKante
+    // abends auch kochKante aber nachts, early nicht
     if (isGloomy.state==ON &&  newArrayList("morning","day","noon","afternoon","dusk","evening","salon","late").contains(Current_BtnState.state.toString)) {
         //logInfo("PirState_Kueche2","Gloomy && zweite Tageshälfte und monitorKochKante.state "+monitorKochKante.state)
         if (monitorKochKante.state==OFF){
@@ -124,7 +112,7 @@ then
         }
     }
 
-    Flag_Pir2_Kueche.postUpdate(1)
+    //Flag_Pir2_Kueche.postUpdate(1)
          
     //}
 end
@@ -134,10 +122,9 @@ rule "rule triggered  by PirState_Kueche2 received command OFF"
 when 	
     Item  PirState_Kueche2 received command OFF
 then
-    //logInfo("PirState_Kueche2", "PirState_Kueche2 reset to 0")
-    wifiLed3_color.sendCommand(kuecheStripColor_pas.state.toString)
-    Flag_Pir2_Kueche.postUpdate(0)
     
+    wifiLed3_color.sendCommand(kuecheStripColor_pas.state.toString)
+        
 end
 
 // pir3
@@ -146,10 +133,11 @@ rule "rule triggered  by PirState_Kueche3 received command ON"
 when 	
     Item  PirState_Kueche3 received command ON
 then
-    logInfo("kueche","pir3 got on")
-    pirLastTriggered_Kueche3.postUpdate( new DateTimeType() )     
-   
-    kammerLicht.sendCommand(ON)
+    //logInfo("kueche","pir3 got on")
+    if (PirState_Kueche.state == ON || PirState_Kueche2.state == ON){
+        pirLastTriggered_Kueche3.postUpdate( new DateTimeType() )     
+        kammerLicht.sendCommand(ON)
+    }
   
 end
 
@@ -166,38 +154,9 @@ end
 
 
 // relais
-// relais26
-// relais27 - triggered by PirStateKueche, derzeit kein Konsument
 // relais28 - kochKante
 // relais29 - kammerlicht
 
-
-rule "rule triggered  by platzHalt26 received command"
-
-when 	
-    Item  platzHalt26 received command 
-then
-	nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais26_toggle.sh",10000)
-    //logInfo("dummy", "platzHalt26 relais position "+nada)
-    //logInfo("PirState_Kueche", "PirState_Kueche got command OFF and "+nada)
-    
-end
-
-rule "rule triggered  by platzHalt27 received command"
-
-when 	
-    Item  platzHalt27 received command 
-then
-	if (receivedCommand==ON){
-        //nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais27_On.sh",10000)
-        mqKuecheRelay27Set.sendCommand('{"action":"ON"}')
-    } else if (receivedCommand==OFF){
-        //nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais27_Off.sh",10000)
-        mqKuecheRelay27Set.sendCommand('{"action":"OFF"}')
-    }
-    //logInfo("PirState_Kueche", "PirState_Kueche got command OFF and "+nada)
-    
-end
 
 
 rule "rule triggered  by kochKante received command"
@@ -207,8 +166,6 @@ when
 then
 	//nada = executeCommandLine("ssh openhabian@tael /local/scripts/relais/relais28_toggle.sh",10000)
     
-    //logInfo("kochKante", "kochKante relais position "+nada)
-    //logInfo("PirState_Kueche", "PirState_Kueche got command OFF and "+nada)
     mqKuecheRelay28Set.sendCommand('{"action":"TOGGLE"}')
 end
 

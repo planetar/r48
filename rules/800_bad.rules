@@ -68,7 +68,7 @@ then
 
     // verlängerung vereinfachen
     if (PirState_Bad2.state==ON || PirState_Bad.state==ON){
-        //logInfo("PirBad", "Pir Bad1  triggert")
+        //logInfo("PirBad", "Pir Bad1  triggert Verlängerung")
         PirState_Bad.sendCommand(ON)
     } else {
         // dies ist ein recht häufiger verlauf
@@ -140,7 +140,7 @@ then
    
 
 			
-    if (newArrayList("dusk","evening","late","goodnight","night").contains(Current_BtnState.state.toString) ||
+    if (newArrayList("dusk","evening","late","goodnight","night","salon").contains(Current_BtnState.state.toString) ||
         isBadDuster.state == ON
     ) {
  

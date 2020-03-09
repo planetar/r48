@@ -2,21 +2,46 @@
 
 // Thing Sensors  -  Incoming
 
-String mqEich         "eiche sens"                { channel="mqtt:topic:mqBroker:sensors:eiche" }
+
+// office
 String mqOfficePack   "officePack"                { channel="mqtt:topic:mqBroker:sensors:officePack" }
 String mqOfficeDesk   "officeDesk"                { channel="mqtt:topic:mqBroker:sensors:officeDesk" }
-String mqRfid         "rfid"                      { channel="mqtt:topic:mqBroker:sensors:rfid" }
-
-                      
-String mqMulti        "multi"                     { channel="mqtt:topic:mqBroker:sensors:multi" }
+String mqEich         "eiche sens"                { channel="mqtt:topic:mqBroker:sensors:eiche" }
 String mqLuftdaten    "feinstaub"                 { channel="mqtt:topic:mqBroker:sensors:feinstaub" }
-String mqWetterBalkon "wetterBalkon"              { channel="mqtt:topic:mqBroker:sensors:wetterBalkon" }
-String mqPirSK        "pirSK"                     { channel="mqtt:topic:mqBroker:sensors:pirSK" }
-String mqPirMedi      "pirMedi"                   { channel="mqtt:topic:mqBroker:sensors:pirMedi" }
-String mqPirClara     "pirClara"                  { channel="mqtt:topic:mqBroker:sensors:pirClara" }
+String mqOfficeTuer   "officeTuer"                { channel="mqtt:topic:mqBroker:sensors:officeTuer" }
 
-String mqPirBad3      "pirBad3"                   { channel="mqtt:topic:mqBroker:sensors:pirBad3" }
+// flur
+String mqPirFlurKoel  "pirFlurKoel"               { channel="mqtt:topic:mqBroker:sensors:pirFlurKoel"}
+String mqPirFlur      "pirFlur"                   { channel="mqtt:topic:mqBroker:sensors:pirFlur"}
+String mqRfid         "rfid"                      { channel="mqtt:topic:mqBroker:sensors:rfid" }
+String mqPirGarde     "pirGarde"                  { channel="mqtt:topic:mqBroker:sensors:pirGarde"}  
+String mqSensorFlur   "sensor Flur"               { channel="mqtt:topic:mqBroker:sensors:sensorFlur"}
+
+// bad
+String mqPirBad3      "pirBad3"                   { channel="mqtt:topic:mqBroker:sensors:pirBad3" }   
+String mqPir_bad      "pir 1,2 Bad"               { channel="mqtt:topic:mqBroker:sensors:pirBad"}
+String mqSensorBad    "sensors Bad"               { channel="mqtt:topic:mqBroker:sensors:sensorBad"}
+
+// kueche
 String mqPirKueche    "pirKueche"                 { channel="mqtt:topic:mqBroker:sensors:pirKueche" }
+String mqSensorKueche "sensors Kueche"            { channel="mqtt:topic:mqBroker:sensors:sensorKueche"}
+String mqLux5Kueche   "lux5 Kueche"               { channel="mqtt:topic:mqBroker:sensors:lux5Kueche"}
+
+// balkon
+String mqWetterBalkon "wetterBalkon"              { channel="mqtt:topic:mqBroker:sensors:wetterBalkon" }
+
+// sk
+String mqPirSK        "pirSK"                     { channel="mqtt:topic:mqBroker:sensors:pirSK" }
+
+// clara
+String mqPirClara     "pirClara"                  { channel="mqtt:topic:mqBroker:sensors:sensClara" }
+String mqPirClara2    "pirClara2"                 { channel="mqtt:topic:mqBroker:sensors:pirClara2" }
+String mqMulti        "multi"                     { channel="mqtt:topic:mqBroker:sensors:multi" }
+
+// medi
+String mqPirMedi      "sensor Medi"               { channel="mqtt:topic:mqBroker:sensors:sensMedi" }
+
+
 
 
 // Thing Remotes  - incoming, outgoing
@@ -50,3 +75,14 @@ String led_fm "FlurMatrix"          {channel="mqtt:topic:mqBroker:lights:fmLed"}
 String led_mm "MediMatrix"          {channel="mqtt:topic:mqBroker:lights:mmLed"}
 String led_rm "rotaMatrix"          {channel="mqtt:topic:mqBroker:lights:rmLed"}
 String led_tl "tokoLights"          {channel="mqtt:topic:mqBroker:lights:tlLed"}
+
+// _dbg to detect when a strip contoller went south, see watchdog.rules 
+String led_bk_dbg "bk_dbg"         {channel="mqtt:topic:mqBroker:lights:bkLeddbg"}
+String led_fk_dbg "fk_dbg"         {channel="mqtt:topic:mqBroker:lights:fkLeddbg"}
+String led_ok_dbg "ok_dbg"         {channel="mqtt:topic:mqBroker:lights:okLeddbg"}
+String led_tl_dbg "tl_dbg"         {channel="mqtt:topic:mqBroker:lights:tlLeddbg"}
+
+
+// Thing mqRaspiHealth - incoming --> health.items
+
+// Thing mqRaspiSensors - incoming 

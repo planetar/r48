@@ -25,7 +25,8 @@ Group gSensor6 "Environ18" <temperature> (gSensors)
 Group gSensor7 "Environ16" <temperature> (gSensors)
 DateTime gerade "jetzt" <time>
 
-
+Number sensor_temperature_Flur           "Temperatur Flur [%.1f]°"           <temperature>  (gSensor1, gFlur)
+Number sensor_humidity_Flur              "Luftfeuchte Flur [%.1f]%"            <rain>       (gSensor1, gFlur)
 Number sensor_temperature_Bad           "Temperatur Bad [%.1f]°"            <temperature>   (gSensor1, gBad) [ "CurrentTemperature" ]
 Number sensor_humidity_Bad              "Luftfeuchte Bad [%.1f]%"           <rain>          (gSensor1, gBad) [ "CurrentHumidity" ]
 Number sensor_temperature_Kueche        "Temperatur Küche [%.1f]°"          <temperature>   (gSensor1, gKueche) [ "CurrentTemperature" ]
@@ -36,10 +37,12 @@ Number sensor_temperature_OfficeDesk        "Temperatur Office [%.1f]°"        
 Number sensor_humidity_OfficeDesk           "Luftfeuchte Office [%.1f]%"        <rain>          (gSensor1, gOffice) [ "CurrentHumidity" ]
 Number sensor_temperature_OfficePack        "Temperatur Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
 Number sensor_humidity_OfficePack           "Luftfeuchte Office [%.1f]%"        <rain>          (gSensor1, gOffice) [ "CurrentHumidity" ]
-Number sensor_pressure_OfficePack        "Luftdruck Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
+Number sensor_pressure_OfficePack        "Luftdruck red. Office [%.1f]"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
 Number sensor_luminosity_OfficePack           "Helligkeit Office [%.1f]%"        <light>          (gSensor1, gOffice) [ "CurrentHumidity" ]
 Number sensor_temperature_Clara         "Temperatur Clara [%.1f]°"          <temperature>   (gSensor1, gClara) [ "CurrentTemperature" ]
 Number sensor_humidity_Clara            "Luftfeuchte Clara [%.1f]%"         <rain>          (gSensor1, gClara) [ "CurrentHumidity" ]
+Number sensor_pressure_Clara            "Luftdruck Clara [%.1f]"
+Number sensor_rPressure_Clara           "Luftdruck Clara red. [%.1f]"
 Number sensor_temperature_Medi         "Temperatur Luise [%.1f]°"          <temperature>   (gSensor1, gMedi) [ "CurrentTemperature" ]
 Number sensor_humidity_Medi            "Luftfeuchte Luise [%.1f]%"         <rain>          (gSensor1, gMedi) [ "CurrentHumidity" ]
 Number sensor_rssi_Kueche               "rssi Küche [%.1f]dBm"              <network>       (gSensor1, gKueche) 
@@ -122,7 +125,7 @@ Number sensor_lux_8 "Office Lux8  [%.1f]" <light> (gSensor5,gOffice)
 Number sensor_lux_3_broadband "lumen SK [%.1f]" <light> (gSensor5,gSchlafkammer)
 Number sensor_lux_3_infrared  "lumen infra SK [%.1f]" <light> (gSensor5,gSchlafkammer)
 Number sensor_lux_3_visible  "lumen visible SK [%.1f]" <light> (gSensor5,gSchlafkammer)
-
+/*
 Number sensor_moist_balkon_0 "Erdfeuchte Balkon 0" (gBalkon)
 Number sensor_moist_office_0 "Erdfeuchte Office 0" (gOffice)
 Number sensor_moist_kueche_0 "Erdfeuchte Kueche 0" (gKueche)
@@ -185,7 +188,7 @@ Number sensor_moistClara_per5
 Number sensor_chem_01
 Number sensor_chem_02
 Number sensor_chem_03
-
+*/
 Switch rush_lux_1 "Lux1  schnell"
 Switch rush_lux_2 "Lux2  schnell" 
 Switch rush_lux_3 "Lux3  schnell"
@@ -237,15 +240,16 @@ Number sensor_feinstaub_pm25    "PM2,5: [%s µg/m³]"       <smoke>     (gSensor
 Number sensor_feinstaub_temp    "Temp: [%.1f °C]]"        <temperature>      (gSensorFeinstaub)   
 Number sensor_feinstaub_hum     "Hum: [%.0f %%]"           <rain>    (gSensorFeinstaub)  
 Number sensor_feinstaub_pressure     "Pre: [%.0f %%]"           <rain>    (gSensorFeinstaub) 
+Number sensor_feinstaub_rPressure     "Pre: [%.0f %%]"           <rain>    (gSensorFeinstaub) 
 Number sensor_feinstaub_signal "Signal: [%.0f %%]"     <network>    (gSensorFeinstaub) 
 
-
+/*
 Number sensor_echolot_5        "Distanz: [%s cm]"        <sound>     (gSensor5,gKueche)
 
 Number sensor_moisture_01       "Bodenfeuchte 1"        <rain>  (gClara)
 Number sensor_moisture_02       "Bodenfeuchte 2"        <rain>  (gKueche)
 Number sensor_moisture_03       "Bodenfeuchte 3"        <rain>  (gKueche)
-
+*/
 String dispOffice_text "minütlich aktualisierte Daten für Darstellung im display"
 Number dispOffice_ctrl  "platzhalter für bitwise kodierte Controls"
 
@@ -256,6 +260,8 @@ Switch activateDisp_Rfid "kommuinziert activateDisp an RFID"
 Switch loopDisp_Rfid "kommuinziert loopDisp an RFID" 
 Switch alert_Rfid "kommuinziert alert an RFID"     { expire="5m,command=OFF" }
 
+
+/*
 // paok18 hat bme680_1 über mqPaok18_val und mqPaok18_dbg. environ18
 // {"temp":23.42,"press":1010.2,"press_red":1016.699,"hum":30.992,"gas":9.844,"alt_mea":54.06149}  {"alt_def":54.06,"errStatus":"ok"}
 Number sensor_environ18_temperature "Temperatur [%.1f]" <temperature> (gSensor6) 
@@ -279,7 +285,7 @@ Number sensor_environ16_altitude  "Höhe in m [%.1f]" <light> (gSensor7)
 Number sensor_environ16_alt_defined  "def Höhe in m [%.1f]" <light> (gSensor7)
 Number sensor_environ16_alt_ground  "def Höhe über Boden in m [%.1f]" <light> (gSensor7)
 String sensor_environ16_errStatus "error text" (gSensor7)
-
+*/
 
 
 // eich in diff zu dem gemessenen. 

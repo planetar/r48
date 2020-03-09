@@ -94,9 +94,13 @@ then
             alertCount_Kueche +=1
         }
         logInfo("sensor","Alarm "+alertCount_Kueche+": Wasserkessel in der Küche vergessen?")
-        sendTelegram("r48_bot","Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
+        //sendTelegram("r48_bot","Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
         //sendMail("test@magisterludi.de", "Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
         //pebbleNotification("oy3NcoHsp-yexg_8S9qCkuOJ3pQ4Junx2MY6njdzAL4", "Wasserkessel?", "Alert #"+alertCount_Kueche+" ausgelöst")
+        // telegram:telegramBot:d50985af
+        val telegramAction = getActions("telegram","telegram:telegramBot:d50985af")
+        telegramAction.sendTelegram("Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
+
     } else{
         if (stetig!=1) {alertCount_Kueche=0}
     }
@@ -160,9 +164,13 @@ then
             alertCount_Bad +=1
         }
         logInfo("sensor","Alarm "+alertCount_Bad+": Fenster im Bad vergessen?")
-        sendTelegram("r48_bot", "Fenster im Bad vergessen? Alert "+alertCount_Bad, "avg humidity Bad: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerBad)
+        //sendTelegram("r48_bot", "Fenster im Bad vergessen? Alert "+alertCount_Bad, "avg humidity Bad: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerBad)
         //sendMail("test@magisterludi.de", "Fenster im Bad vergessen? Alert "+alertCount_Bad, "avg humidity Bad: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerBad)
         //pebbleNotification("daniel", "Fenster im Bad?", "Alert #"+alertCount_Bad+" ausgelöst")
+        // telegram:telegramBot:d50985af
+        val telegramAction = getActions("telegram","telegram:telegramBot:d50985af")
+        telegramAction.sendTelegram("Fenster im Bad vergessen? Alert "+alertCount_Bad, "avg humidity Bad: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerBad)
+
     } else{
         if (stetig!=1) {alertCount_Bad=0}
     }

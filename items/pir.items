@@ -28,7 +28,8 @@ Switch      PirState_Balkon      "Pir Balkon"                   (gPirStates,gSch
 Switch      PirState_Clara       "Pir Clara integ."             (gPirStates,gClara)   { expire="2m,command=OFF" }
 Switch      PirState_Clara1      "Pir Clara1"                   (gPirStates,gClara)   { expire="30s,command=OFF" }
 Switch      PirState_Clara2      "Pir Clara2"                   (gPirStates,gClara)   { expire="30s,command=OFF" }
-Switch      PirState_Multi       "Pir Clara Eingang"            (gPirStates,gClara)   { expire="30s,command=OFF" } // quer-Verknüpfung zu PirState_Clara
+Switch      PirState_Clara3      "Pir Clara3  Eingang"          (gPirStates,gClara)   { expire="30s,command=OFF" }
+Switch      PirState_Clara4      "Pir Clara4 vom Sofaeck"       (gPirStates,gClara)   { expire="3m,command=OFF" } 
  
 Switch      PirState_SK          "Pir SK"                       (gPirStates,gSchlafkammer)  { expire="2m,command=OFF" }
 Switch      PirState_SK2         "Pir SK2 Schrank"              (gPirStates,gSchlafkammer)  { expire="45s,command=OFF" }

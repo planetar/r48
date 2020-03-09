@@ -7,6 +7,986 @@ var Number sumDeltaHum
 var Number sumDeltaPress
 var Number numSamples
 
+/*
+die Sensor und pir - parser sind alle nach sensor_data.py migriert, und dort gibt es nun für temp und hum calibration
+hier sind nur noch Presence und health. der alte Stand ist auskommentiert erhalten.
+
+
+
+Flur
+Bad
+Kueche
+Balkon
+SK
+Clara
+Medi
+Office
+
+Presence
+Health
+
+*/
+
+
+/****************************************************** FLUR ************************************************/
+
+// pir an Koel
+     
+// rule "mqPirFlurKoel changed"
+//   when 
+//     Item mqPirFlurKoel received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPirFlurKoel.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir1", jsor)
+//       if (oval=="ON"){
+//         PirState_Flur1.sendCommand(ON)
+//         //logInfo("mqParse","PirState_Flur1 on")
+//       }
+
+//       oval  = transform("JSONPATH", "$.pir2", jsor)
+//       if (oval=="ON"){
+//         PirState_Flur2.sendCommand(ON)
+//         //logInfo("mqParse","PirState_Flur2 on")
+//       }
+  
+
+//     }
+// end
+
+
+// // pir 3, 4  lux1  an flurBox
+
+
+// rule "mqPirFlur changed"
+//   when 
+//     Item mqPirFlur received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPirFlur.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir1", jsor)
+//       if (oval=="ON"){
+//         PirState_Flur3.sendCommand(ON)
+//         //logInfo("mqParse","PirState_Flur3 on")
+//       }
+
+//       oval  = transform("JSONPATH", "$.pir2", jsor)
+//       if (oval=="ON"){
+//         PirState_Flur4.sendCommand(ON)
+//         //logInfo("mqParse","PirState_Flur4 on")
+//       }
+  
+//       oval  = transform("JSONPATH", "$.tocStatus", jsor)
+//       //if (oval=="ON"){
+//         flurSonderWunsch.sendCommand(oval)
+//         //logInfo("mqParse","flurSonderWunsch "+oval)
+//       //}
+  
+
+//     }
+// end
+
+
+// pirGarde
+
+
+
+// rule "mqPirGarde changed"
+//   when 
+//     Item mqPirGarde received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPirGarde.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir", jsor)
+//       if (oval=="ON"){
+//         PirState_Garde.sendCommand(ON)
+//         logInfo("mqParse","PirState_Garde on")
+//       }
+
+//     }
+// end
+
+/*
+// -> sensor_data.py
+// mqSensorFlur
+
+rule "mqSensorFlur changed"
+  when 
+    Item mqSensorFlur received update
+  then 
+    { 
+      var String jsor
+      var String oval
+
+      jsor = (mqSensorFlur.state as StringType).toString
+
+      oval  = transform("JSONPATH", "$.temp", jsor)
+      sensor_temperature_Flur.sendCommand(oval)    
+      
+      oval  = transform("JSONPATH", "$.hum", jsor)
+      sensor_humidity_Flur.sendCommand(oval)    
+      
+     
+
+    }
+end
+*/
+
+// rfid
+ 
+
+
+/****************************************************** Bad ************************************************/
+
+
+
+
+/*
+String mqPir_bad "pir1,2 Bad"         {channel="mqtt:topic:mqBroker:raspiSensors:pirBad"}
+PirState_Bad1
+PirState_Bad2
+
+String mqSensorBad "sensors Bad"         {channel="mqtt:topic:mqBroker:raspiSensors:sensorBad"}
+sensor_humidity_Bad
+sensor_temperature_Bad 
+sensor_lux_2
+
+*/
+
+
+// sensor bad an moa   mit temp , hum, lux
+
+/*
+// -> sensor_data.py
+rule "mqSensorBad changed"
+  when 
+    Item mqSensorBad received update
+  then 
+    {
+      var String jsor
+      var String oval
+
+      jsor = (mqSensorBad.state as StringType).toString
+
+      oval  = transform("JSONPATH", "$.temp", jsor)
+      sensor_temperature_Bad.sendCommand(oval)    
+      
+      oval  = transform("JSONPATH", "$.hum", jsor)
+      sensor_humidity_Bad.sendCommand(oval)    
+      
+      oval  = transform("JSONPATH", "$.lux", jsor)
+      sensor_lux_2.sendCommand(oval)      
+
+    }
+end
+ */
+
+// pir1, pir2  an moa
+
+// rule "mqPir_bad changed"
+//   when 
+//     Item mqPir_bad received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPir_bad.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir1", jsor)
+//       if (oval=="ON"){
+//         PirState_Bad1.sendCommand(ON)
+//         //logInfo("mqParse","PirState_Bad1 on")
+//       }
+
+//       oval  = transform("JSONPATH", "$.pir2", jsor)
+//       if (oval=="ON"){
+//         PirState_Bad2.sendCommand(ON)
+//         //logInfo("mqParse","PirState_Bad2 on")
+//       }
+  
+
+//     }
+// end
+     
+
+// pir3 intense an box am Fenster
+/*
+String mqPirBad3     "incoming" 
+String mqPirBad3Set  "outgoing" 
+
+pir/bad3/state {"pir":"ON","intense":"nop","scanWifi":"OFF","vers":"0.01"}
+
+*/
+ 
+// rule "mqPirBad3 changed"
+//   when 
+//     Item mqPirBad3 received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPirBad3.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir", jsor)
+//       if (oval=="ON"){
+//         PirState_Bad3.sendCommand(ON)
+//       }
+  
+      
+//       oval  = transform("JSONPATH", "$.intense", jsor)
+//       IntenseBad.postUpdate(oval)
+
+//       // if (oval=="ON"){IntenseBad.sendCommand(oval)}
+//       // else if (oval=="OFF"){
+//       //   // nur wenn wirklich noetig, macht sonst kurzes Flackern
+//       //   if (IntenseBad.state=ON){
+//       //     IntenseBad.sendCommand(OFF)
+//       //   }
+//       // }
+
+//     }
+// end
+     
+
+
+/****************************************************** Kueche ************************************************/
+
+
+/*
+// -> sensor_data.py
+rule "mqSensorKueche changed"
+  when 
+    Item mqSensorKueche received update
+  then 
+    {
+      var String jsor
+      var String oval
+
+      jsor = (mqSensorKueche.state as StringType).toString
+
+      oval  = transform("JSONPATH", "$.temp", jsor)
+      sensor_temperature_Kueche.sendCommand(oval)    
+      
+      oval  = transform("JSONPATH", "$.hum", jsor)
+      sensor_humidity_Kueche.sendCommand(oval)    
+      
+     // oval  = transform("JSONPATH", "$.lux", jsor)
+     // sensor_lux_2.postUpdate(oval)      
+
+    }
+end
+
+*/
+
+/*
+pir/kueche/state {"pir1":"OFF","pir2":"OFF","pir3":"ON","rssi":"-62","vers":"1.08"}
+*/
+
+// mqPirKueche
+
+ 
+// rule "mqPirKueche received update"
+//   when 
+//     Item mqPirKueche received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPirKueche.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir1", jsor)
+//       if (oval=="ON"){
+//         PirState_Kueche.sendCommand(ON)
+//       }
+  
+//       oval  = transform("JSONPATH", "$.pir2", jsor)
+//       if (oval=="ON"){
+//         PirState_Kueche2.sendCommand(ON)
+//       }
+  
+//       oval  = transform("JSONPATH", "$.pir3", jsor)
+//       if (oval=="ON"){
+//         PirState_Kueche3.sendCommand(ON)
+//       }
+  
+//       logInfo("mqttParse","pirKueche: "+jsor)
+     
+//     }
+// end
+
+
+
+
+
+
+/****************************************************** Balkon ************************************************/
+
+
+
+// mqWetterBalkon
+// sensor/wetterBalkon/state {"temp":27.58,"hum":38.85449,"press":1009.712,"rPress":1015.839,"lux":72,"broad":243,"infrared":139,"rssi":-60,"moist":601,"vers":"1.01"}
+
+// bme280 hat temp, press, humidity. Vergesellschafftet mit tsl2561 mit Lux_4, broadband, infrared
+
+
+
+// rule "mqWetterBalkon changed"
+//   when 
+//     Item mqWetterBalkon received update
+//   then 
+//     {
+//       var String jsor = (mqWetterBalkon.state as StringType).toString
+
+//       //logInfo("mqttParse",jsor)
+
+//       var String oval  = transform("JSONPATH", "$.temp", jsor)
+//       sensor_bme280_temperature.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.pir", jsor)
+//       if (oval=="ON"){
+//         PirState_Balkon.sendCommand(ON)
+//       }
+  
+//       oval  = transform("JSONPATH", "$.hum", jsor)
+//       sensor_bme280_humidity.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.press", jsor)
+//       sensor_bme280_pressure.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.rPress", jsor)
+//       sensor_bme280_rPressure.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.broad", jsor)
+//       sensor_bme280_broadband.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.infrared", jsor)
+//       sensor_bme280_infrared.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.lux", jsor)
+//       sensor_lux_4.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.rssi", jsor)
+//       sensor_rssi_Balkon.postUpdate(oval)
+
+//       // oval  = transform("JSONPATH", "$.an0", jsor)
+//       // sensor_moist_balkon_0.postUpdate(oval)
+
+//       // val telegramAction = getActions("telegram","telegram:telegramBot:anyID")
+//       // telegramAction.sendTelegram("kleiner Gruss")
+
+//     }
+// end
+
+
+
+/****************************************************** SK ************************************************/
+
+
+
+/*
+  Sensor calibration offsets
+
+sensor     temp	 hum       mq (vs rest)
+officePack	1,6	  11,1       +
+officedesk	2,8	   1         +
+SK	        0,8    5         +
+bad	        0,5   12
+kueche	    0,9   18
+medi  	    2,1    7         +
+clara	      2,1    1         +
+
+
+TBD: 
+  - mq for bad, kueche (raspi)
+  - for each:  reportedVal - offset = usedVal
+*/
+
+
+/*
+
+// {"temp":26.27,"hum":40.65918,"press":1021.306,"rPress":1028.113,"lux":0,"rssi":-59,"vers":"1.04"}
+// mqPirSK pir/sk/state {"temp":0,"hum":0,"press":0,"rPress":0,"lux":257,"rssi":-53,"pir":"OFF","vers":"1.01"}  PirState_SK
+rule "mqPirSK changed"
+  when 
+    Item mqPirSK received update
+  then 
+    {
+      var String jsor = (mqPirSK.state as StringType).toString
+      var String oval
+
+      //logInfo("mqttParse",jsor)
+
+      oval  = transform("JSONPATH", "$.lux", jsor)
+      sensor_lux_3.postUpdate(oval)
+
+      oval  = transform("JSONPATH", "$.temp", jsor)
+      sensor_temperature_SK.postUpdate(oval)
+
+      oval  = transform("JSONPATH", "$.hum", jsor)
+      sensor_humidity_SK.postUpdate(oval)
+      // logInfo("test",oval)
+      // logInfo("test",jsor)
+      // die zwei pressure haben derzeit kein item  (und ansich auch nicht viel Bedeutung)
+      oval  = transform("JSONPATH", "$.press", jsor)
+      //sensor_pressure_SK.postUpdate(oval)
+      oval  = transform("JSONPATH", "$.rPress", jsor)
+      //sensor_rPressure_SK.postUpdate(oval)
+
+      oval  = transform("JSONPATH", "$.pir1", jsor)
+      if (oval=="ON"){
+        PirState_SK.sendCommand(ON)
+      }
+  
+      oval  = transform("JSONPATH", "$.pir2", jsor)
+      if (oval=="ON"){
+        PirState_SK2.sendCommand(ON)
+      }
+
+      oval  = transform("JSONPATH", "$.toc", jsor)
+      if (oval=="ON"){
+        TocState_SK.sendCommand(ON)
+      }
+
+      oval  = transform("JSONPATH", "$.rssi", jsor)
+      //logInfo("test",oval)
+      sensor_rssi_SK.postUpdate(oval)
+//    sensor_rssi_SK
+    }
+end
+*/
+
+/*
+
+
+      oval  = transform("JSONPATH", "$.pir1", jsor)
+      if (oval=="ON"){
+        PirState_Kueche.sendCommand(ON)
+      }
+  
+      oval  = transform("JSONPATH", "$.pir2", jsor)
+      if (oval=="ON"){
+        PirState_Kueche2.sendCommand(ON)
+      }
+  
+*/
+
+
+/****************************************************** Clara ************************************************/
+
+// sensor/clara/state {"pir":"OFF","temp":21.1,"hum":45.9,"lastTemp":21,"lastHum":45.3,"fail2win":"0/5","lux":0,"rssi":"-28","vers":"1.08"}
+
+// pir/clara/state {"temp":32,"hum":41.1,"lastTemp":32,"lastHum":40,"fail2win":"120/35","lux":35,"rssi":"-71","rushLux":"OFF","showPir":"OFF","showErr":"OFF","vers":"1.04"}
+
+// rule "mqPirClara changed"
+//   when 
+//     Item mqPirClara received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPirClara.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir1", jsor)
+//       if (oval=="ON"){
+//         PirState_Clara1.sendCommand(ON)
+//       }
+//       oval  = transform("JSONPATH", "$.pir2", jsor)
+//       if (oval=="ON"){
+//         PirState_Clara2.sendCommand(ON)
+//       }
+//       /*
+//       oval  = transform("JSONPATH", "$.temp", jsor)
+//       sensor_temperature_Clara.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.hum", jsor)
+//       sensor_humidity_Clara.postUpdate(oval)    
+//       */
+
+//       oval  = transform("JSONPATH", "$.lux", jsor)
+//       sensor_lux_6.postUpdate(oval)      
+
+//       oval  = transform("JSONPATH", "$.rssi", jsor)
+//       sensor_rssi_Clara.postUpdate(oval)
+
+//     }
+// end
+/*
+rule "mqPirClara2 changed"
+  when 
+    Item mqPirClara2 changed
+  then 
+    {
+      var String jsor
+      var String oval
+
+      jsor = (mqPirClara2.state as StringType).toString
+
+      oval  = transform("JSONPATH", "$.pir", jsor)
+      if (oval=="ON"){
+        PirState_Clara2.sendCommand(ON)
+      }
+      
+      oval  = transform("JSONPATH", "$.moisture", jsor)
+      sensor_moisture_01.postUpdate(oval)    
+     
+
+    }
+end
+*/
+
+
+// // multi   mqMulti
+
+// rule "mqMulti received update"
+//   when 
+//     Item mqMulti received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqMulti.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir1", jsor)
+//       if (oval=="ON"){
+//         PirState_Clara3.sendCommand(ON)
+//       }
+//       oval  = transform("JSONPATH", "$.pir2", jsor)
+//       if (oval=="ON"){
+//         PirState_Clara4.sendCommand(ON)
+//       }
+
+//       oval  = transform("JSONPATH", "$.temperature", jsor)
+//       sensor_temperature_Clara.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.humidity", jsor)
+//       sensor_humidity_Clara.postUpdate(oval)    
+ 
+//       oval  = transform("JSONPATH", "$.pressure", jsor)
+//       sensor_pressure_Clara.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.rPressure", jsor)
+//       sensor_rPressure_Clara.postUpdate(oval)         
+   
+//     }
+// end
+
+
+
+
+/****************************************************** Medi ************************************************/
+
+
+
+ 
+// // pir/medi/state {"temp":32.7,"hum":45.4,"lastTemp":32.7,"lastHum":45.1,"fail2win":"80/41","lux":53,"rssi":"-49","rushLux":"OFF","showPir":"OFF","showErr":"OFF","vers":"1.04"}
+// rule "mqPirMedi changed"
+//   when 
+//     Item mqPirMedi received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqPirMedi.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.pir", jsor)
+//       if (oval=="ON"){
+//         PirState_Medi.sendCommand(ON)
+//       }
+      
+// /* 
+//       oval  = transform("JSONPATH", "$.temp", jsor)
+//       sensor_temperature_Medi.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.hum", jsor)
+//       sensor_humidity_Medi.postUpdate(oval)
+//        */
+
+//       oval  = transform("JSONPATH", "$.temperature", jsor)
+//       sensor_temperature_Medi.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.humidity", jsor)
+//       sensor_humidity_Medi.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.lux", jsor)
+//       sensor_lux_7.postUpdate(oval)      
+
+//       oval  = transform("JSONPATH", "$.rssi", jsor)
+//       sensor_rssi_Medi.postUpdate(oval)
+
+//     }
+// end
+
+
+
+
+/****************************************************** Office ************************************************/
+
+
+
+// rule "mqOfficeDesk changed"
+//   when 
+//     Item mqOfficeDesk received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqOfficeDesk.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.temp", jsor)
+//       if (oval != "0"){
+//         sensor_temperature_OfficeDesk.postUpdate(oval)    
+//       }
+//       oval  = transform("JSONPATH", "$.hum", jsor)
+//       sensor_humidity_OfficeDesk.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.lux", jsor)
+//       sensor_lux_8.postUpdate(oval)      
+
+//       oval  = transform("JSONPATH", "$.rssi", jsor)
+//       sensor_rssi_OfficeDesk.postUpdate(oval)
+
+//     }
+// end
+
+/*
+Number sensor_temperature_OfficePack        "Temperatur Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
+Number sensor_humidity_OfficePack           "Luftfeuchte Office [%.1f]%"        <rain>          (gSensor1, gOffice) [ "CurrentHumidity" ]
+Number sensor_pressure_OfficePack        "Luftdruck Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
+Number sensor_luminosity_OfficePack           "Helligkeit Office [%.1f]%"        <light>          (gSensor1, gOffice) [ "CurrentHumidity" ]
+
+*/
+
+
+rule "mqOfficePack changed"
+  when 
+    Item mqOfficePack received update
+  then 
+    {
+      var String jsor
+      var String oval
+
+      jsor = (mqOfficePack.state as StringType).toString
+      //logInfo("mqParse",jsor)
+
+      // oval  = transform("JSONPATH", "$.temp", jsor)
+      // sensor_temperature_OfficePack.postUpdate(oval)    
+      
+      // oval  = transform("JSONPATH", "$.hum", jsor)
+      // sensor_humidity_OfficePack.postUpdate(oval)    
+      
+      // oval  = transform("JSONPATH", "$.lux", jsor)
+      // sensor_luminosity_OfficePack.postUpdate(oval)      
+
+      // oval  = transform("JSONPATH", "$.rPress", jsor)
+      // sensor_pressure_OfficePack.postUpdate(oval)
+
+      // // toc will bettreif auslösen
+      // oval = transform("JSONPATH", "$.toc", jsor)
+      // if (oval=="ON"){
+      //   // der kann wirklich nerven
+      //   // bettReif.sendCommand(oval)  
+      // }
+       
+
+     
+        // pir will PirStateofficePack auslösen
+      oval = transform("JSONPATH", "$.pir", jsor)
+      if (oval=="ON"){
+        PirState_OfficePack.sendCommand(ON) 
+      }  
+      
+      oval = transform("JSONPATH", "$.rushLux", jsor)
+      if (oval=="ON"||oval=="OFF"){
+        rush_officePack.postUpdate(oval)
+      }
+      oval = transform("JSONPATH", "$.loopDsp", jsor)
+      if (oval=="ON"||oval=="OFF"){
+        loopDisp_officePack.postUpdate(oval)
+      }
+      oval = transform("JSONPATH", "$.refDsp", jsor)
+      if (oval=="ON"||oval=="OFF"){
+        refDisp_officePack.postUpdate(oval)
+      }
+      oval = transform("JSONPATH", "$.scanWifi", jsor)
+      if (oval=="ON"||oval=="OFF"){
+        scanWifi_officePack.postUpdate(oval)
+      }
+      
+      // kleine berechnung
+      var Number delta
+      var Number desk
+      var Number pack
+      
+      desk = sensor_temperature_OfficeDesk.state as Number
+      pack = sensor_temperature_OfficePack.state as Number
+      delta = desk - pack
+      ofcDelta_Temp.sendCommand(delta)
+
+      desk = sensor_humidity_OfficeDesk.state as Number
+      pack = sensor_humidity_OfficePack.state as Number
+      delta = desk - pack
+      ofcDelta_Hum.sendCommand(delta)
+
+    }
+end
+
+/*
+Number ofcDelta_Temp "temp officeDesk - officePack"
+Number ofcDelta_Hum  "hum officeDesk - officePack"
+*/
+// rule "mqMulti changed"
+//   when 
+//     Item mqMulti changed
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqMulti.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.temp", jsor)
+//       sensor_temperature_Multi.postUpdate(oval)    
+      
+//       oval  = transform("JSONPATH", "$.hum", jsor)
+//       sensor_humidity_Multi.postUpdate(oval)    
+      
+//       // oval  = transform("JSONPATH", "$.Co2", jsor)
+//       // sensor_co2_Multi.postUpdate(oval)      
+
+//       oval  = transform("JSONPATH", "$.rssi", jsor)
+//       sensor_rssi_Multi.postUpdate(oval)
+
+//     }
+// end
+
+
+// mqOfficeTuer
+/*
+pir/officeTuer/state {"pir":"ON","rushLux":"OFF","showPir":"ON","showErr":"OFF","vers":"1.04"}
+
+*/
+
+
+// rule "mqOfficeTuer changed"
+//   when 
+//     Item mqOfficeTuer received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqOfficeTuer.state as StringType).toString
+//       //logInfo("mqParse",jsor)
+
+//       oval = transform("JSONPATH", "$.pir", jsor)
+//       if (oval=="ON"){
+//         PirState_OfficeTuer.sendCommand(ON) 
+//       }  
+
+//     }
+// end
+
+
+
+ // mqLuftdaten
+/*
+  sensor/feinstaub/state {"_type": "airRohr", "sensor_feinstaub_pressure": "100251.16", "sensor_feinstaub_pm25": "4.12", 
+  "sensor_feinstaub_temp": "22.35", "sensor_feinstaub_pm10": "6.65", "sensor_feinstaub_hum": "67.41", "sensor_feinstaub_signal": "-60"}
+*/
+
+//  rule "mqLuftdaten changed"
+//   when 
+//     Item mqLuftdaten changed
+//   then 
+//     {
+//       var String jsor
+//       var String oval
+
+//       jsor = (mqLuftdaten.state as StringType).toString
+
+//       oval  = transform("JSONPATH", "$.sensor_feinstaub_pressure", jsor)
+//       sensor_feinstaub_pressure.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.sensor_feinstaub_pm25", jsor)
+//       sensor_feinstaub_pm25.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.sensor_feinstaub_temp", jsor)
+//       sensor_feinstaub_temp.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.sensor_feinstaub_pm10", jsor)
+//       sensor_feinstaub_pm10.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.sensor_feinstaub_hum", jsor)
+//       sensor_feinstaub_hum.postUpdate(oval)
+
+//       oval  = transform("JSONPATH", "$.sensor_feinstaub_signal", jsor)
+//       sensor_feinstaub_signal.postUpdate(oval)
+
+//     }
+
+
+
+//   end
+
+
+
+
+/////////////////  eich
+/*
+// eich in diff zu dem gemessenen. 
+Number eichDiff_temp "diff der temp"
+Number eichDiff_hum  "diff der Humidity"
+Number eichDiff_press "diff des Drucks"
+
+mqEich
+*/
+
+/*
+Number sensor_temperature_OfficePack        "Temperatur Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
+Number sensor_humidity_OfficePack           "Luftfeuchte Office [%.1f]%"        <rain>          (gSensor1, gOffice) [ "CurrentHumidity" ]
+Number sensor_pressure_OfficePack        "Luftdruck Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
+Number sensor_luminosity_OfficePack           "Helligkeit Office [%.1f]%"        <light>          (gSensor1, gOffice) [ "CurrentHumidity" ]
+
+*/
+rule "mqEich changed"
+  when 
+    Item mqEich changed
+  then 
+    {
+      var String jsor
+      var String oval
+
+      var Number eich_temp
+      var Number eich_hum
+      var Number eich_press
+
+
+      var Number test_temp
+      var Number test_hum
+      var Number test_press
+
+      var Number delta_temp
+      var Number delta_hum
+      var Number delta_press
+
+      var String testel
+
+      jsor = (mqEich.state as StringType).toString
+      //logInfo("mqParse",jsor)
+
+      oval  = transform("JSONPATH", "$.temp", jsor)
+      eich_temp = Float::parseFloat(oval)
+      //sensor_temperature_OfficePack.postUpdate(oval)    
+      
+      oval  = transform("JSONPATH", "$.hum", jsor)
+      eich_hum = Float::parseFloat(oval)
+      //sensor_humidity_OfficePack.postUpdate(oval)      
+
+      oval  = transform("JSONPATH", "$.rPress", jsor)
+      eich_press = Float::parseFloat(oval)
+      //sensor_pressure_OfficePack.postUpdate(oval)
+
+
+      // so, die Diff zu:
+
+
+       
+      // testel = "Bad"
+      //  officePack 
+      // test_temp = sensor_temperature_OfficePack.state as Number
+      // test_hum =  sensor_humidity_OfficePack.state as Number
+      // test_press =  sensor_pressure_OfficePack.state as Number
+
+      // officeDesk
+      //testel = "officeDesk"
+      // test_temp = sensor_temperature_OfficeDesk.state as Number
+      // test_hum =  sensor_humidity_OfficeDesk.state as Number
+
+      // testel = "Flur"
+      // test_temp = sensor_temperature_Flur.state as Number
+      // test_hum =  sensor_humidity_Flur.state as Number
+
+      testel = "Bad"
+      sensor_temperature_Bad
+      test_temp = sensor_temperature_Bad.state as Number
+      test_hum =  sensor_humidity_Bad.state as Number
+
+      // testel = "Kueche"
+      // test_temp = sensor_temperature_Kueche.state as Number
+      // test_hum =  sensor_humidity_Kueche.state as Number
+
+      // testel = "Clara" 
+      // test_temp =   sensor_temperature_Clara.state as Number
+      //  test_hum =  sensor_humidity_Clara.state as Number
+
+      // testel = "Medi"
+      // test_temp = sensor_temperature_Medi.state as Number
+      // test_hum =     sensor_humidity_Medi.state as Number 
+
+      // testel = "SK" 
+      // test_temp = sensor_temperature_SK.state as Number
+      // test_hum =     sensor_humidity_SK.state as Number
+
+      //test_press =  sensor_pressure_OfficeDesk.state as Number
+
+      // berechne und lege ab
+
+      delta_temp = test_temp - eich_temp
+      eichDiff_temp.postUpdate(delta_temp)
+
+      delta_hum = test_hum - eich_hum
+      eichDiff_hum.postUpdate(delta_hum)
+
+      // delta_press = test_press - eich_press
+      // eichDiff_press.postUpdate(delta_press)
+
+      // sumDeltaTemp, sumDeltaHum, sumDeltaPress, numSamples
+      sumDeltaTemp=sumDeltaTemp+delta_temp
+      sumDeltaHum=sumDeltaHum+delta_hum
+     // sumDeltaPress=sumDeltaPress+delta_press
+      numSamples+=1
+
+      logInfo("mqParse","eiche "+testel+": temp: "+delta_temp+" hum: "+delta_hum+" press: "+delta_press)
+
+      delta_temp = sumDeltaTemp / numSamples
+      delta_hum  = sumDeltaHum / numSamples
+     // delta_press = sumDeltaPress / numSamples
+
+      logInfo("mqParse","averrage über "+numSamples+": temp: "+delta_temp+" hum: "+delta_hum)
+      //logInfo("mqParse","averrage über "+numSamples+": temp: "+delta_temp+" hum: "+delta_hum+" press: "+delta_press)
+
+
+
+
+    }
+end
+
+
+
+
+
+/****************************************************** Presence ************************************************/
+
+
 rule "MqttPostionParse_dp"
   when
     Item mqttPosition_dp_Raw changed 
@@ -125,6 +1105,10 @@ rule "mqtt_dp_Region changed"
       }
     }
 end
+
+
+
+/****************************************************** raspiHealth ************************************************/
 
 
 /*
@@ -338,689 +1322,3 @@ then
   }
 end 
 
-
-// mqRfid (Type=StringItem, State={"rfidValid":"ON","rfidEntry":"1","commError":false,"commErrorMsg":"ok"}, Label=rfid state, Category=null)
-rule "mqttParse_rfid"
-  when 
-    Item mqRfid changed or 
-    Item mqRfid received update
-  then 
-    var String json = (mqRfid.state as StringType).toString
-    var String vlid = transform("JSONPATH", "$.rfidValid", json)
-    var String entr = transform("JSONPATH", "$.rfidEntry", json)
-
-    rfidValid.sendCommand(vlid)
-    rfidEntry.postUpdate(entr)
-    logInfo("mqttParse",rfidValid.state +" "+rfidEntry.state)
-end 
-
-
-// paok18 hat bme680_1 über mqPaok18_val und mqPaok18_dbg. environ18
-// {"temp":23.42,"press":1010.2,"press_red":1016.699,"hum":30.992,"gas":9.844,"alt_mea":54.06149}  {"alt_def":54.06,"errStatus":"ok"}
-// Number sensor_environ18_temperature "Temperatur [%.1f]" <temperature> (gSensor6) 
-// Number sensor_environ18_humidity "Luftfeuchte [%.1f]" <rain> (gSensor6) 
-// Number sensor_environ18_pressure "Luftdruck (absolut) [%.1f]" <pressure> (gSensor6)
-// Number sensor_environ18_rPressure "Luftdruck (abs, red.) [%.1f]" <pressure> (gSensor6)
-// Number sensor_environ18_gas "Gas als kOhm  [%.1f]" <smoke> (gSensor6)
-// Number sensor_environ18_altitude  "Höhe in m [%.1f]" <light> (gSensor6)
-// Number sensor_environ18_alt_defined  "def Höhe in m [%.1f]" <light> (gSensor6)
-
-rule "mqPaok18_val changed"
-  when 
-    Item mqPaok18_val changed
-  then 
-    {
-      var String json = (mqPaok18_val.state as StringType).toString
-      var String ovar  = transform("JSONPATH", "$.temp", json)
-      sensor_environ18_temperature.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.hum", json)
-      sensor_environ18_humidity.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.press", json)
-      sensor_environ18_pressure.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.press_red", json)
-      sensor_environ18_rPressure.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.gas", json)
-      sensor_environ18_gas.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.alt_mea", json)
-      sensor_environ18_altitude.postUpdate(ovar)
-
-      var Number ist=sensor_environ18_altitude.state as Number
-      var Number sei=sensor_environ18_alt_defined.state as Number
-
-      var Number delta = ist - sei
-      sensor_environ18_alt_ground.postUpdate(delta)
-
-      var Number val16
-      var Number val18
-      val16 = sensor_environ16_temperature.state as Number
-      val18 = sensor_environ18_temperature.state as Number
-      
-      dTemp.postUpdate(val16-val18)
-
-      val16 = sensor_environ16_humidity.state as Number
-      val18 = sensor_environ18_humidity.state as Number
-      
-      dHum.postUpdate(val16-val18)
-
-
-
-      val16 = sensor_environ16_pressure.state as Number
-      val18 = sensor_environ18_pressure.state as Number
-      
-      dPress.postUpdate(val16-val18)
-
-
-
-      val16 = sensor_environ16_gas.state as Number
-      val18 = sensor_environ18_gas.state as Number
-      
-      dGas.postUpdate(val16-val18)
-
-
-
-      val16 = sensor_environ16_altitude.state as Number
-      val18 = sensor_environ18_altitude.state as Number
-      
-      dAlt.postUpdate(val16-val18)
-
-
-    }
-end
-
-
-
-
-// mqPaok18_dbg {"alt_def":54.06,"errStatus":"ok"}
-rule "mqPaok18_dbg changed"
-  when 
-    Item mqPaok18_dbg changed
-  then 
-    {
-      var String jsor = (mqPaok18_dbg.state as StringType).toString
-
-      logInfo("mqttParse",jsor)
-
-      var String oval  = transform("JSONPATH", "$.alt_def", jsor)
-      sensor_environ18_alt_defined.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.errStatus", jsor)
-      sensor_environ18_errStatus.postUpdate(oval)
-    }
-end
-
-
-
-rule "mqPaok16_val changed"
-  when 
-    Item mqPaok16_val changed
-  then 
-    {
-      var String json = (mqPaok16_val.state as StringType).toString
-      var String ovar  = transform("JSONPATH", "$.temp", json)
-      sensor_environ16_temperature.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.hum", json)
-      sensor_environ16_humidity.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.press", json)
-      sensor_environ16_pressure.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.press_red", json)
-      sensor_environ16_rPressure.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.gas", json)
-      sensor_environ16_gas.postUpdate(ovar)
-
-      ovar  = transform("JSONPATH", "$.alt_mea", json)
-      sensor_environ16_altitude.postUpdate(ovar)
-
-      // var Number ist=sensor_environ16_altitude.state as Number
-      // var Number sei=sensor_environ16_alt_defined.state as Number
-
-      // val Number delta = ist - sei
-      // sensor_environ16_alt_ground.postUpdate(delta)
-    }
-end
-
-// mqPaok16_dbg {"alt_def":54.06,"errStatus":"ok"}
-rule "mqPaok16_dbg changed"
-  when 
-    Item mqPaok16_dbg changed
-  then 
-    {
-      var String jsor = (mqPaok16_dbg.state as StringType).toString
-
-      logInfo("mqttParse",jsor)
-
-      var String oval  = transform("JSONPATH", "$.alt_def", jsor)
-      sensor_environ16_alt_defined.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.errStatus", jsor)
-      sensor_environ16_errStatus.postUpdate(oval)
-    }
-end
-
-// mqWetterBalkon
-// sensor/wetterBalkon/state {"temp":27.58,"hum":38.85449,"press":1009.712,"rPress":1015.839,"lux":72,"broad":243,"infrared":139,"rssi":-60,"moist":601,"vers":"1.01"}
-
-// bme280 hat temp, press, humidity. Vergesellschafftet mit tsl2561 mit Lux_4, broadband, infrared
-
-
-
-rule "mqWetterBalkon changed"
-  when 
-    Item mqWetterBalkon changed
-  then 
-    {
-      var String jsor = (mqWetterBalkon.state as StringType).toString
-
-      //logInfo("mqttParse",jsor)
-
-      var String oval  = transform("JSONPATH", "$.temp", jsor)
-      sensor_bme280_temperature.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.hum", jsor)
-      sensor_bme280_humidity.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.press", jsor)
-      sensor_bme280_pressure.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.rPress", jsor)
-      sensor_bme280_rPressure.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.broad", jsor)
-      sensor_bme280_broadband.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.infrared", jsor)
-      sensor_bme280_infrared.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.lux", jsor)
-      sensor_lux_4.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.rssi", jsor)
-      sensor_rssi_Balkon.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.an0", jsor)
-      sensor_moist_balkon_0.postUpdate(oval)
-
-    }
-end
-
-
-
-// {"temp":26.27,"hum":40.65918,"press":1021.306,"rPress":1028.113,"lux":0,"rssi":-59,"vers":"1.04"}
-// mqPirSK pir/sk/state {"temp":0,"hum":0,"press":0,"rPress":0,"lux":257,"rssi":-53,"pir":"OFF","vers":"1.01"}  PirState_SK
-rule "mqPirSK changed"
-  when 
-    Item mqPirSK changed
-  then 
-    {
-      var String jsor = (mqPirSK.state as StringType).toString
-      var String oval
-
-      //logInfo("mqttParse",jsor)
-
-      oval  = transform("JSONPATH", "$.lux", jsor)
-      sensor_lux_3.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.temp", jsor)
-      sensor_temperature_SK.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.hum", jsor)
-      sensor_humidity_SK.postUpdate(oval)
-      // logInfo("test",oval)
-      // logInfo("test",jsor)
-      // die zwei pressure haben derzeit kein item  (und ansich auch nicht viel Bedeutung)
-      oval  = transform("JSONPATH", "$.press", jsor)
-      //sensor_pressure_SK.postUpdate(oval)
-      oval  = transform("JSONPATH", "$.rPress", jsor)
-      //sensor_rPressure_SK.postUpdate(oval)
-
-   
-
-      oval  = transform("JSONPATH", "$.rssi", jsor)
-      //logInfo("test",oval)
-      sensor_rssi_SK.postUpdate(oval)
-//    sensor_rssi_SK
-    }
-end
- 
-// pir/medi/state {"temp":32.7,"hum":45.4,"lastTemp":32.7,"lastHum":45.1,"fail2win":"80/41","lux":53,"rssi":"-49","rushLux":"OFF","showPir":"OFF","showErr":"OFF","vers":"1.04"}
-rule "mqPirMedi changed"
-  when 
-    Item mqPirMedi changed
-  then 
-    {
-      var String jsor
-      var String oval
-
-      jsor = (mqPirMedi.state as StringType).toString
-
-      oval  = transform("JSONPATH", "$.temp", jsor)
-      sensor_temperature_Medi.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.hum", jsor)
-      sensor_humidity_Medi.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.lux", jsor)
-      sensor_lux_7.postUpdate(oval)      
-
-      oval  = transform("JSONPATH", "$.rssi", jsor)
-      sensor_rssi_Medi.postUpdate(oval)
-
-    }
-end
-
-// pir/clara/state {"temp":32,"hum":41.1,"lastTemp":32,"lastHum":40,"fail2win":"120/35","lux":35,"rssi":"-71","rushLux":"OFF","showPir":"OFF","showErr":"OFF","vers":"1.04"}
-rule "mqPirClara changed"
-  when 
-    Item mqPirClara changed
-  then 
-    {
-      var String jsor
-      var String oval
-
-      jsor = (mqPirClara.state as StringType).toString
-
-      oval  = transform("JSONPATH", "$.temp", jsor)
-      sensor_temperature_Clara.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.hum", jsor)
-      sensor_humidity_Clara.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.lux", jsor)
-      sensor_lux_6.postUpdate(oval)      
-
-      oval  = transform("JSONPATH", "$.rssi", jsor)
-      sensor_rssi_Clara.postUpdate(oval)
-
-    }
-end
-
-
-rule "mqOfficeDesk changed"
-  when 
-    Item mqOfficeDesk changed
-  then 
-    {
-      var String jsor
-      var String oval
-
-      jsor = (mqOfficeDesk.state as StringType).toString
-
-      oval  = transform("JSONPATH", "$.temp", jsor)
-      sensor_temperature_OfficeDesk.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.hum", jsor)
-      sensor_humidity_OfficeDesk.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.lux", jsor)
-      sensor_lux_8.postUpdate(oval)      
-
-      oval  = transform("JSONPATH", "$.rssi", jsor)
-      sensor_rssi_OfficeDesk.postUpdate(oval)
-
-    }
-end
-
-/*
-Number sensor_temperature_OfficePack        "Temperatur Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
-Number sensor_humidity_OfficePack           "Luftfeuchte Office [%.1f]%"        <rain>          (gSensor1, gOffice) [ "CurrentHumidity" ]
-Number sensor_pressure_OfficePack        "Luftdruck Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
-Number sensor_luminosity_OfficePack           "Helligkeit Office [%.1f]%"        <light>          (gSensor1, gOffice) [ "CurrentHumidity" ]
-
-*/
-rule "mqOfficePack changed"
-  when 
-    Item mqOfficePack changed
-  then 
-    {
-      var String jsor
-      var String oval
-
-      jsor = (mqOfficePack.state as StringType).toString
-      //logInfo("mqParse",jsor)
-
-      oval  = transform("JSONPATH", "$.temp", jsor)
-      sensor_temperature_OfficePack.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.hum", jsor)
-      sensor_humidity_OfficePack.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.lux", jsor)
-      sensor_luminosity_OfficePack.postUpdate(oval)      
-
-      oval  = transform("JSONPATH", "$.rPress", jsor)
-      sensor_pressure_OfficePack.postUpdate(oval)
-
-      // toc will bettreif auslösen
-      oval = transform("JSONPATH", "$.toc", jsor)
-      if (oval=="ON"){
-        // der kann wirklich nerven
-        // bettReif.sendCommand(oval)  
-      }
-       
-
-     
-        // pir will PirStateofficePack auslösen
-      oval = transform("JSONPATH", "$.pir", jsor)
-      if (oval=="ON"){
-        PirState_OfficePack.sendCommand(ON) 
-      }  
-      
-      oval = transform("JSONPATH", "$.rushLux", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        rush_officePack.postUpdate(oval)
-      }
-      oval = transform("JSONPATH", "$.loopDsp", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        loopDisp_officePack.postUpdate(oval)
-      }
-      oval = transform("JSONPATH", "$.refDsp", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        refDisp_officePack.postUpdate(oval)
-      }
-      oval = transform("JSONPATH", "$.scanWifi", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        scanWifi_officePack.postUpdate(oval)
-      }
-      
-      // kleine berechnung
-      var Number delta
-      var Number desk
-      var Number pack
-      
-      desk = sensor_temperature_OfficeDesk.state as Number
-      pack = sensor_temperature_OfficePack.state as Number
-      delta = desk - pack
-      ofcDelta_Temp.sendCommand(delta)
-
-      desk = sensor_humidity_OfficeDesk.state as Number
-      pack = sensor_humidity_OfficePack.state as Number
-      delta = desk - pack
-      ofcDelta_Hum.sendCommand(delta)
-
-    }
-end
-
-/*
-Number ofcDelta_Temp "temp officeDesk - officePack"
-Number ofcDelta_Hum  "hum officeDesk - officePack"
-*/
-// rule "mqMulti changed"
-//   when 
-//     Item mqMulti changed
-//   then 
-//     {
-//       var String jsor
-//       var String oval
-
-//       jsor = (mqMulti.state as StringType).toString
-
-//       oval  = transform("JSONPATH", "$.temp", jsor)
-//       sensor_temperature_Multi.postUpdate(oval)    
-      
-//       oval  = transform("JSONPATH", "$.hum", jsor)
-//       sensor_humidity_Multi.postUpdate(oval)    
-      
-//       // oval  = transform("JSONPATH", "$.Co2", jsor)
-//       // sensor_co2_Multi.postUpdate(oval)      
-
-//       oval  = transform("JSONPATH", "$.rssi", jsor)
-//       sensor_rssi_Multi.postUpdate(oval)
-
-//     }
-// end
-
-
- // mqLuftdaten
-/*
-  sensor/feinstaub/state {"_type": "airRohr", "sensor_feinstaub_pressure": "100251.16", "sensor_feinstaub_pm25": "4.12", 
-  "sensor_feinstaub_temp": "22.35", "sensor_feinstaub_pm10": "6.65", "sensor_feinstaub_hum": "67.41", "sensor_feinstaub_signal": "-60"}
-*/
-
- rule "mqLuftdaten changed"
-  when 
-    Item mqLuftdaten changed
-  then 
-    {
-      var String jsor
-      var String oval
-
-      jsor = (mqLuftdaten.state as StringType).toString
-
-      oval  = transform("JSONPATH", "$.sensor_feinstaub_pressure", jsor)
-      sensor_feinstaub_pressure.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.sensor_feinstaub_pm25", jsor)
-      sensor_feinstaub_pm25.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.sensor_feinstaub_temp", jsor)
-      sensor_feinstaub_temp.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.sensor_feinstaub_pm10", jsor)
-      sensor_feinstaub_pm10.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.sensor_feinstaub_hum", jsor)
-      sensor_feinstaub_hum.postUpdate(oval)
-
-      oval  = transform("JSONPATH", "$.sensor_feinstaub_signal", jsor)
-      sensor_feinstaub_signal.postUpdate(oval)
-
-    }
-
-
-
-  end
-
-
-
-/*
-String mqPirBad3     "incoming" 
-String mqPirBad3Set  "outgoing" 
-
-pir/bad3/state {"pir":"ON","intense":"nop","scanWifi":"OFF","vers":"0.01"}
-
-*/
- 
-rule "mqPirBad3 changed"
-  when 
-    Item mqPirBad3 received update
-  then 
-    {
-      var String jsor
-      var String oval
-
-      jsor = (mqPirBad3.state as StringType).toString
-
-      oval  = transform("JSONPATH", "$.pir", jsor)
-      if (oval=="ON"){
-        PirState_Bad3.sendCommand(ON)
-      }
-  
-      
-      oval  = transform("JSONPATH", "$.intense", jsor)
-      IntenseBad.postUpdate(oval)
-
-      // if (oval=="ON"){IntenseBad.sendCommand(oval)}
-      // else if (oval=="OFF"){
-      //   // nur wenn wirklich noetig, macht sonst kurzes Flackern
-      //   if (IntenseBad.state=ON){
-      //     IntenseBad.sendCommand(OFF)
-      //   }
-      // }
-
-    }
-end
-     
-
-
-/*
-pir/kueche/state {"pir1":"OFF","pir2":"OFF","pir3":"ON","rssi":"-62","vers":"1.08"}
-*/
-
-// mqPirKueche
-
- 
-rule "mqPirKueche changed"
-  when 
-    Item mqPirKueche changed
-  then 
-    {
-      var String jsor
-      var String oval
-
-      jsor = (mqPirKueche.state as StringType).toString
-
-      oval  = transform("JSONPATH", "$.pir1", jsor)
-      if (oval=="ON"){
-        PirState_Kueche.sendCommand(ON)
-      }
-  
-      oval  = transform("JSONPATH", "$.pir2", jsor)
-      if (oval=="ON"){
-        PirState_Kueche2.sendCommand(ON)
-      }
-  
-      oval  = transform("JSONPATH", "$.pir3", jsor)
-      if (oval=="ON"){
-        PirState_Kueche3.sendCommand(ON)
-      }
-  
-      
-     
-    }
-end
-     
-
-
-/////////////////  eich
-/*
-// eich in diff zu dem gemessenen. 
-Number eichDiff_temp "diff der temp"
-Number eichDiff_hum  "diff der Humidity"
-Number eichDiff_press "diff des Drucks"
-
-mqEich
-*/
-
-/*
-Number sensor_temperature_OfficePack        "Temperatur Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
-Number sensor_humidity_OfficePack           "Luftfeuchte Office [%.1f]%"        <rain>          (gSensor1, gOffice) [ "CurrentHumidity" ]
-Number sensor_pressure_OfficePack        "Luftdruck Office [%.1f]°"         <temperature>   (gSensor1, gOffice) [ "CurrentTemperature" ]
-Number sensor_luminosity_OfficePack           "Helligkeit Office [%.1f]%"        <light>          (gSensor1, gOffice) [ "CurrentHumidity" ]
-
-*/
-rule "mqEich changed"
-  when 
-    Item mqEich changed
-  then 
-    {
-      var String jsor
-      var String oval
-
-      var Number eich_temp
-      var Number eich_hum
-      var Number eich_press
-
-
-      var Number test_temp
-      var Number test_hum
-      var Number test_press
-
-      var Number delta_temp
-      var Number delta_hum
-      var Number delta_press
-
-      var String testel
-
-      jsor = (mqEich.state as StringType).toString
-      //logInfo("mqParse",jsor)
-
-      oval  = transform("JSONPATH", "$.temp", jsor)
-      eich_temp = Float::parseFloat(oval)
-      //sensor_temperature_OfficePack.postUpdate(oval)    
-      
-      oval  = transform("JSONPATH", "$.hum", jsor)
-      eich_hum = Float::parseFloat(oval)
-      //sensor_humidity_OfficePack.postUpdate(oval)      
-
-      oval  = transform("JSONPATH", "$.rPress", jsor)
-      eich_press = Float::parseFloat(oval)
-      //sensor_pressure_OfficePack.postUpdate(oval)
-
-
-      // so, die Diff zu:
-
-
-       
-      // testel = "Bad"
-      //  officePack 
-      // test_temp = sensor_temperature_OfficePack.state as Number
-      // test_hum =  sensor_humidity_OfficePack.state as Number
-      // test_press =  sensor_pressure_OfficePack.state as Number
-
-      // officeDesk
-      //testel = "officeDesk"
-      // test_temp = sensor_temperature_OfficeDesk.state as Number
-      // test_hum =  sensor_humidity_OfficeDesk.state as Number
-
-      //testel = "Bad"
-      // sensor_temperature_Bad
-      // test_temp = sensor_temperature_Bad.state as Number
-      // test_hum =  sensor_humidity_Bad.state as Number
-
-      // testel = "Kueche"
-      // test_temp = sensor_temperature_Kueche.state as Number
-      // test_hum =  sensor_humidity_Kueche.state as Number
-
-      // testel = "Clara" 
-      // test_temp =   sensor_temperature_Clara.state as Number
-      //  test_hum =  sensor_humidity_Clara.state as Number
-
-      // testel = "Medi"
-      // test_temp = sensor_temperature_Medi.state as Number
-      // test_hum =     sensor_humidity_Medi.state as Number 
-
-      testel = "SK" 
-      test_temp = sensor_temperature_SK.state as Number
-      test_hum =     sensor_humidity_SK.state as Number
-
-      //test_press =  sensor_pressure_OfficeDesk.state as Number
-
-      // berechne und lege ab
-
-      delta_temp = test_temp - eich_temp
-      eichDiff_temp.postUpdate(delta_temp)
-
-      delta_hum = test_hum - eich_hum
-      eichDiff_hum.postUpdate(delta_hum)
-
-      // delta_press = test_press - eich_press
-      // eichDiff_press.postUpdate(delta_press)
-
-      // sumDeltaTemp, sumDeltaHum, sumDeltaPress, numSamples
-      sumDeltaTemp=sumDeltaTemp+delta_temp
-      sumDeltaHum=sumDeltaHum+delta_hum
-     // sumDeltaPress=sumDeltaPress+delta_press
-      numSamples+=1
-
-      logInfo("mqParse","eiche "+testel+": temp: "+delta_temp+" hum: "+delta_hum+" press: "+delta_press)
-
-      delta_temp = sumDeltaTemp / numSamples
-      delta_hum  = sumDeltaHum / numSamples
-     // delta_press = sumDeltaPress / numSamples
-
-      logInfo("mqParse","averrage über "+numSamples+": temp: "+delta_temp+" hum: "+delta_hum)
-      //logInfo("mqParse","averrage über "+numSamples+": temp: "+delta_temp+" hum: "+delta_hum+" press: "+delta_press)
-
-
-
-
-    }
-end

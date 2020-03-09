@@ -89,7 +89,7 @@ then
     if (sensor_humidity_Clara.state == 0 || sensor_temperature_Clara.state == 0) {
         smalle2Power2.sendCommand("OFF")
         // Wartezeit, damit der sensor wirklich neu starten muss
-        Thread::sleep(1000)
+        Thread::sleep(2000)
         smalle2Power2.sendCommand("ON")
         // und loggen
         logInfo("bmp-watchdog", "pirClara-watchdog  alarmed  ")
@@ -106,7 +106,7 @@ end
 // String led_fk_dbg "FensterKante dbg"                 // (bei Umstellung auf mqtt v2 binding nicht migriert)
 
 
-
+/* 
 rule "led_bk_dbg changed"
 when Item led_bk_dbg changed
 
@@ -143,3 +143,4 @@ then
         // {"state":"ON","effect":"solid","bright":28,"colorHsv":{"h":35,"s":240,"v":255}}
 	}
 end
+ */

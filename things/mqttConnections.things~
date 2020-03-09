@@ -1,0 +1,183 @@
+
+Bridge mqtt:broker:mqBroker [ host="192.168.50.1",secure=false, username="oh", password="autan" ]
+{
+    Thing topic sensors "mqSensors" {
+
+        Channels:
+            Type string : officePack     "officePack Sensor"        [stateTopic="sensor/officePack/state"]
+            Type string : officeDesk     "officedesk Sensor"        [stateTopic="sensor/officeDesk/state"]   
+            Type string : eiche          "eiche Sensor"             [stateTopic="sensor/eiche/state"]        
+            Type string : rfid           "rfid Sensor"              [stateTopic="sensor/rfid/state"]         
+            Type string : multi          "multi Sensor"             [stateTopic="sensor/multi/state"]        
+            Type string : feinstaub      "feinstaub Sensor"         [stateTopic="sensor/feinstaub/state"]    
+            Type string : wetterBalkon   "wetterBalkon Sensor"      [stateTopic="sensor/wetterBalkon/state"] 
+            Type string : pirClara       "pirClara Sensor"          [stateTopic="pir/clara/state"]           
+            Type string : pirSK          "pirSK Sensor"             [stateTopic="sensor/sk/state"]              
+            Type string : pirMedi        "pirMedi Sensor"           [stateTopic="pir/medi/stat"]            
+            Type string : pirBad3        "pirBad3 Sensor"           [stateTopic="pir/bad3/state"]            
+            Type string : pirKueche      "pirKueche Sensor"         [stateTopic="pir/kueche/state"]
+            Type string : pirGarde       "pir Garde"                [stateTopic="pir/garde/state"]
+            Type string : pirFlur        "pir flur"                 [stateTopic="pir/flur/state]          
+        
+            Type string : officePackSet  "officePack setCmd"        [commandTopic="sensor/officePack/set"]
+            Type string : officeDeskSet  "officedesk setCmd"        [commandTopic="sensor/officeDesk/set"]
+            Type string : rfidSet        "rfid setCmd"              [commandTopic="sensor/rfid/set"]
+            Type string : multiSet       "multi setCmd"             [commandTopic="sensor/multi/set"]
+            Type string : wetterBalkonSet "wetterBalkon setCmd"     [commandTopic="sensor/wetterBalkon/set"]
+            Type string : pirClaraSet    "pirClara setCmd"          [commandTopic="pir/clara/set"]
+            Type string : pirSKSet       "pirSK setCmd"             [commandTopic="sensor/sk/set"]
+            Type string : pirMediSet     "pirMedi setCmd"           [commandTopic="pir/medi/set"]
+            Type string : pirBad3Set     "pirBad3 setCmd"           [commandTopic="pir/bad3/set"]
+            Type string : pirKuecheSet   "pirKueche setCmd"         [commandTopic="pir/kueche/set"]
+
+        
+
+    }
+
+    Thing topic remotes "mqRemotes" {
+
+        Channels:
+            Type string : vbb                "vbb connex"          [stateTopic="ext/vbb/timetable/state"]
+            Type string : vbbCmd             "vbb setCmd"          [commandTopic="ext/vbb/timetable/cmd"]
+
+            Type string : kuecheRelay        "Relay"               [stateTopic="r48/kueche/relais/state"]
+            Type string : kuecheRelay27Set   "relay27Set"          [commandTopic="r48/kueche/relais/ch27/set"]
+            Type string : kuecheRelay28Set   "relay28Set"          [commandTopic="r48/kueche/relais/ch28/set"]
+            Type string : kuecheRelay29Set   "relay29Set"          [commandTopic="r48/kueche/relais/ch29/set"]
+
+            Type string : ownFeng            "owntracksFeng"       [stateTopic="owntracks/dp/feng:state"]
+            Type string : ownFlamingo        "owntracksFlamingo"   [stateTopic="owntracks/lp/flamingo"]
+
+
+    }
+
+
+   Thing topic lights "mqLights" {
+
+        Channels:
+            Type string : bkLed   "BettKante"            [commandTopic="led/bk/set"]
+            Type string : fkLed   "FensterKante"         [commandTopic="led/fk/set"]
+            Type string : okLed   "OfficeKante"          [commandTopic="led/ok/set"]
+            Type string : tlLed   "tokoLights"           [commandTopic="led/tl/set"]
+            Type string : fmLed   "FlurMatrix"           [commandTopic="led/fm/set"]
+            Type string : mmLed   "MediMatrix"           [commandTopic="led/mm/set"]
+            Type string : rmLed   "rotaMatrix"           [commandTopic="led/rm/set"]
+            
+            Type string : bkLeddbg   "bk_dbg"            [commandTopic="led/bk/dbg"]
+            Type string : fkLeddbg   "fk_dbg"            [commandTopic="led/fk/dbg"]
+            Type string : okLeddbg   "ok_dbg"            [commandTopic="led/ok/dbg"]
+            Type string : tlLeddbg   "tl_dbg"            [commandTopic="led/tl/dbg"]
+ 
+    }
+
+
+
+  
+    Thing topic tasmota "mqTasmoten" {
+
+        Channels:
+        
+            Type string : sm1Rslt                "smalle1 result"          [stateTopic="tasmota/smalle1/stat/RESULT"]
+            Type string : sm1Snsr                "smalle1 sensor"          [stateTopic="tasmota/smalle1/tele/SENSOR"]
+            
+            Type string : sm1Cmd1                "smalle1 Power1"          [commandTopic="tasmota/smalle1/cmnd/POWER1"]
+            Type string : sm1Cmd2                "smalle1 Power2"          [commandTopic="tasmota/smalle1/cmnd/POWER2"]
+
+            
+            Type string : sm2Rslt                "smalle2 result"          [stateTopic="tasmota/smalle2/stat/RESULT"]
+            Type string : sm2Snsr                "smalle2 sensor"          [stateTopic="tasmota/smalle2/tele/SENSOR"]
+            
+            Type string : sm2Cmd1                "smalle2 Power1"          [commandTopic="tasmota/smalle2/cmnd/POWER1"]
+            Type string : sm2Cmd2                "smalle2 Power2"          [commandTopic="tasmota/smalle2/cmnd/POWER2"]
+            
+            
+            Type string : sm3Rslt                "smalle3 result"          [stateTopic="tasmota/smalle3/stat/RESULT"]
+            Type string : sm3Snsr                "smalle3 sensor"          [stateTopic="tasmota/smalle3/tele/SENSOR"]
+            
+            Type string : sm3Cmd1                "smalle3 Power1"          [commandTopic="tasmota/smalle3/cmnd/POWER1"]
+            Type string : sm3Cmd2                "smalle3 Power2"          [commandTopic="tasmota/smalle3/cmnd/POWER2"]
+
+            
+            Type string : sm4Rslt                "smalle4 result"          [stateTopic="tasmota/smalle4/stat/RESULT"]
+            Type string : sm4Snsr                "smalle4 sensor"          [stateTopic="tasmota/smalle4/tele/SENSOR"]
+            
+            Type string : sm4Cmd1                "smalle4 Power1"          [commandTopic="tasmota/smalle4/cmnd/POWER1"]
+            Type string : sm4Cmd2                "smalle4 Power2"          [commandTopic="tasmota/smalle4/cmnd/POWER2"]
+          
+            Type string : sm5Rslt                "smalle5 result"          [stateTopic="tasmota/smalle5/stat/RESULT"]
+            Type string : sm5Snsr                "smalle5 sensor"          [stateTopic="tasmota/smalle5/tele/SENSOR"]            
+            Type string : sm5Cmd                 "smalle5 Power"           [commandTopic="tasmota/smalle5/cmnd/POWER"]            
+
+            
+            Type string : sm6Rslt                "smalle6 result"          [stateTopic="tasmota/smalle6/stat/RESULT"]
+            Type string : sm6Snsr                "smalle6 sensor"          [stateTopic="tasmota/smalle6/tele/SENSOR"]            
+            Type string : sm6Cmd                 "smalle6 Power"           [commandTopic="tasmota/smalle6/cmnd/POWER"]            
+
+            
+            Type string : sm7Rslt                "smalle7 result"          [stateTopic="tasmota/smalle7/stat/RESULT"]
+            Type string : sm7Snsr                "smalle7 sensor"          [stateTopic="tasmota/smalle7/tele/SENSOR"]            
+            Type string : sm7Cmd                 "smalle7 Power"           [commandTopic="tasmota/smalle7/cmnd/POWER"]            
+
+            
+            Type string : sm8Rslt                "smalle8 result"          [stateTopic="tasmota/smalle8/stat/RESULT"]
+            Type string : sm8Snsr                "smalle8 sensor"          [stateTopic="tasmota/smalle8/tele/SENSOR"]            
+            Type string : sm8Cmd                 "smalle8 Power"           [commandTopic="tasmota/smalle8/cmnd/POWER"]            
+            
+            
+            
+            Type string : sm9Rslt                "smalle9 result"          [stateTopic="tasmota/smalle9/stat/RESULT"]
+            Type string : sm9Snsr                "smalle9 sensor"          [stateTopic="tasmota/smalle9/tele/SENSOR"]
+            
+            Type string : sm9Cmd1                "smalle9 Power1"          [commandTopic="tasmota/smalle9/cmnd/POWER1"]
+            Type string : sm9Cmd2                "smalle9 Power2"          [commandTopic="tasmota/smalle9/cmnd/POWER2"]
+
+            
+            Type string : sm10Rslt                "smalle10 result"          [stateTopic="tasmota/smalle10/stat/RESULT"]
+            Type string : sm10Snsr                "smalle10 sensor"          [stateTopic="tasmota/smalle10/tele/SENSOR"]
+            
+            Type string : sm10Cmd1                "smalle10 Power1"          [commandTopic="tasmota/smalle10/cmnd/POWER1"]
+            Type string : sm10Cmd2                "smalle10 Power2"          [commandTopic="tasmota/smalle10/cmnd/POWER2"]
+
+            
+            Type string : sm11Rslt                "smalle11 result"          [stateTopic="tasmota/smalle11/stat/RESULT"]
+            Type string : sm11Snsr                "smalle11 sensor"          [stateTopic="tasmota/smalle11/tele/SENSOR"]
+            
+            Type string : sm11Cmd1                "smalle11 Power1"          [commandTopic="tasmota/smalle11/cmnd/POWER1"]
+            Type string : sm11Cmd2                "smalle11 Power2"          [commandTopic="tasmota/smalle11/cmnd/POWER2"]
+
+            
+            Type string : sm12Rslt                "smalle12 result"          [stateTopic="tasmota/smalle12/stat/RESULT"]
+            Type string : sm12Snsr                "smalle12 sensor"          [stateTopic="tasmota/smalle12/tele/SENSOR"]
+            
+            Type string : sm12Cmd1                "smalle12 Power1"          [commandTopic="tasmota/smalle12/cmnd/POWER1"]
+            Type string : sm12Cmd2                "smalle12 Power2"          [commandTopic="tasmota/smalle12/cmnd/POWER2"]
+    }  
+
+   Thing topic raspiHealth "mqRaspiHealth" {
+
+        Channels:
+            Type string : koelHlth    "koel health"          [stateTopic="raspi/health/koel/state"] 
+            Type string : moaHlth     "moa health"           [stateTopic="raspi/health/moa/state"]
+            Type string : kiwiHlth    "kiwi health"          [stateTopic="raspi/health/kiwi/state"]
+            Type string : taelHlth    "tael health"          [stateTopic="raspi/health/tael/state"]
+            Type string : tiekeHlth   "tieke health"         [stateTopic="raspi/health/tieke/state"]
+ 
+    }
+
+  Thing topic raspiSensors "mqRaspiSensors" {
+
+        Channels:
+                Type string : pirBad "pir Bad" [stateTopic="pir/bad/state"]
+                Type string : sensorBad "sensor Bad" [stateTopic="sensor/bad/state"]
+                Type string : sensorKueche "sensor kueche" [stateTopic="sensor/kueche/state"]
+                Type string : pirFlurKoel "pir flur Koel" [stateTopic="pir/flurKoel/state"]
+
+
+	}
+
+
+
+
+
+}
+

@@ -318,7 +318,9 @@ then
         led_ok.sendCommand('{"state":"OFF"}')
         ok_Calls =0
         
-       
+        led_fm.sendCommand('{"bright":0}')
+        led_rm.sendCommand('{"bright":0}')
+        led_mm.sendCommand('{"bright":0}')
 
       /*  
         result = executeCommandLine("python /local/scripts/hashMap/hashMap_da.py set da,office,officeLicht "+oLVal,10000)
@@ -361,7 +363,10 @@ then
         //if (ok_Calls<ok_CallsLimit){
             led_ok.sendCommand('{"state":"ON","effect":"shiftBand","stepTime":120,"bright":16}')
             ok_Calls++
-            led_fm.sendCommand('{"state":"ON","effect":"matrixOm","bright":1}')
+            led_fm.sendCommand('{"bright":6}')
+            led_rm.sendCommand('{"bright":6}')
+            led_mm.sendCommand('{"bright":6}')
+
             // '{"state":"ON","effect":"matrixOm","bright":1}'
 
         //}

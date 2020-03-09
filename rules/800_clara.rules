@@ -1,6 +1,15 @@
 /*
     die beiden PIR setzen ihren status in PirState_Clara1 und PirState_Clara2
     nur wenn beide ON sind, geht PirState_Clara ON und schaltet das Licht
+
+
+    PirState_Clara1   Blick vom Billy aufs Fenster
+    PirState_Clara2   Blick vom Billy auf den Tisch (Blende?)
+    PirState_Clara3   Blick vom Regal zum Eingang
+    PirState_Clara4   Blick vom Regal/Sofaeck ins Zimmer
+
+    PirStateClara     integriert 1 und 4 und steuert die Bogenlampe mit langem expire
+
 */
 // Clara
 
@@ -19,15 +28,22 @@ then
 end
 
 
-
+// PirState_Clara1   Blick vom Billy aufs Fenster
+// PirState_Clara4   Blick vom Regal/Sofaeck ins Zimmer
 rule "rule triggered  by PirState_Clara1 received command ON"
 when 	
-    Item  PirState_Clara1 received command ON
+    Item  PirState_Clara1 received command ON or
+    Item  PirState_Clara4 received command ON
 then
+
+    PirState_Clara.sendCommand(ON)
     
     pirLastTriggered_Clara1.postUpdate( new DateTimeType() ) 
-    //logInfo("PirState_Clara", "PirState_Clara1 ON while PirState_Clara2 "+PirState_Clara2.state)
+    logInfo("PirState_Clara", "PirState_Clara to ON while PirState_Clara1 "+PirState_Clara1.state + " and PirState_Clara4 "+PirState_Clara4.state)
 
+end
+
+/*
     // filter?
     if (PirState_Clara1.state==ON || PirState_Clara2.state==ON){
         PirState_Clara.sendCommand(ON)
@@ -46,23 +62,36 @@ then
             }
 
 end
+*/
 
-
+// PirState_Clara2   Blick vom Billy auf den Tisch (Blende?)
 rule "rule triggered  by PirState_Clara2 received command ON"
 when 	
     Item  PirState_Clara2 received command ON
 then
+   // spot am Ender
+   logInfo("Pirstate Clara", "PirState_Clara2 got on ")
+    //if (pirActive_tokoSpot2.state.toString=="ON"){
+                
+                //logInfo("clara","clara duster "+(sensor_lux_6.state < dusterLimit))
+                //if (sensor_lux_6.state < dusterLimit){
+                    //schrankSpot2.sendCommand(80)
+                    mqSmalle9Cmd1.sendCommand("ON")
 
-    pirLastTriggered_Clara2.postUpdate( new DateTimeType() ) 
-    //logInfo("PirState_Clara", "PirState_Clara2 ON while PirState_Clara1 "+PirState_Clara1.state)
-    
-        // filter?
-    //if (PirState_Clara1.state==ON && PirState_Clara2.state==ON){
-        PirState_Clara.sendCommand(ON)
-    //}
+                //}
+            //}
 
 end
 
+rule "rule triggered  by PirState_Clara2 received command OFF"
+when 	
+    Item  PirState_Clara2 received command OFF
+then
+   // spot am Ender
+
+    mqSmalle9Cmd1.sendCommand("OFF")
+
+end
 
 rule "rule triggered  by PirState_Clara received command ON"
 
@@ -74,10 +103,10 @@ then
             // active konfiguriert?
             if (pirActive_Clara_bogenLicht.state.toString=="ON"){
                 // no show at bright light
-                //if (isGloomy.state==OFF){return;}
 
                 //logInfo("clara","clara duster "+(sensor_lux_6.state < dusterLimit))
-                if (sensor_lux_6.state < dusterLimit){
+                
+                if (isClaraDuster){
                     claraLicht.sendCommand(ON)
                 }
             }
@@ -118,9 +147,9 @@ then
 end
 
 // pirMulti zeigt genau auf den Eingang und macht kurz schnell das Licht an und schnell wieder aus, wenn niemnd hineinkam
-rule "rule triggered  by PirState_Multi received command ON"
+rule "rule triggered  by PirState_Clara3 received command ON"
 when 	
-    Item  PirState_Multi received command ON
+    Item  PirState_Clara3 received command ON
 then
     //logInfo("pirMulti","pir Multi hat ausgelöst")
     //if ( newArrayList("early","morning","dusk","evening","late","salon","goodnight","night").contains(Current_BtnState.state.toString)) {
@@ -128,7 +157,7 @@ then
             if (pirActive_Clara_bogenLicht.state.toString=="ON"){
                 // no show at bright light
 
-                if (sensor_lux_6.state < dusterLimit){
+                if (isClaraDuster){
                     claraLicht.sendCommand(ON)
                 }
             }
@@ -139,7 +168,7 @@ end
 rule "rule triggered  by PirState_Multi received command OFF"
 
 when 	
-    Item  PirState_Multi received command OFF
+    Item  PirState_Clara3 received command OFF
 then
     if(PirState_Clara.state==OFF){
         claraLicht.sendCommand(OFF)
@@ -166,6 +195,7 @@ then
     if ((sensor_lux_6.state < dusterLimit)) {dust="ON"} 
     var String msg = '{"isDuster":"'+dust+'","da":"'+da+'","lux":'+sensor_lux_6.state+'}'
     
-    var nada = executeCommandLine("ssh openhabian@kiwi mosquitto_pub  -u spy -P autan -t tokoLights/environ -m '"+ msg +"'" ,10000)
+    executeCommandLine("ssh openhabian@kiwi mosquitto_pub  -u spy -P autan -t tokoLights/environ -m '"+ msg +"'" ,10000)
+    //var nada = executeCommandLine("ssh openhabian@kiwi mosquitto_pub  -u spy -P autan -t tokoLights/environ -m '"+ msg +"'" ,10000)
     //logInfo("clara","sl6 upd msg "+msg+" result: "+nada)
 end

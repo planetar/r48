@@ -1,0 +1,6 @@
+String      lastMsg_bot1         "lastMsg_bot 1"         {channel="telegram:telegramBot:d50985af:lastMessageText"}
+DateTime    lastMsgDate_bot1     "lastMsgDate_bot 1"     {channel="telegram:telegramBot:d50985af:lastMessageDate"}
+String      lastMsgName_bot1     "lastMsgName_bot 1"     {channel="telegram:telegramBot:d50985af:lastMessageName"}
+String      lastMsgUserName_bot1 "lastMsgUserName_bot 1" {channel="telegram:telegramBot:d50985af:lastMessageUsername"}
+String      chatId_bot1          "chatId_bot 1"          {channel="telegram:telegramBot:d50985af:chatId"}
+String      replyId_bot1         "lastMsgUserName_bot 1" {channel="telegram:telegramBot:d50985af:replyId"}
