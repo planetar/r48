@@ -1,0 +1,16 @@
+/*
+//hue_0210_001788a718e6_1_color
+Color flurGo "Go"  (gHueItems, gFlur) [ "Lighting" ] { channel="hue:0210:001788a718e6:1:color" }
+// hue_0210_001788a718e6_2_color
+Color flurStrip "Strip"  (gHueItems, gFlur) [ "Lighting" ] { channel="hue:0210:001788a718e6:2:color" }
+// hue:0210:001788a718e6:12:color
+Color mediStrip "mediStrip"  (gHueItems, gMedi) [ "Lighting" ] { channel="hue:0210:001788a718e6:12:color" }
+Dimmer mediStripBright "mediStripBright" (gHueItems, gMedi) [ "Lighting" ] { channel="hue:0210:001788a718e6:12:color" }
+userName : HRE7YnsG3NQ8KyQVPojbQIqGtqHPmNJiEem6igE8
+*/  
+
+Bridge hue:bridge:1 [ ipAddress="192.168.50.121", userName="HRE7YnsG3NQ8KyQVPojbQIqGtqHPmNJiEem6igE8"  ] {
+	0210 flurGo [ lightId="1" ]
+	0210 flurStrip [ lightId="2" ]
+    0210 mediStrip [ lightId="12" ]
+}

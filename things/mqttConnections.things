@@ -1,30 +1,45 @@
 
-Bridge mqtt:broker:mqBroker [ host="192.168.50.1",secure=false, username="oh", password="autan" ]
+Bridge mqtt:broker:mqBroker [ host="192.168.50.1",secure=false, username="oh", password="autan", qos=1 ]
 {
     Thing topic sensors "mqSensors" {
 
         Channels:
+            Type string : pirFlurKoel    "pir flur Koel"            [stateTopic="pir/flurKoel/state"]
+            Type string : pirFlur        "pir flur"                 [stateTopic="pir/flur/state"]          
+            Type string : rfid           "rfid Sensor"              [stateTopic="sensor/rfid/state"]         
+            Type string : pirGarde       "pir Garde"                [stateTopic="pir/garde/state"]
+            Type string : sensorFlur     "sensor Flur"              [stateTopic="sensor/flur/state"]
+            
+            Type string : pirBad         "pir Bad"                  [stateTopic="pir/bad/state"]
+            Type string : sensorBad      "sensor Bad"               [stateTopic="sensor/bad/state"]
+            Type string : pirBad3        "pirBad3 Sensor"           [stateTopic="pir/bad3/state"]
+            
+            Type string : sensorKueche   "sensor kueche"            [stateTopic="sensor/kueche/state"]
+            Type string : pirKueche      "pirKueche Sensor"         [stateTopic="pir/kueche/state"]
+            Type string : lux5Kueche     "lux5 Kueche"              [stateTopic="sensor/lux5Kueche/state"]
+            Type string : wetterBalkon   "wetterBalkon Sensor"      [stateTopic="sensor/wetterBalkon/state"]
+
+            Type string : pirSK          "pirSK Sensor"             [stateTopic="sensor/sk/state"]
+
+            Type string : sensClara      "Clara Sens   pir1"        [stateTopic="sensor/clara/state"]              
+            Type string : pirClara2      "clara 2 pir2"             [stateTopic="pir/clara2/state"]
+            Type string : multi          "multi Sensor"             [stateTopic="sensor/multi/state"] 
+       
+            Type string : sensMedi        "Medi Sensor"             [stateTopic="sensor/medi/state"]            
+                        
             Type string : officePack     "officePack Sensor"        [stateTopic="sensor/officePack/state"]
             Type string : officeDesk     "officedesk Sensor"        [stateTopic="sensor/officeDesk/state"]   
-            Type string : eiche          "eiche Sensor"             [stateTopic="sensor/eiche/state"]        
-            Type string : rfid           "rfid Sensor"              [stateTopic="sensor/rfid/state"]         
-            Type string : multi          "multi Sensor"             [stateTopic="sensor/multi/state"]        
-            Type string : feinstaub      "feinstaub Sensor"         [stateTopic="sensor/feinstaub/state"]    
-            Type string : wetterBalkon   "wetterBalkon Sensor"      [stateTopic="sensor/wetterBalkon/state"] 
-            Type string : pirClara       "pirClara Sensor"          [stateTopic="pir/clara/state"]           
-            Type string : pirSK          "pirSK Sensor"             [stateTopic="sensor/sk/state"]              
-            Type string : pirMedi        "pirMedi Sensor"           [stateTopic="pir/medi/stat"]            
-            Type string : pirBad3        "pirBad3 Sensor"           [stateTopic="pir/bad3/state"]            
-            Type string : pirKueche      "pirKueche Sensor"         [stateTopic="pir/kueche/state"]
-            Type string : pirGarde       "pir Garde"                [stateTopic="pir/garde/state"]
-            Type string : pirFlur        "pir flur"                 [stateTopic="pir/flur/state]          
+            Type string : eiche          "eiche Sensor"             [stateTopic="sensor/eich/state"]        
+            Type string : officeTuer     "officeTuer"               [stateTopic="pir/officeTuer/state"]
+            Type string : feinstaub      "feinstaub Sensor"         [stateTopic="sensor/feinstaub/state"] 
         
             Type string : officePackSet  "officePack setCmd"        [commandTopic="sensor/officePack/set"]
             Type string : officeDeskSet  "officedesk setCmd"        [commandTopic="sensor/officeDesk/set"]
+
             Type string : rfidSet        "rfid setCmd"              [commandTopic="sensor/rfid/set"]
             Type string : multiSet       "multi setCmd"             [commandTopic="sensor/multi/set"]
             Type string : wetterBalkonSet "wetterBalkon setCmd"     [commandTopic="sensor/wetterBalkon/set"]
-            Type string : pirClaraSet    "pirClara setCmd"          [commandTopic="pir/clara/set"]
+            Type string : pirClaraSet    "pirClara setCmd"          [commandTopic="sensor/clara/set"]
             Type string : pirSKSet       "pirSK setCmd"             [commandTopic="sensor/sk/set"]
             Type string : pirMediSet     "pirMedi setCmd"           [commandTopic="pir/medi/set"]
             Type string : pirBad3Set     "pirBad3 setCmd"           [commandTopic="pir/bad3/set"]
@@ -63,10 +78,10 @@ Bridge mqtt:broker:mqBroker [ host="192.168.50.1",secure=false, username="oh", p
             Type string : mmLed   "MediMatrix"           [commandTopic="led/mm/set"]
             Type string : rmLed   "rotaMatrix"           [commandTopic="led/rm/set"]
             
-            Type string : bkLeddbg   "bk_dbg"            [commandTopic="led/bk/dbg"]
-            Type string : fkLeddbg   "fk_dbg"            [commandTopic="led/fk/dbg"]
-            Type string : okLeddbg   "ok_dbg"            [commandTopic="led/ok/dbg"]
-            Type string : tlLeddbg   "tl_dbg"            [commandTopic="led/tl/dbg"]
+            Type string : bkLeddbg   "bk_dbg"            [stateTopic="led/bk/dbg"]
+            Type string : fkLeddbg   "fk_dbg"            [stateTopic="led/fk/dbg"]
+            Type string : okLeddbg   "ok_dbg"            [stateTopic="led/ok/dbg"]
+            Type string : tlLeddbg   "tl_dbg"            [stateTopic="led/tl/dbg"]
  
     }
 
@@ -163,19 +178,6 @@ Bridge mqtt:broker:mqBroker [ host="192.168.50.1",secure=false, username="oh", p
             Type string : tiekeHlth   "tieke health"         [stateTopic="raspi/health/tieke/state"]
  
     }
-
-  Thing topic raspiSensors "mqRaspiSensors" {
-
-        Channels:
-                Type string : pirBad "pir Bad" [stateTopic="pir/bad/state"]
-                Type string : sensorBad "sensor Bad" [stateTopic="sensor/bad/state"]
-                Type string : sensorKueche "sensor kueche" [stateTopic="sensor/kueche/state"]
-                Type string : pirFlurKoel "pir flur Koel" [stateTopic="pir/flurKoel/state"]
-
-
-	}
-
-
 
 
 
