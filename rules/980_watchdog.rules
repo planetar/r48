@@ -29,13 +29,13 @@ then
 	//logInfo("bme-watchdog", "bme-watchdog  delta seit bme update: "+delta+" sensorAlarm: "+sensorAlarm)
 
     if (sensorAlarm) {
-        steckdose04Switch.sendCommand("OFF")
+        //steckdose04Switch.sendCommand("OFF")
         // satt Wartezeit, dsmit der sensor wirklich neu starten muss
         Thread::sleep(6000)
 
         logInfo("bme-watchdog", "bme-watchdog tried restart with delta since bme update: "+delta+" ("+(delta/60000)+" min.)"+" sensorAlarm: "+sensorAlarm)
    
-		steckdose04Switch.sendCommand("ON")
+		//steckdose04Switch.sendCommand("ON")
         Thread::sleep(300)
 
 //        logInfo("bme-watchdog", "bme-watchdog tried restart with delta since bme update: "+delta+" ("+(delta/60000)+" min.)"+" sensorAlarm: "+sensorAlarm)

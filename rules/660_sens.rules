@@ -42,9 +42,9 @@ then
     logInfo("medi","init sens  ")
 end
 
-rule "sensor_humidity_Kueche received command"
+rule "sensor_humidity_Kueche changed"
 when 
-    Item sensor_humidity_Kueche received command
+    Item sensor_humidity_Kueche changed
 then
    
     //logInfo("sensor","humidity Kueche: "+sensor_humidity_Kueche.state)
@@ -96,7 +96,7 @@ then
         logInfo("sensor","Alarm "+alertCount_Kueche+": Wasserkessel in der Küche vergessen?")
         //sendTelegram("r48_bot","Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
         //sendMail("test@magisterludi.de", "Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
-        //pebbleNotification("oy3NcoHsp-yexg_8S9qCkuOJ3pQ4Junx2MY6njdzAL4", "Wasserkessel?", "Alert #"+alertCount_Kueche+" ausgelöst")
+        //pebbleNotification("oy3NcoHsp-yexg_8S9qCkuOJ3pQ4Junx2MY6njdzAL4", "Wasserkessel?", "Alert #"+alertCount_Kueche+" ausgelöst") 
         // telegram:telegramBot:d50985af
         val telegramAction = getActions("telegram","telegram:telegramBot:d50985af")
         telegramAction.sendTelegram("Wasserkessel in der Küche vergessen? Alert "+alertCount_Kueche, "avg humidity Kueche: "+avg+" avg2 "+avg2+" stetig: "+stetig+" trigger: "+alarmTriggerKueche)
@@ -112,7 +112,7 @@ end
 
 rule "sensor_humidity_Bad changed"
 when 
-    Item sensor_humidity_Bad received command
+    Item sensor_humidity_Bad changed
 then
    
     

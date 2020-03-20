@@ -44,3 +44,7 @@ Switch      daAction_Balkon     { expire="20s,command=OFF" }
 Switch      daAction_Kueche     { expire="20s,command=OFF" }
 Switch      daAction_Bad        { expire="20s,command=OFF" }
 Switch      daAction_Flur       { expire="20s,command=OFF" }
+
+
+
+String Mode "Mode of the day [%s]"

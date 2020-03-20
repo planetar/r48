@@ -88,3 +88,12 @@ String i24Transmit {channel="lirc:remote:kiwi:i24:transmit"}
 // 26, 27 bezieht sich auf GPIO pins auf Tael, über die je ein Relais gesteuert wird
 Switch platzHalt26
 Switch platzHalt27
+
+
+Dimmer spotBright_Garde
+Dimmer spotBright_Bad
+Dimmer spotBright_Kueche
+Dimmer spotBright_SK
+
+Dimmer spotBright_medi
+Dimmer spotBright_Office

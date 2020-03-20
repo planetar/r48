@@ -37,6 +37,13 @@ if(bettreifTimer3 === null) {
             logInfo("bettreifTimer1", "bettreifTimer3 rescheduled")
             bettreifTimer3.reschedule(now.plusMinutes(2))
         }
+
+
+
+			cycle afternoon:
+            
+            pirActive_Flur_Kante.sendCommand("ON")
+
 */
 
 var Timer flurTimer = null
@@ -167,7 +174,7 @@ then
         gardeSpot.sendCommand(ON)
     } else {
         gardeSpot.sendCommand(OFF)
-    }
+    }  
 
     
 end

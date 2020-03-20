@@ -1,3 +1,12 @@
+/*
+cycleAction
+goodnight
+badSpot_brightness.sendCommand(7)
+
+night
+			// Spot im Bad
+			badSpot_brightness.sendCommand(0)
+*/
 var Timer badSpotDelayed = null
 var Number tooFast=5
 var Number badDusterLimit=23

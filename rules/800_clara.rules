@@ -56,7 +56,7 @@ end
 
                 //logInfo("clara","clara duster "+(sensor_lux_6.state < dusterLimit))
                 if (sensor_lux_6.state < dusterLimit){
-                    schrankSpot2.sendCommand(80)
+                   // schrankSpot2.sendCommand(80)
                     
                 }
             }

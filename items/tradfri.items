@@ -18,51 +18,8 @@
 
 */
 
-// bettlicht
-Dimmer bettLicht_Temp   "bettLicht_Temp" (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0210:gwb8d7af2b2e3d:65550:color_temperature" }
-Color bettLicht         "bettLicht"      (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0210:gwb8d7af2b2e3d:65550:color" }
-
-// schrankSpot
-Dimmer schrankSpot1      "schrankSpot1"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65562:brightness" }
-Dimmer schrankSpot2      "schrankSpot2"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65563:brightness"}
-Dimmer schrankSpot3      "schrankSpot3"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65564:brightness" }
 
 
-// klarlicht
-Dimmer klarLicht_Temp   "klarlicht_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65546:color_temperature" }
-Dimmer klarLicht        "klarlicht"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65546:brightness" }
-
-// officelicht
-Dimmer officeLicht_Temp   "officelicht_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65548:color_temperature" }
-Dimmer officeLicht        "officelicht"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65548:brightness" }
-
-// officePanel
-Dimmer officePanel_Temp   "officePanel_Temp" (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65552:color_temperature" }
-Dimmer officePanel        "officePanel"      (gOffice) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65552:brightness" }
-
-// officeSpot
-Dimmer officeSpot        "officeSpot"      (gOffice) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65554:brightness" }
-
-// claraLicht
-Dimmer claraLicht_Temp   "claraLicht_Temp" (gClara) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65556:color_temperature" }
-Dimmer claraLicht        "claraLicht"      (gClara) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65556:brightness" }
-
-// mediStehLampe
-Dimmer mediStehLampe_Temp   "mediStehLampe_Temp" (gMedi) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65558:color_temperature" }
-Dimmer mediStehLampe        "mediStehLampe"      (gMedi) [ "Lighting" ] { channel="tradfri:0220:gwb8d7af2b2e3d:65558:brightness" }
-
-// luiseSpot
-
-Group gMediSpot         "mediSpots"       (gMedi) [ "Lighting" ]  
-
-Dimmer mediSpot1        "mediSpot1"      (gMediSpot) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65559:brightness" }
-Dimmer mediSpot2        "mediSpot2"      (gMediSpot) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65560:brightness" }
-
-// badSpot
-Dimmer badSpot        "badSpot"      (gBad) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65567:brightness" }
-
-// spot in der gaderobe
-Dimmer gardeSpot        "gardeSpot"      (gFlur) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65570:brightness" }
 //remotes
 
 //officeRemote
@@ -93,7 +50,104 @@ Switch luiseRemote_Replace    "luiseLichtRemote_Replace" (gRemotes) [ "Lighting"
 Number badRemote_Battery    "luiseLichtRemote_Level" (gRemotes)   [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65566:battery_level" }
 Switch badRemote_Replace    "luiseLichtRemote_Replace" (gRemotes) [ "Lighting" ]  { channel="tradfri:0830:gwb8d7af2b2e3d:65566:battery_low" }
 
+
+
+
+
+// schrankSpot
+
+
+Dimmer schrankSpot3      "schrankSpot3"  (gSchlafkammer) [ "Lighting" ] { channel="tradfri:0100:gwb8d7af2b2e3d:65564:brightness" }
+
+
+
+
+
+// luiseSpot
+
+Group gMediSpot         "mediSpots"       (gMedi) [ "Lighting" ]  
+
+
+
  
+// 1_flur 
+
+// spot in der gaderobe
+Dimmer gardeSpot_brightness   "gardeSpot brightness"      (gFlur) [ "Lighting" ] { channel="mqtt:topic:mqBroker:gardeSpot:brightness" }
+Switch gardeSpot              "gardeSpotPower"            (gFlur) [ "Lighting" ] { channel="mqtt:topic:mqBroker:gardeSpot:power" }
+
+
+// 2_bad 
+
+// badSpot
+Dimmer badSpot_brightness        "badSpot"      (gBad) [ "Lighting" ] { channel="mqtt:topic:mqBroker:badSpot:brightness" }
+Dimmer badSpot                   "badSpot"      (gBad) [ "Lighting" ] { channel="mqtt:topic:mqBroker:badSpot:power" }
+
+// 3_kueche 
+Dimmer kuecheSpot_brightness      "kuecheSpot"  (gKueche) [ "Lighting" ] { channel="mqtt:topic:mqBroker:kuecheSpot:brightness"}
+Dimmer kuecheSpot                 "kuecheSpot"  (gKueche) [ "Lighting" ] { channel="mqtt:topic:mqBroker:kuecheSpot:power"}
+  
+// 4_balkon 
+
+
+// 5_SK 
+Dimmer schrankSpot1_brightness      "schrankSpot1"  (gSchlafkammer) [ "Lighting" ] { channel="mqtt:topic:mqBroker:schrankSpot1:brightness" }
+Dimmer schrankSpot1                 "schrankSpot1"  (gSchlafkammer) [ "Lighting" ] { channel="mqtt:topic:mqBroker:schrankSpot1:power" }
+
+
+// bettlicht
+Dimmer bettLicht_brightness     "bettLicht_bright" (gSchlafkammer) [ "Lighting" ] { channel="mqtt:topic:mqBroker:bettLicht:brightness" }
+Switch bettLicht                "bettLicht"        (gSchlafkammer) [ "Lighting" ] { channel="mqtt:topic:mqBroker:bettLicht:power" }
+
+// 6_clara 
+
+// claraLicht
+Dimmer claraLicht_Temp              "claraLicht_Temp" (gClara) [ "Lighting" ] { channel="mqtt:topic:mqBroker:claraBogenLicht:colorTemp" }
+Dimmer claraLicht_brightness        "claraLicht"      (gClara) [ "Lighting" ] { channel="mqtt:topic:mqBroker:claraBogenLicht:brightness" }
+Dimmer claraLicht                   "claraLicht"      (gClara) [ "Lighting" ] { channel="mqtt:topic:mqBroker:claraBogenLicht:power" }
+
+// 7_medi
+
+// mediSpot1
+Dimmer mediSpot1_brightness        "mediSpot1"      (gMediSpot) [ "Lighting" ] { channel="mqtt:topic:mqBroker:mediSpot1:brightness" }
+Dimmer mediSpot1                   "mediSpot1"      (gMediSpot) [ "Lighting" ] { channel="mqtt:topic:mqBroker:mediSpot1:power" }
+
+// mediSpot2
+Dimmer mediSpot2_brightness        "mediSpot2"      (gMediSpot) [ "Lighting" ] { channel="mqtt:topic:mqBroker:mediSpot2:brightness" }
+Dimmer mediSpot2                   "mediSpot2"      (gMediSpot) [ "Lighting" ] { channel="mqtt:topic:mqBroker:mediSpot2:power" }
+ 
+// mediStehLampe
+Dimmer mediStehLampe_Temp              "mediStehLampe_Temp" (gMedi) [ "Lighting" ] { channel="mqtt:topic:mqBroker:mediStehLampe:colorTemp" }
+Dimmer mediStehLampe_brightness        "mediStehLampe"      (gMedi) [ "Lighting" ] { channel="mqtt:topic:mqBroker:mediStehLampe:brightness" }
+Dimmer mediStehLampe                   "mediStehLampe"      (gMedi) [ "Lighting" ] { channel="mqtt:topic:mqBroker:mediStehLampe:power" }
+
+// 8_ofc
+
+// klarlicht
+Dimmer klarLicht_Temp              "klarlicht_Temp" (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeKlarLicht:colorTemp" }
+Dimmer klarLicht_brightness        "klarlicht"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeKlarLicht:brightness" }
+Dimmer klarLicht                   "klarlicht"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeKlarLicht:power" }
+
+
+// officelicht
+Dimmer officeLicht_Temp              "officelicht_Temp" (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeLicht:colorTemp" }
+Dimmer officeLicht_brightness        "officelicht"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeLicht:brightness" }
+Dimmer officeLicht                   "officelicht"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeLicht:power" }
+
+// officePanel
+Dimmer officePanel_Temp              "officePanel_Temp" (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officePanel:colorTemp" }
+Dimmer officePanel_brightness        "officePanel"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officePanel:brightness" }
+Dimmer officePanel                   "officePanel"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officePanel:power" }
+
+// officeSpot
+Dimmer officeSpot_brightness        "officeSpot"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeSpot:brightness" }
+Dimmer officeSpot                   "officeSpot"      (gOffice) [ "Lighting" ] { channel="mqtt:topic:mqBroker:officeSpot:power" }
+
+
+
+
+
+
 
 /*
 // so gehen die tradfri items mit der in tradfri.things konfigurierten bridge

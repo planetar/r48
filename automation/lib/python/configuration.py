@@ -5,3 +5,4 @@ admin_email = "admin_email@magisterludi.de"
 
 openhabHost = "localhost"
 openhabPort = "8080"# "8443"
+

@@ -81,15 +81,15 @@ end
 
 */
 
+/* StateBtn - rules binden die button auf habPanel an */
+
 // StateBtn_early
 rule "rule triggered by StateBtn_early"
 
 when 
 	Item StateBtn_early received update
 then
-	if (StateBtn_early.state == ON) {
-			
-			currentPhase="early"			
+	if (StateBtn_early.state == ON) {	
 			Current_BtnState.postUpdate("early")
 	}
 end
@@ -101,8 +101,6 @@ when
 	Item StateBtn_morning received update
 then
 	if (StateBtn_morning.state == ON) {
-
-			currentPhase="morning"
 			Current_BtnState.postUpdate("morning")
 	}
 
@@ -116,8 +114,6 @@ when
 	Item StateBtn_day received update
 then
 	if (StateBtn_day.state == ON) {
-
-			currentPhase="day"
 			Current_BtnState.postUpdate("day")
 	}
 
@@ -130,8 +126,6 @@ when
 	Item StateBtn_noon received update
 then
 	if (StateBtn_noon.state == ON) {
-
-			currentPhase="noon"
 			Current_BtnState.postUpdate("noon")
 	}
 
@@ -144,10 +138,6 @@ when
 	Item StateBtn_afternoon received update
 then
 	if (StateBtn_afternoon.state == ON) {
-
-			currentPhase="afternoon"
-			
-			pirActive_Flur_Kante.sendCommand("ON")
 			Current_BtnState.postUpdate("afternoon")
 	}
 
@@ -160,19 +150,6 @@ when
 	Item StateBtn_dusk received update
 then
 	if (StateBtn_dusk.state == ON) {
-
-			currentPhase="dusk"
-			
-			pirActive_SK_spot2.sendCommand("ON")
-
-			if (da_Daniel.state.toString == "ON")
-			{
-				// officeLight an
-				officeLicht.sendCommand("80")
-				officePanel.sendCommand("20")
-				klarLicht.sendCommand("4")
-
-			}
 			Current_BtnState.postUpdate("dusk")
 	}
 
@@ -187,16 +164,6 @@ when
 	Item StateBtn_evening received update
 then
 	if (StateBtn_evening.state == ON) {
-			
-			currentPhase="evening"
-			
-			if (da_Daniel.state.toString == "ON")
-			{
-				// officeLight an
-				officeLicht.sendCommand("80")
-				officePanel.sendCommand("40")
-				klarLicht.sendCommand("4")
-			}
 			Current_BtnState.postUpdate("evening")
 	}
 
@@ -209,8 +176,6 @@ when
 	Item StateBtn_salon received update
 then
 	if (StateBtn_salon.state == ON) {
-			
-			currentPhase="salon"
 			Current_BtnState.postUpdate("salon")
 	}
 
@@ -223,14 +188,6 @@ when
 	Item StateBtn_late received update
 then
 	if (StateBtn_late.state == ON) {
-			
-			currentPhase="late"
-			
-			if (da_Daniel == "ON")
-			{
-
-			}
-			
 			Current_BtnState.postUpdate("late")
 	}
 
@@ -245,34 +202,7 @@ when
 then
 	if (StateBtn_goodnight.state == ON) {
 		// goodnight ist eine Phase, die nicht im Cycle ist, sondern nur manuell gerufen wird.
-		// derzeit nur von dp
-		// 
-
-			// Spot im Bad
-			badSpot.sendCommand(7)
-
-			// OfficeLight dunkler
-			officeLicht.sendCommand(7)
-			officePanel.sendCommand(7)
-
-			// KlarLight sanft
-			klarLicht.sendCommand(1)
-
-			// redlight on
-
-
-			//steckdose16Switch.sendCommand("ON")
-			//Thread::sleep(300)
-			if (da_Daniel == "ON")
-			{
-				// buddhaLight an
-				//steckdose01Switch.sendCommand("ON")
-				//pirActive_SK_Bettkante.sendCommand("ON")
-
-			}
-
 			Current_BtnState.postUpdate("goodnight")
-			
 	}
 
 end
@@ -284,66 +214,23 @@ when
 	Item StateBtn_night received update
 then
 	if (StateBtn_night.state == ON) {
-			// alles reset und aus
-			
-			currentPhase="night"
-			
-			
-			// Flur ganz mini
-			
-			
-			// // Spotlight
-			// schrankSpot1.sendCommand(0)
-			// schrankSpot2.sendCommand(0)
-			// schrankSpot3.sendCommand(0)
-
-			// Spot im Bad
-			badSpot.sendCommand(0)
-
-			// Luise
-			// lokal in medi.rules mediCycleAction
-			/*
-			mediStrip.sendCommand(0)
-			mediStehLampe.sendCommand(0)
-			mediSpot1.sendCommand(0)
-			mediSpot2.sendCommand(0)
-			*/
-
-			// OfficeLight 
-			officeLicht.sendCommand("0")
-			klarLicht.sendCommand("0")
-			officePanel.sendCommand("0")
-			officeSpot.sendCommand("0")
-
-			// Kueche
-			PirState_Kueche.sendCommand("OFF")
-			PirState_Kueche2.sendCommand("OFF")
-
-
-
-
 		Current_BtnState.postUpdate("night")
 	}
 
 end
 
 // StateBtn_away ist etwas anders, da nicht zeitlich sondern durch Abwesenheit getriggert.
-// lässt Hue unverändert, setzt Brightness auf 0 und FSD auf OFF
 rule "rule triggered by StateBtn_away"
 
 when 
 	Item StateBtn_away received update
 then
 	if (StateBtn_away.state == ON) {
-		// so weit auch : reset und alles (fast)n aus
-			
-			currentPhase="away"
-			
 
 			// Spotlight
 			schrankSpot1.sendCommand(0)
-			schrankSpot2.sendCommand(0)
-			schrankSpot3.sendCommand(0)
+			// schrankSpot2.sendCommand(0)
+			// schrankSpot3.sendCommand(0)
 
 			// Spot im Bad
 			badSpot.sendCommand(0)
@@ -371,6 +258,9 @@ end
 
 
 // Current_BtnState received update
+/*
+
+*/
 rule "rule triggered by Current_BtnState"
 
 when 
@@ -381,6 +271,7 @@ then
 
 	for ( aState : statesArray) {
 		if (aState==curState) {
+			
 			reColor.sendCommand(aState)
 		} else {
 			
@@ -402,6 +293,10 @@ then
 	cycleAction_Flur.sendCommand(curState)
 	cycleAction_Balkon.sendCommand(curState)
 end
+
+
+
+/*
 
 // diese Regel setzt StateBtn nach Astro_Day_Phase
 rule "rule triggered by Astro_Day_Phase changed"
@@ -667,3 +562,4 @@ then
 	//checkLight_Kueche.sendCommand(ON)
 end
 
+*/

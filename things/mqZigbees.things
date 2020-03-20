@@ -1,0 +1,91 @@
+Bridge mqtt:broker:mqBroker [ host="192.168.50.1",secure=false, username="oh", password="autan", qos=1 ]
+{
+    Thing topic gardeSpot "z2m 1Flur gardeSpot" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/gardeSpot", transformationPattern="JSONPATH:$.state", commandTopic="z2m/gardeSpot/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/gardeSpot", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/gardeSpot/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+    
+    Thing topic badSpot "z2m 2Bad badSpot" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/badSpot", transformationPattern="JSONPATH:$.state", commandTopic="z2m/badSpot/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/badSpot", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/badSpot/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+    
+    Thing topic kuecheSpot "z2m 3Kueche kuecheSpot" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/kuecheSpot", transformationPattern="JSONPATH:$.state", commandTopic="z2m/kuecheSpot/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/kuecheSpot", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/kuecheSpot/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+    
+    Thing topic schrankSpot1 "z2m 5SK schrankSpot1" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/schrankSpot1", transformationPattern="JSONPATH:$.state", commandTopic="z2m/badSschrankSpot1pot/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/schrankSpot1", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/schrankSpot1/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+    
+    Thing topic bettLicht "z2m 5SK bettLicht" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/bettLicht", transformationPattern="JSONPATH:$.state", commandTopic="z2m/bettLicht/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/bettLicht", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/bettLicht/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+    
+
+    Thing topic claraBogenLicht "z2m 6Clara claraBogenLicht" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/claraBogenLicht", transformationPattern="JSONPATH:$.state", commandTopic="z2m/claraBogenLicht/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/claraBogenLicht", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/claraBogenLicht/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+            Type dimmer : colorTemp "colorTemp" [stateTopic="z2m/claraBogenLicht", transformationPattern="JSONPATH:$.color_temp", commandTopic="z2m/claraBogenLicht/set", min=154, max=500, step=1, formatBeforePublish="{ \"color_temp\" : %s }"]
+    }
+
+
+    Thing topic mediStehLampe "z2m 7Medi mediStehLampe" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/mediStehLampe", transformationPattern="JSONPATH:$.state", commandTopic="z2m/mediStehLampe/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/mediStehLampe", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/mediStehLampe/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+            Type dimmer : colorTemp "colorTemp" [stateTopic="z2m/mediStehLampe", transformationPattern="JSONPATH:$.color_temp", commandTopic="z2m/mediStehLampe/set", min=154, max=500, step=1, formatBeforePublish="{ \"color_temp\" : %s }"]
+    }
+
+    Thing topic mediSpot1 "z2m 7Medi mediSpot1" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/mediSpot1", transformationPattern="JSONPATH:$.state", commandTopic="z2m/mediSpot1/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/mediSpot1", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/mediSpot1/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+
+    Thing topic mediSpot2 "z2m 7Medi mediSpot2" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/mediSpot2", transformationPattern="JSONPATH:$.state", commandTopic="z2m/mediSpot2/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/mediSpot2", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/mediSpot2/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+    
+
+    Thing topic officeLicht "z2m 8Ofc officeLicht" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/officeLicht", transformationPattern="JSONPATH:$.state", commandTopic="z2m/officeLicht/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/officeLicht", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/officeLicht/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+            Type dimmer : colorTemp "colorTemp" [stateTopic="z2m/officeLicht", transformationPattern="JSONPATH:$.color_temp", commandTopic="z2m/officeLicht/set", min=154, max=500, step=1, formatBeforePublish="{ \"color_temp\" : %s }"]
+    }
+    Thing topic officePanel "z2m 8Ofc officePanel" {
+        Channels:
+            Type switch : power "ofpowerr" [stateTopic="z2m/officePanel", transformationPattern="JSONPATH:$.state", commandTopic="z2m/officePanel/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/officePanel", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/officePanel/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+            Type dimmer : colorTemp "colorTemp" [stateTopic="z2m/officePanel", transformationPattern="JSONPATH:$.color_temp", commandTopic="z2m/officePanel/set", min=154, max=500, step=1, formatBeforePublish="{ \"color_temp\" : %s }"]
+    }
+
+    Thing topic officeKlarLicht "z2m 8Ofc officeKlarLicht" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/officeKlarLicht", transformationPattern="JSONPATH:$.state", commandTopic="z2m/officeKlarLicht/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/officeKlarLicht", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/officeKlarLicht/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+            Type dimmer : colorTemp "colorTemp" [stateTopic="z2m/officeKlarLicht", transformationPattern="JSONPATH:$.color_temp", commandTopic="z2m/officeKlarLicht/set", min=154, max=500, step=1, formatBeforePublish="{ \"color_temp\" : %s }"]
+    }
+    Thing topic officeSpot "z2m 8Ofc officeSpot" {
+        Channels:
+            Type switch : power "power" [stateTopic="z2m/officeSpot", transformationPattern="JSONPATH:$.state", commandTopic="z2m/officeSpot/set", transformationPatternOut="JS:setTradfriState.js"]
+            Type dimmer : brightness "brightness" [stateTopic="z2m/officeSpot", transformationPattern="JSONPATH:$.brightness", commandTopic="z2m/officeSpot/set", min=0, max=255, step=1, formatBeforePublish="{ \"brightness\" : %s }"]
+    }
+
+
+
+
+
+}

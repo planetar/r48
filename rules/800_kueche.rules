@@ -75,7 +75,9 @@ when
 then
 
     if (isGloomy.state==ON){
-        schrankSpot3.sendCommand(ON)
+        logInfo("PirState_Kueche", "PirState_Kueche got command ON")
+        
+        kuecheSpot_brightness.sendCommand(spotBright_Kueche.state.toString)
     }
 
 end
@@ -85,9 +87,9 @@ rule "rule triggered  by PirState_Kueche received command OFF"
 when 	
     Item  PirState_Kueche received command OFF
 then
-	//logInfo("PirState_Kueche", "PirState_Kueche got command OFF")
+	logInfo("PirState_Kueche", "PirState_Kueche got command OFF")
  
-    schrankSpot3.sendCommand(OFF)
+    kuecheSpot_brightness.sendCommand(0)
 
 end
 
@@ -234,3 +236,16 @@ then
     }
   
 end
+
+
+/*
+
+cycleAction
+night
+
+
+			// Kueche
+			PirState_Kueche.sendCommand("OFF")
+			PirState_Kueche2.sendCommand("OFF")
+
+*/

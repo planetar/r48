@@ -676,15 +676,15 @@ Number sensor_luminosity_OfficePack           "Helligkeit Office [%.1f]%"       
 */
 
 
-rule "mqOfficePack changed"
-  when 
-    Item mqOfficePack received update
-  then 
-    {
-      var String jsor
-      var String oval
+// rule "mqOfficePack changed"
+//   when 
+//     Item mqOfficePack received update
+//   then 
+//     {
+//       var String jsor
+//       var String oval
 
-      jsor = (mqOfficePack.state as StringType).toString
+//       jsor = (mqOfficePack.state as StringType).toString
       //logInfo("mqParse",jsor)
 
       // oval  = transform("JSONPATH", "$.temp", jsor)
@@ -708,46 +708,46 @@ rule "mqOfficePack changed"
        
 
      
-        // pir will PirStateofficePack auslösen
-      oval = transform("JSONPATH", "$.pir", jsor)
-      if (oval=="ON"){
-        PirState_OfficePack.sendCommand(ON) 
-      }  
+      //   // pir will PirStateofficePack auslösen
+      // oval = transform("JSONPATH", "$.pir", jsor)
+      // if (oval=="ON"){
+      //   PirState_OfficePack.sendCommand(ON) 
+      // }  
       
-      oval = transform("JSONPATH", "$.rushLux", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        rush_officePack.postUpdate(oval)
-      }
-      oval = transform("JSONPATH", "$.loopDsp", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        loopDisp_officePack.postUpdate(oval)
-      }
-      oval = transform("JSONPATH", "$.refDsp", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        refDisp_officePack.postUpdate(oval)
-      }
-      oval = transform("JSONPATH", "$.scanWifi", jsor)
-      if (oval=="ON"||oval=="OFF"){
-        scanWifi_officePack.postUpdate(oval)
-      }
+      // oval = transform("JSONPATH", "$.rushLux", jsor)
+      // if (oval=="ON"||oval=="OFF"){
+      //   rush_officePack.postUpdate(oval)
+      // }
+      // oval = transform("JSONPATH", "$.loopDsp", jsor)
+      // if (oval=="ON"||oval=="OFF"){
+      //   loopDisp_officePack.postUpdate(oval)
+      // }
+      // oval = transform("JSONPATH", "$.refDsp", jsor)
+      // if (oval=="ON"||oval=="OFF"){
+      //   refDisp_officePack.postUpdate(oval)
+      // }
+      // oval = transform("JSONPATH", "$.scanWifi", jsor)
+      // if (oval=="ON"||oval=="OFF"){
+      //   scanWifi_officePack.postUpdate(oval)
+      // }
       
-      // kleine berechnung
-      var Number delta
-      var Number desk
-      var Number pack
+//       // kleine berechnung
+//       var Number delta
+//       var Number desk
+//       var Number pack
       
-      desk = sensor_temperature_OfficeDesk.state as Number
-      pack = sensor_temperature_OfficePack.state as Number
-      delta = desk - pack
-      ofcDelta_Temp.sendCommand(delta)
+//       desk = sensor_temperature_OfficeDesk.state as Number
+//       pack = sensor_temperature_OfficePack.state as Number
+//       delta = desk - pack
+//       ofcDelta_Temp.sendCommand(delta)
 
-      desk = sensor_humidity_OfficeDesk.state as Number
-      pack = sensor_humidity_OfficePack.state as Number
-      delta = desk - pack
-      ofcDelta_Hum.sendCommand(delta)
+//       desk = sensor_humidity_OfficeDesk.state as Number
+//       pack = sensor_humidity_OfficePack.state as Number
+//       delta = desk - pack
+//       ofcDelta_Hum.sendCommand(delta)
 
-    }
-end
+//     }
+// end
 
 /*
 Number ofcDelta_Temp "temp officeDesk - officePack"
@@ -877,12 +877,13 @@ rule "mqEich changed"
 
       var Number eich_temp
       var Number eich_hum
-      var Number eich_press
 
+      // var Number eich_press
+      // var Number test_press
 
       var Number test_temp
       var Number test_hum
-      var Number test_press
+
 
       var Number delta_temp
       var Number delta_hum

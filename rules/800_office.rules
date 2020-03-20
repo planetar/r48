@@ -213,6 +213,7 @@ then
 
     if (state=="night"){
         if (atDesk_Daniel.state==OFF){
+
             officeLicht.sendCommand(0)
             officePanel.sendCommand(0)
             klarLicht.sendCommand(0)
@@ -222,6 +223,8 @@ then
 
             pirActive_OfficeLevel.sendCommand(OFF)
         }
+
+        led_ok.sendCommand('{"stepTime":280,"bright":2}')
     }
 
     if (state=="early" || state=="morning"){
@@ -256,12 +259,26 @@ then
         
         if (atDesk_Daniel.state==ON){
             
+			if (da_Daniel.state.toString == "ON")
+			{
+				// officeLight an
+				officeLicht_brightness.sendCommand("80")
+				officePanel_brightness.sendCommand("12")
+				klarLicht_brightness.sendCommand("4")
+
+			}
            
         }
     }   else if (state=="evening" ){
         
         if (atDesk_Daniel.state==ON){
-            
+            if (da_Daniel.state.toString == "ON")
+			{
+				// officeLight an
+				officeLicht_brightness.sendCommand("80")
+				officePanel_brightness.sendCommand("12")
+				klarLicht.sendCommand("4")
+			}
            
         }
     }   else if (state=="salon" ){
@@ -272,19 +289,29 @@ then
         }
     }   else if (state=="late" ){
         
+            if (atDesk_Daniel.state==ON){
+                
+            }
+
+    }   else if (state=="goodnight" ){
+        
         if (atDesk_Daniel.state==ON){
             
+			// OfficeLight dunkler
+			officeLicht_brightness.sendCommand(7)
+			officePanel_brightness.sendCommand(7)
+
+			// KlarLight sanft
+			klarLicht_brightness.sendCommand(1)
+
            
         }
         // led_ok.sendCommand('{"state":"ON","effect":"farbGlitter","stepTime":280,"bright":32}')
-    }   else if (state=="night" ){
-        
-        led_ok.sendCommand('{"state":"OFF","stepTime":280,"bright":2}')
-        if (atDesk_Daniel.state==ON){
-            
-           
-        }
-    }
+
+
+
+
+    }   
 
 
 end

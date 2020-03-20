@@ -8,7 +8,7 @@ import json
 # @when("Item mqOfficePack received update")
 
 
-verbose=True
+verbose=False 
 
 '''
 
@@ -18,7 +18,7 @@ verbose=True
 #// officePack nachEichen: averrage uber 83: temp: 0.13867470 hum: -1.77503988
 #// bad        nachEichen: averrage uber 94: temp: 1.53542553 hum: -5.86596819
 
-def getOffsetsForSensor(sensorId):
+def getOffsetsForSensor(sensorId): 
     
     dOffsetTable = {
         "officePack"    :   (1.7, 9.3) ,
@@ -243,6 +243,22 @@ def parseSensorKueche(event):
 
         if verbose:
             parseSensorKueche.log.info(u"parsed "+id+": "+str(temp)+u"°, "+str(hum)+"% ")
+
+
+# sensor/lux5Kueche/state {"vers":"1.07","lux":5,"rssi":-59}  sensor_lux_5
+
+@rule("parseSensorLux5Kueche", description="parse JSON sensorData ", tags=["sensor", "mqtt", "kueche"])
+@when("Item mqLux5Kueche received update")
+def parseSensorLux5Kueche(event):
+    id="lux5Kueche"
+
+    jsondata = json.loads(str(ir.getItem("mqLux5Kueche").state))
+
+    lux=jsondata["lux"]
+    events.sendCommand("sensor_lux_5", str(lux))
+    
+    if verbose:
+        parseSensorLux5Kueche.log.info(u"parsed "+id+": "+str(lux))
 
 
 # mqPirKueche
@@ -509,7 +525,6 @@ def parseOfficeDesk(event):
 # mqOfficePack
 # sensor/officePack/state {"temp":22.26,"hum":52.67773,"press":996.5044,"rPress":1002.915,"lux":20,"pir":"ON","toc":"OFF","rushLux":"OFF","loopDsp":"ON","refDsp":"ON","scanWifi":"OFF","vers":"1.09"}
 
-
 @rule("parseOfficePack", description="parse JSON sensorData and apply correction", tags=["sensor", "mqtt", "Clara"])
 @when("Item mqOfficePack received update")
 def parseOfficePack(event):
@@ -537,11 +552,24 @@ def parseOfficePack(event):
 
         if jsondata.get("pir") == "ON":
             events.sendCommand("PirState_OfficePack", "ON")
-
-        # this will trigger an error: 
-        #if jsondata["por"] == "ON":
-        #    events.sendCommand("PirState_OfficePack", "ON")
         
+        events.postUpdate("rush_officePack", str(jsondata["rushLux"]))
+        events.postUpdate("loopDisp_officePack", str(jsondata["loopDsp"]))
+        events.postUpdate("refDisp_officePack", str(jsondata["refDsp"]))
+        events.postUpdate("scanWifi_officePack", str(jsondata["scanWifi"]))
+
+
+        # compare 2 sensors
+        desk = float(str(ir.getItem("sensor_temperature_OfficeDesk").state))
+        pack = float(str(ir.getItem("sensor_temperature_OfficePack").state))
+        delta = desk - pack
+        events.sendCommand("ofcDelta_Temp",str(delta))
+
+        desk = float(str(ir.getItem("sensor_humidity_OfficeDesk").state))
+        pack = float(str(ir.getItem("sensor_humidity_OfficePack").state))
+        delta = desk - pack
+        events.sendCommand("ofcDelta_Hum",str(delta))
+
         if verbose:
             parseOfficePack.log.info(u"parsed "+id+": "+str(temp)+u"°, "+str(hum)+"% ")
 
